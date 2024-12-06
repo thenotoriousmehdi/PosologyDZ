@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 export default function Login() {
@@ -11,6 +11,7 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [error, setError] = useState<string>(""); 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
   const images = [
     'src/assets/imgLogin1.png',
     'src/assets/imgLogin2.png',
@@ -45,36 +46,41 @@ export default function Login() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(""); 
-    
-
-    // try {
-    //   const response = await axios.post("http://localhost:8000/api/login/", {
-    //     email,
-    //     password,
-    //   });
-
-    //   // Store tokens and user info
-    //   localStorage.setItem("accessToken", response.data.access);
-    //   localStorage.setItem("refreshToken", response.data.refresh);
-    //   localStorage.setItem("user", JSON.stringify(response.data.user));
-
-    //   // Redirect to /Reports after successful login
-    //   navigate("/Reports");
-    // } catch (error: any) {
-    //   if (error.response) {
-    //     setError(
-    //       error.response.data.error ||
-    //         "Identifiants incorrects, veuillez réessayer."
-    //     );
-    //   } else if (error.request) {
-    //     setError("Aucune réponse reçue du serveur. Veuillez réessayer.");
-    //   } else {
-    //     setError("Une erreur est survenue. Veuillez réessayer.");
-    //   }
-    // }
+    setError("");
+  
+    try {
+      const response = await axios.post('http://localhost:3000/users/login', {
+        email,
+        password,
+      });
+  
+      console.log('Login response:', response);  // Log the full response object for debugging
+  
+      // Extract token from the response data
+      const { accessToken } = response.data;
+  
+      if (accessToken) {
+        localStorage.setItem('authToken', accessToken);  // Store token in localStorage
+        navigate('/hi');  // Adjust route based on your app's navigation
+      } else {
+        setError("No token received from server. Please try again.");
+      }
+    } catch (error: unknown) {
+      console.error('Error during login:', error);  // Log the error to understand the issue
+  
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.log('Axios error response:', error.response);
+          setError("Invalid credentials or something went wrong. Please try again.");
+        } else if (error.request) {
+          setError("No response received from the server. Please try again.");
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again later.");
+      }
+    }
   };
-
+  
   return (
     <div className="flex h-screen bg-[url('src/assets/layer.svg')] bg-no-repeat bg-cover justify-center xl:bg-PrimaryBlack ">
       <div
