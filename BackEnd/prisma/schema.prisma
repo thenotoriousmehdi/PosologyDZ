@@ -27,3 +27,19 @@ enum Role {
   preparateur
 }
 
+model Patient {
+  id          Int      @id @default(autoincrement()) 
+  name        String  
+  age         Int     
+  gender      String  
+  weight      Float    
+  phoneNumber String   
+  antecedents String   
+  etablissement String 
+  medicin     String  
+  specialite  String   
+  grade       String   
+  
+  createdAt   DateTime @default(now())  
+  updatedAt   DateTime @updatedAt      
+}
