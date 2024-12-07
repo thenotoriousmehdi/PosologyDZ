@@ -69,18 +69,18 @@ app.get('/patient/:id', async (req, res) => {
   }
 });
 
-app.get('/patients', async (req, res) => { // Change the endpoint to '/patients' for fetching all patients
+app.get('/patients', async (req, res) => { 
   try {
-    const patients = await prisma.patient.findMany(); // Fetch all patients
+    const patients = await prisma.patient.findMany(); 
 
     if (patients.length > 0) {
-      res.json(patients); // Return the list of patients
+      res.json(patients); 
     } else {
-      res.status(404).json({ error: 'No patients found' }); // Handle case when no patients are found
+      res.status(404).json({ error: 'No patients found' }); 
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' }); // Handle errors
+    res.status(500).json({ error: 'Internal server error' }); 
   }
 });
  
@@ -88,7 +88,6 @@ app.delete('/patients/:id', async (req, res) => {
   const patientId = parseInt(req.params.id);
 
   try {
-    // Check if the patient exists
     const patient = await prisma.patient.findUnique({
       where: { id: patientId },
     });
@@ -97,7 +96,6 @@ app.delete('/patients/:id', async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    // Proceed to delete the patient
     await prisma.patient.delete({
       where: { id: patientId },
     });
@@ -106,6 +104,23 @@ app.delete('/patients/:id', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get('/medicine-preparations', async (req, res) => {
+  try {
+   
+    const preparations = await prisma.medicinePreparation.findMany({
+      include: {
+        patient: true, 
+      },
+    });
+
+   
+    res.status(200).json(preparations);
+  } catch (error) {
+    console.error('Error fetching medicine preparations:', error);
+    res.status(500).json({ message: "Error retrieving medicine preparations." });
   }
 });
 

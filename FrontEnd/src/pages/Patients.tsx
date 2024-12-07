@@ -57,7 +57,7 @@ const Patients: React.FC = () => {
 
   return (
     <div className="flex w-full bg-Backg bg-no-repeat bg-cover px-[35px] py-[30px] xl:gap-[50px] h-screen">
-      {/* <AddPatient isOpen={isPopupOpen} onClose={handleClosePopup} />   */}
+       {/* <AddPatient isOpen={isPopupOpen} onClose={handleClosePopup} />    */}
       <div className="z-10">
         <Sidebar />
       </div>
@@ -71,14 +71,14 @@ const Patients: React.FC = () => {
         </div>
 
         <div className="flex justify-between">
-          <div className="flex items-center border border-green/30 rounded-[10px] px-4 py-5 bg-white w-[400px]">
+          <div className="flex items-center border border-green/30 focus:border-green/100 focus:outline-none rounded-[10px] px-4 py-5 bg-white w-[400px]">
             <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
             <input
               type="text"
               placeholder="Rechercher.."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="ml-3 w-full font-openSans text-[20px] outline-none text-sm text-PrimaryBlack placeholder-PrimaryBlack/50"
+              className="ml-3 w-full font-openSans text-[20px] focus:border-green/100 focus:outline-none  outline-none text-sm text-PrimaryBlack placeholder-PrimaryBlack/50"
             />
           </div>
 
