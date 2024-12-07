@@ -1,13 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login"
-import Hi from "./pages/hi";
+import Preparations from "./pages/Preparations";
+
+import Patients from "./pages/Patients";
+//import Patients from "./pages/Patients"
 function App() {
   return (
     <Router>
           <Routes>
-            <Route path="/" element={<Login/>}/>  
-            <Route path="/hi" element={<Hi/>}/> 
+          <Route path="/" element={<Patients/>}/> 
+            <Route path="/Login" element={<Login/>}/>  
+            <Route path="/Preparations" element={<Preparations/>}/>
           </Routes>
     </Router>
   );

@@ -26,7 +26,7 @@ export default {
         PrimaryBlack: '#1D1C1C',
         BorderWithoutAction: '#E0E1E2',
         green: '#0F5012',
-        white: '#ffffff'
+        white: '#FEFEFE'
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],

@@ -54,19 +54,16 @@ export default function Login() {
         password,
       });
   
-      console.log('Login response:', response);  // Log the full response object for debugging
-  
-      // Extract token from the response data
       const { accessToken } = response.data;
   
       if (accessToken) {
-        localStorage.setItem('authToken', accessToken);  // Store token in localStorage
-        navigate('/hi');  // Adjust route based on your app's navigation
+        localStorage.setItem('authToken', accessToken); 
+        navigate('/');  
       } else {
         setError("No token received from server. Please try again.");
       }
     } catch (error: unknown) {
-      console.error('Error during login:', error);  // Log the error to understand the issue
+      console.error('Error during login:', error);  
   
       if (axios.isAxiosError(error)) {
         if (error.response) {
