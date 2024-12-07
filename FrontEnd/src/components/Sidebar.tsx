@@ -35,7 +35,7 @@ const handleLogout = () => {
   return (
     <>
       {/* Sidebar for larger screens */}
-      <div className="hidden w-52 h-[calc(100vh-60px)] bg-green xl:flex flex-col pt-5 pr-5 pl-5 rounded-[10px]">
+      <div className="hidden w-52 h-full bg-green xl:flex flex-col  rounded-none">
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <img
@@ -53,9 +53,9 @@ const handleLogout = () => {
               <Link
                 to={item.path}
                 onClick={() => setActiveSection(item.name)}
-                className={`flex items-center cursor-pointer p-2 rounded-2xl ${
+                className={`flex items-center cursor-pointer py-2 px-4 rounded-none ${
                   activeSection === item.name
-                    ? "bg-white text-PrimaryBlack"
+                    ? "bg-white/80  text-PrimaryBlack"
                     : "text-white hover:text-white hover:bg-white/10"
                 }`}
               >
@@ -76,7 +76,7 @@ const handleLogout = () => {
 
 {/* Logout Section */}
 <div className="border-t border-gray-600 "></div>
-<div className="flex items-center rounded-2xl hover:bg-white/10 p-2 cursor-pointer mb-2"
+<div className="flex items-center rounded-none hover:bg-white/10 py-2 px-4  cursor-pointer "
              onClick={handleLogout}>
           <span className="mr-3 text-2xl text-white">
             <FiLogOut />
