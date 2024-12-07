@@ -26,7 +26,8 @@ export default {
         PrimaryBlack: '#1D1C1C',
         BorderWithoutAction: '#E0E1E2',
         green: '#0F5012',
-        white: '#FEFEFE'
+        white: '#FEFEFE',
+        delete: '#FF3A3A',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
@@ -36,4 +37,3 @@ export default {
   },
   plugins: [],
 }
-

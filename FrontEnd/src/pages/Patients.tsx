@@ -17,11 +17,10 @@ const Patients: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]); 
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]); 
   const [searchQuery, setSearchQuery] = useState<string>(""); 
-  const [isPopupOpen, setPopupOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-
-  const handleOpenPopup = () => setPopupOpen(true);
-  const handleClosePopup = () => setPopupOpen(false);
+  const handleOpenPopup = () => setIsOpen(true);
+  const handleClosePopup = () => setIsOpen(false);
   useEffect(() => {
     axios
       .get("http://localhost:3000/patients") 
@@ -57,7 +56,7 @@ const Patients: React.FC = () => {
 
   return (
     <div className="flex w-full bg-Backg bg-no-repeat bg-cover px-[35px] py-[30px] xl:gap-[50px] h-screen">
-       {/* <AddPatient isOpen={isPopupOpen} onClose={handleClosePopup} />    */}
+        {isOpen && <AddPatient isOpen={isOpen} onClose={handleClosePopup} />}
       <div className="z-10">
         <Sidebar />
       </div>

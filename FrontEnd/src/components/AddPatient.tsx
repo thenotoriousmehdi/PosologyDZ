@@ -12,6 +12,7 @@ interface PopupProps {
     isOpen: boolean;
     onClose: () => void;
   }
+  
 
 const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
     
@@ -20,15 +21,203 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
       <div className="fixed inset-0 flex items-center justify-center z-50  bg-PrimaryBlack bg-opacity-55">
        <div className="flex flex-col bg-white rounded-[10px] shadow-lg  mx-[20px] my-[20px] w-full h-[calc(100vh-150px)] md:mx-[50px] md:my-[40px] xl:mx-[250px] xl:my-[50px] xl:w-[calc(100%-200px)] xl:h-[calc(100vh-150px)]">
 
-       <div
-                className="bg-Backg border border-PrimaryBlack p-[10px] rounded-full hover:bg-black hover:border-black"
+{/* title  */}
+       <div className="flex justify-between items-center h-[12%] border-b w-full rounded-t-[10px] bg-white px-[35px] py-[30px] z-10"
+      style={{
+        boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)",
+      }}>
+       <h1 className="font-poppins font-bold text-[24px]  text-PrimaryBlack">
+       Ajouter un patient
+          </h1>
+          <div
+                className="bg-[#FAFAFA] border border-green p-[4px] rounded-[10px] hover:bg-green"
                 onClick={onClose}
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  className="sm:size-10 size-6 text-green/65 hover:text-white"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </div>
+        </div>
+        
+{/* second part */}
+        <div className="flex flex-col gap-[35px] h-[76%] p-12 overflow-y-auto ">
+          {/* header */}
+          <div className="flex justify-between gap-8 items-center"> 
+        <h1 className="font-poppins font-semibold text-[16px] text-green">
+        Informations personnelles
+            </h1>
+            <div className="flex-1 border-t-[0.5px] border-[#E0E1E2]"></div>
 
-                </div>
+            <h1 className="font-openSans font-normal text-[16px] text-PrimaryBlack/60">
+        1/3
+            </h1>
+            </div>
+{/* infos */}
+<div className="flex flex-col gap-[30px]  ">
+
+{/* first line */}
+<div className="flex justify-between items-center gap-4">
+<div className="flex flex-col justify-start gap-2 w-full"> 
+<h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+        Nom et Prénom
+        <span className="text-delete">*</span>
+            </h1>
+
+
+              <label className="w-full">
+                <input
+                  className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                  type="text"
+                  placeholder="Nom et prénom du patient"
+                  pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
+                  required
+                  // value={email}
+                  // onChange={handleEmailChange}
+                />
+              </label>
+</div>          
 
 
 
+<div className="flex flex-col justify-start gap-2 w-full"> 
+<h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+       Age
+        <span className="text-delete">*</span>
+            </h1>  
+              <label className="w-full">
+                <input
+                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                  type="number"
+                  placeholder="Age"
+                 pattern="^(?:1[01][0-9]|[1-9][0-9]?)$"
+                 required
+                  // value={email}
+                  // onChange={handleEmailChange}
+                />
+              </label>
+  </div>       
+</div>
+{/* second line */}
+<div className="flex justify-between items-center gap-4">
+<div className="flex flex-col justify-start gap-2 w-full"> 
+<h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+      Sexe
+        <span className="text-delete">*</span>
+            </h1>
+
+
+            <label className="w-full">
+  <select
+    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+    required
+  >
+    <option value="" disabled selected>Sexe</option>
+    <option value="garçon">Garçon</option>
+    <option value="fille">Fille</option>
+  </select>
+</label>
+
+</div>          
+
+
+
+<div className="flex flex-col justify-start gap-2 w-full"> 
+<h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+Poids(kg)
+        <span className="text-delete">*</span>
+            </h1>  
+              <label className="w-full">
+                <input
+                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                  type="number"
+                  placeholder="Poids"
+                pattern="^(?:[1-9][0-9]{0,2}|300)$"
+                 required
+                  // value={email}
+                  // onChange={handleEmailChange}
+                />
+              </label>
+  </div>       
+</div>
+{/* Third line */}
+
+<div className="flex flex-col justify-start gap-2 w-1/2"> 
+<h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+    Numéro de téléphone
+        <span className="text-delete">*</span>
+            </h1>
+
+
+            <label className="w-full">
+                <input
+                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                  type="tel"
+                  placeholder="Numéro de téléphone"
+                pattern="^0[5-9][0-9]{8}$"
+                 required
+                  // value={email}
+                  // onChange={handleEmailChange}
+                />
+              </label>
+
+</div>          
+
+{/* fourth */}
+<div className="flex flex-col justify-start gap-2 w-full"> 
+<h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+Antécédents Médicaux
+      
+            </h1>
+
+
+            <label className="w-full">
+            <textarea
+                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+
+                  placeholder="Citez les Antécédents Médicaux du patient"
+              
+                  // value={email}
+                  // onChange={handleEmailChange}
+                />
+              </label>
+
+</div> 
+      
+
+
+
+
+
+
+
+
+
+  </div>
+
+
+
+
+
+        </div>
+
+        <div className="flex justify-end items-center h-[12%] border-b w-full rounded-b-[10px] bg-white px-[35px] py-[40px] z-10"
+      style={{
+        boxShadow: "0px 4px 10px 4px rgba(29, 28, 28, 0.10)",
+      }}>
+         <button className="bg-green py-4 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" >
+            Suivant
+          </button>
+        </div>
 
 
 
