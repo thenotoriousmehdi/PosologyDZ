@@ -1,55 +1,60 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PatientCard from "../components/PatientCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
+import PreparationCard from "../components/PreparationCard";
 
-interface Patient {
+interface Preparation {
   id: string;
-  name: string;
-  phoneNumber: string;
-  gender: string;
-  age: string;
+  dci: string;
+  dosageInitial: number;
+  dosageAdapte: number;
+  nombreGellules: number;
+  compriméEcrasé: number;
+  statut: "A_faire" | "En_Cours" | "Termine";
 }
 
 const Preparations: React.FC = () => {
-  const [patients, setPatients] = useState<Patient[]>([]); 
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]); 
+  const [preparations, setPreparations] = useState<Preparation[]>([]); 
+  const [filteredPreparations, setFilteredPreparations] = useState<Preparation[]>([]); 
   const [searchQuery, setSearchQuery] = useState<string>(""); 
+  const [selectedStatus, setSelectedStatus] = useState<string>(""); // State for the selected status filter
 
   useEffect(() => {
-    // Fetch patients data
     axios
-      .get("http://localhost:3000/patients") 
+      .get("http://localhost:3000/medicine-preparations") 
       .then((response) => {
-        setPatients(response.data); 
-        setFilteredPatients(response.data); 
+        setPreparations(response.data); 
+        setFilteredPreparations(response.data); 
       })
       .catch(() => {
-        console.log("Error fetching patients");
+        console.log("Error fetching preparations");
       });
   }, []);
 
+  // Handle search input change
   const handleSearch = (query: string) => {
     setSearchQuery(query); 
-    const lowerCaseQuery = query.toLowerCase(); 
-    const filtered = patients.filter((patient) =>
-      patient.name.toLowerCase().includes(lowerCaseQuery)
-    );
-    setFilteredPatients(filtered); 
+    filterPreparations(query, selectedStatus); // Call the filter function with search query and status
   };
 
-  const handleDelete = (id: string) => {
-    axios
-      .delete(`http://localhost:3000/patients/${id}`) // Make the delete API call
-      .then(() => {
-        setPatients(prevPatients => prevPatients.filter(patient => patient.id !== id)); // Update frontend state after successful delete
-        setFilteredPatients(prevPatients => prevPatients.filter(patient => patient.id !== id)); // Update filtered state as well
-      })
-      .catch(() => {
-        console.log("Error deleting patient");
-      });
+  // Handle status change in the select dropdown
+  const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const status = event.target.value;
+    setSelectedStatus(status); 
+    filterPreparations(searchQuery, status); // Call the filter function with search query and status
+  };
+
+  // Function to filter preparations based on search and status
+  const filterPreparations = (query: string, status: string) => {
+    const lowerCaseQuery = query.toLowerCase();
+    const filtered = preparations.filter((prep) => {
+      const matchesSearch = prep.dci.toLowerCase().includes(lowerCaseQuery);
+      const matchesStatus = status ? prep.statut === status : true; // Only filter by status if one is selected
+      return matchesSearch && matchesStatus;
+    });
+    setFilteredPreparations(filtered); // Update filtered preparations state
   };
 
   return (
@@ -67,7 +72,7 @@ const Preparations: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center border border-green/30 rounded-[10px] px-4 py-5  bg-white w-[400px]">
+          <div className="flex items-center border border-green/30 rounded-[10px] px-4 py-5 bg-white w-[400px]">
             <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
             <input
               type="text"
@@ -78,35 +83,36 @@ const Preparations: React.FC = () => {
             />
           </div>
           <div>
-        <select
-          className="border border-green/30 rounded-[10px] px-4 py-5 h-full text-green bg-white cursor-pointer focus:outline-green"
-        >
-          <option value="">Statut</option>
-          <option value="active">A faire</option>
-          <option value="inactive">En cours</option>
-          <option value="pending">Terminé</option>
-        </select>
-      </div>
-         
+            <select
+              className="border border-green/30 rounded-[10px] px-4 font-poppins font-medium hover:bg-green/10 text-[16px] py-5 h-full text-green bg-white cursor-pointer focus:outline-green"
+              value={selectedStatus}
+              onChange={handleStatusChange}
+            >
+              <option value="">Tout</option>
+              <option value="A_faire">A faire</option>
+              <option value="En_Cours">En cours</option>
+              <option value="Termine">Terminé</option>
+            </select>
+          </div>
         </div>
-
         <div className="flex-grow overflow-y-auto">
           <div className="flex flex-col gap-[20px]">
-            {filteredPatients.length > 0 ? (
-              filteredPatients.map((patient: Patient) => (
-                <PatientCard
-                  key={patient.id}
-                  id={patient.id}
-                  name={patient.name}
-                  phoneNumber={patient.phoneNumber}
-                  gender={patient.gender}
-                  age={patient.age}
-                  onDelete={handleDelete} 
+            {filteredPreparations.length > 0 ? (
+              filteredPreparations.map((prep: Preparation) => (
+                <PreparationCard
+                  key={prep.id}
+                  id={prep.id}
+                  dci={prep.dci}
+                  dosageInitial={prep.dosageInitial}
+                  dosageAdapte={prep.dosageAdapte}
+                  nombreGellules={prep.nombreGellules}
+                  compriméEcrasé={prep.compriméEcrasé} 
+                  statut={prep.statut}
                 />
               ))
             ) : (
               <div className="text-center text-gray-500 font-poppins text-[18px]">
-                Aucun patient trouvé
+                Aucune préparation trouvée
               </div>
             )}
           </div>

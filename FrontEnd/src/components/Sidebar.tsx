@@ -8,6 +8,7 @@ const Sidebar = () => {
   const location = useLocation(); 
   const [activeSection, setActiveSection] = useState("");
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const menuItems = [
     { name: "Patients", icon: <FiUser />, path: "/" },
     { name: "Préparations", icon: <CgPill />, path: "/Preparations" },

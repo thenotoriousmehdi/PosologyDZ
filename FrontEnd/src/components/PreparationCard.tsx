@@ -1,39 +1,80 @@
 import React, { useState } from "react";
 import { TbEyeFilled } from "react-icons/tb";
-import { IoEllipsisVertical } from "react-icons/io5";
+import axios from 'axios'; // Make sure you have axios installed
 
+// Define your types for props
 interface PreparationCardProps {
-  id: string; 
-  name: string;
-  phoneNumber: string;
-  gender: string;
-  age: string;
-  onDelete: (id: string) => void; 
+  id: string;
+  dci: string;
+  dosageInitial: number;
+  dosageAdapte: number;
+  nombreGellules: number;
+  compriméEcrasé: number;
+  statut: "A_faire" | "En_Cours" | "Termine";
 }
+
+enum Statut {
+  A_Faire = "A_faire",
+  En_Cours = "En_Cours",
+  Terminé = "Termine",
+}
+
+const statutMapping: { [key in Statut]: string } = {
+  [Statut.A_Faire]: "A faire",
+  [Statut.En_Cours]: "En cours",
+  [Statut.Terminé]: "Terminé",
+};
+
+// Define color mapping based on statut
+const statutColorMapping: { [key in Statut]: string } = {
+  [Statut.A_Faire]: "bg-[#F9A825]",
+  [Statut.En_Cours]: "bg-[#1E88E5]",
+  [Statut.Terminé]: "bg-[#43A047]",
+};
 
 const PreparationCard: React.FC<PreparationCardProps> = ({
   id,
-  name,
-  phoneNumber,
-  gender,
-  age,
-  onDelete,  
+  dci,
+  dosageInitial,
+  dosageAdapte,
+  nombreGellules,
+  compriméEcrasé,
+  statut,
 }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // Use useState to manage the current statut of the preparation
+  const [currentStatut, setCurrentStatut] = useState<Statut>(statut);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleOptionClick = (option: string) => {
-    if (option === "Supprimer") {
-      const confirmDelete = window.confirm("etes-vous sure de vouloir supprimer ce patient ?");
-      if (confirmDelete) {
-        onDelete(id);  
-      }
+  // Function to handle statut change and make API request
+  const handleStatutChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatut = event.target.value as Statut;
+  
+    // Prompt for confirmation
+    const confirmed = window.confirm(
+      `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
+    );
+  
+    if (!confirmed) {
+      // Revert to the previous statut if the user cancels
+      event.target.value = currentStatut;
+      return;
     }
-    setIsDropdownOpen(false); 
+  
+    try {
+      // Make the API call to update the statut on the backend
+      const response = await axios.patch(
+        `http://localhost:3000/medicine-preparations/${id}/statut`,
+        { statut: newStatut }
+      );
+  
+      // If the update is successful, update the state
+      setCurrentStatut(newStatut);
+      alert("Statut mis à jour avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du statut", error);
+      alert("Échec de la mise à jour du statut");
+    }
   };
+  
 
   return (
     <div className="relative">
@@ -44,53 +85,46 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 w-full">
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-semibold text-[16px] text-PrimaryBlack">
-              {name}
+              {dci}
             </h1>
           </div>
 
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-              {phoneNumber}
+              {dosageInitial}mg -- {dosageAdapte}mg
             </h1>
           </div>
 
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-              {gender}
+              {nombreGellules} gel/{compriméEcrasé} comp
             </h1>
           </div>
-         
+
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-              {age} ans
+              #{id}
             </h1>
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0">
-          <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group">
-            <TbEyeFilled style={{ color: '#0F5012', fontSize: '20px'}} />
+        <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0 justify-center items-center">
+          <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 group">
+            <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
-          <div className="relative">
-            <div
-              className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
-              onClick={toggleDropdown}
-            >
-              <IoEllipsisVertical style={{ color: '#0F5012', fontSize: '20px'}}  />
-            </div>
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-[150px] bg-white border border-gray-300 shadow-lg z-10 rounded-[10px]">
-                <ul className="flex flex-col p-2 space-y-2">
-                  <li
-                    className="cursor-pointer hover:bg-BorderWithoutAction/30 px-3 py-2 hover:rounded-[10px]"
-                    onClick={() => handleOptionClick('Supprimer')}
-                  >
-                    Delete
-                  </li>
-                </ul>
-              </div>
-            )}
+
+          {/* Statut Dropdown */}
+          <div>
+          <select
+         className={`rounded-[10px] px-4 py-4 h-full text-PrimaryBlack bg-white cursor-pointer focus:outline-green ${statutColorMapping[currentStatut]}`}
+         value={currentStatut}
+         onChange={handleStatutChange}
+>
+              <option value={Statut.A_Faire}>{statutMapping[Statut.A_Faire]}</option>
+              <option value={Statut.En_Cours}>{statutMapping[Statut.En_Cours]}</option>
+              <option value={Statut.Terminé}>{statutMapping[Statut.Terminé]}</option>
+            </select>
           </div>
         </div>
       </div>

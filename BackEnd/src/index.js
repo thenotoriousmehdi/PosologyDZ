@@ -124,6 +124,33 @@ app.get('/medicine-preparations', async (req, res) => {
   }
 });
 
+app.patch("/medicine-preparations/:id/statut", async (req, res) => {
+  const { id } = req.params;
+  const { statut } = req.body;
+
+  // Validate statut
+  const validStatuts = ["A_faire", "En_Cours", "Termine"];
+  if (!validStatuts.includes(statut)) {
+    return res.status(400).json({ message: "Invalid statut value" });
+  }
+
+  try {
+    // Update the statut in the database
+    const updatedPreparation = await prisma.medicinePreparation.update({
+      where: { id: parseInt(id) },
+      data: {
+        statut: statut, // Directly use the statut value
+      },
+    });
+
+    // Respond with the updated preparation data
+    res.status(200).json(updatedPreparation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating statut" });
+  }
+});
+
 
 async function main() {
   app.listen(PORT, () => { console.info('Server running at http://localhost:3000');
