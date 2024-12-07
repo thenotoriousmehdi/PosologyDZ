@@ -37,15 +37,15 @@ const handleLogout = () => {
       {/* Sidebar for larger screens */}
       <div className="hidden w-52 h-full bg-green xl:flex flex-col  rounded-none">
         {/* Logo */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6 mt-6">
           <img
             src={logo}
             alt="chu logo"
-            className="w-[45px] h-[61px] mt-3"
+            className="w-[45px] h-[61px] "
           />
         </div>
         {/* Divider */}
-        <div className="border-t border-gray-600 mb-6"></div>
+        <div className="border-t border-gray-600 mb-4"></div>
         {/* Menu Items */}
         <ul className="space-y-2 flex-grow">
           {menuItems.map((item) => (

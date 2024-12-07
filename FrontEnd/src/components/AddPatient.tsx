@@ -99,7 +99,7 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
           {step === 1 && (
             <div className="flex flex-col gap-[30px]">
               {/* first line */}
-              <div className="flex justify-between items-center gap-4">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                     Nom et Prénom
@@ -138,7 +138,7 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
                 </div>
               </div>
               {/* second line */}
-              <div className="flex justify-between items-center gap-4">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                     Sexe
@@ -179,7 +179,7 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
               </div>
               {/* Third line */}
 
-              <div className="flex flex-col justify-start gap-2 w-1/2">
+              <div className="flex flex-col justify-start gap-2 md:w-1/2">
                 <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                   Numéro de téléphone
                   <span className="text-delete">*</span>
@@ -221,7 +221,7 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
           {step === 2 && (
             <div className="flex flex-col gap-[30px]">
              {/* first line */}
-             <div className="flex justify-between items-center gap-4">
+             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                   Nom de l’établissement
@@ -264,7 +264,7 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
               </div>
               
  {/* second line */}
- <div className="flex justify-between items-center gap-4">
+ <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                   Spécialité
@@ -324,9 +324,195 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
           {step === 3 && (
             <div className="flex flex-col gap-[30px]">
               {/* Add fields for step 3 */}
-              <h2 className="text-center text-PrimaryBlack">
-                Step 3 content goes here
-              </h2>
+{/* first line */}
+<div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    DCI
+                    <span className="text-delete">*</span>
+                  </h1>
+
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      placeholder="DCI"
+                      pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Indication thérapeutique
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      placeholder="Age"
+           
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+{/* second line */}
+<div className="flex flex-col md:flex-row justify-between items-center gap-4">
+<div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Dosage initial(mg)
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="number"
+                      placeholder="Dosage initial"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Dosage adapté(mg)
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="number"
+                      placeholder="Dosage adapté"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+              </div>
+{/* third line */}
+<div className="flex flex-col md:flex-row justify-between items-center gap-4">
+<div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Posologie, mode d’emploi (par jour)
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="number"
+                      placeholder="Posologie, mode d’emploi"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Voie d’administration
+                  </h1>
+
+                  <label className="w-full">
+                    <select
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                    >
+                      <option value="" disabled selected>
+                      Voie d’administration
+                      </option>
+                      <option value="Orale">Orale</option>
+                      <option value="Assistant">Assistant(e)</option>
+                      <option value="Resident">Resident(e)</option>
+
+                    </select>
+                  </label>
+                </div>
+              </div>
+{/* fourth line */}
+<div className="flex flex-col md:flex-row justify-between items-center gap-4">
+<div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  QSP (nombre de jours)
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="number"
+                      placeholder="QSP"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Excipient à effet notoire
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      placeholder="Excipient à effet notoire"
+           
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+{/* fidth line */}
+<div className="flex flex-col md:flex-row justify-between items-center gap-4">
+<div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Date de préparation
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="date"
+                      placeholder="Date de préparation"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Date de péremption
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="date"
+                      placeholder="Date de péremption"
+                      required
+                      // value={email}
+                      // onChange={handleEmailChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+
+
+            
             </div>
           )}
         </div>
