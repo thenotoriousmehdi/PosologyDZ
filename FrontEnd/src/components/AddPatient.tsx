@@ -429,8 +429,6 @@ const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose }) => {
                               Voie d’administration
                             </option>
                             <option value="Orale">Orale</option>
-                            <option value="Assistant">Assistant(e)</option>
-                            <option value="Resident">Resident(e)</option>
                           </select>
                         </label>
                       </div>
