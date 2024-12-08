@@ -28,6 +28,12 @@ enum Role {
   admin
 }
 
+enum Grade{
+  Ma
+  Assistant
+  Resident
+ }
+
 model Patient {
   id          Int      @id @default(autoincrement()) 
   name        String  
@@ -39,7 +45,7 @@ model Patient {
   etablissement String? 
   medicin     String?  
   specialite  String?  
-  grade       String   
+  grade       Grade   
   medicinePreparations MedicinePreparation[]
 
   createdAt   DateTime @default(now())  
@@ -52,9 +58,9 @@ model MedicinePreparation {
   dci              String    
   indication       String?  
   dosageInitial    Float    
-  dosageAdapte     Float?    
+  dosageAdapte     Float    
   modeEmploi       Float     
-  voieAdministration String   
+  voieAdministration String? 
   qsp              Int      
   excipient        String?   
   preparationDate  DateTime  
@@ -73,3 +79,6 @@ enum Statut {
   En_Cours
   Termine
 }
+ 
+
+ 

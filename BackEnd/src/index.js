@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 import cors from 'cors';
+
 const app = express();
 const PORT = 3000;
 const prisma = new PrismaClient();
@@ -150,6 +151,150 @@ app.patch("/medicine-preparations/:id/statut", async (req, res) => {
     res.status(500).json({ message: "Error updating statut" });
   }
 });
+
+app.post('/patients', async (req, res) => {
+  try {
+    const { 
+      name, 
+      age, 
+      gender, 
+      weight, 
+      phoneNumber, 
+      grade,
+      antecedents = null, 
+      etablissement = null, 
+      medicin = null, 
+      specialite = null,
+      medicinePreparations = [] 
+    } = req.body
+
+    
+    if (!name || !age || !gender || !weight || !phoneNumber || !grade) {
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        requiredFields: ['name', 'age', 'gender', 'weight', 'phoneNumber', 'grade']
+      });
+    }
+
+    const newPatient = await prisma.patient.create({
+      data: {
+        name,
+        age: Number(age),
+        gender,
+        weight: Number(weight),
+        phoneNumber,
+        antecedents,
+        etablissement,
+        medicin,
+        specialite,
+        grade,
+        medicinePreparations: {
+          create: medicinePreparations.map(prep => {
+            const nombreGellules = Number(prep.qsp*prep.modeEmploi) ;
+            const compriméEcrasé = Number( (prep.dosageAdapte*prep.qsp*prep.modeEmploi)/prep.dosageInitial);
+
+            return {
+              dci: prep.dci,
+              indication: prep.indication || null,
+              dosageInitial: Number(prep.dosageInitial),
+              dosageAdapte: Number(prep.dosageAdapte),
+              modeEmploi: Number(prep.modeEmploi || 0),
+              voieAdministration: prep.voieAdministration || null,
+              qsp: Number(prep.qsp || 0),
+              excipient: prep.excipient || null,
+              preparationDate: new Date(prep.preparationDate),
+              peremptionDate: new Date(prep.peremptionDate),
+              statut: 'A_faire', 
+              nombreGellules,
+              compriméEcrasé 
+            };
+          })
+        }
+      },
+      include: {
+        medicinePreparations: true
+      }
+    })
+
+    res.status(201).json(newPatient)
+  } catch (error) {
+    console.error('Detailed error creating patient:', error)
+    res.status(500).json({ 
+      error: 'Could not create patient', 
+      details: error.message,
+      fullError: error
+    })
+  }
+})
+
+// app.get('/download-pdf/:patientId/:medicinePreparationId', async (req, res) => {
+//   const { patientId, medicinePreparationId } = req.params;
+
+//   try {
+//     // Fetch patient and medicine preparation details from the database
+//     const patient = await prisma.patient.findUnique({
+//       where: { id: patientId },
+//       include: {
+//         medicinePreparations: {
+//           where: { id: medicinePreparationId },
+//         },
+//       },
+//     });
+
+//     // If patient or medicine preparation not found, return an error
+//     if (!patient || patient.medicinePreparations.length === 0) {
+//       return res.status(404).json({ error: 'Patient or medicine preparation not found' });
+//     }
+
+//     // Extract medicine preparation data
+//     const medicinePreparation = patient.medicinePreparations[0];
+
+//     // Create a PDF document
+//     const doc = new PDFDocument();
+
+//     // Set PDF response headers
+//     res.setHeader('Content-Type', 'application/pdf');
+//     res.setHeader('Content-Disposition', `attachment; filename=medicine_preparation_${medicinePreparationId}.pdf`);
+
+//     // Pipe the PDF to the response
+//     doc.pipe(res);
+
+//     // Add content to the PDF
+//     doc.fontSize(20).text('Medicine Preparation Details', { align: 'center' });
+//     doc.moveDown();
+
+//     doc.fontSize(12).text(`Patient: ${patient.name}`);
+//     doc.text(`Age: ${patient.age}`);
+//     doc.text(`Gender: ${patient.gender}`);
+//     doc.text(`Phone Number: ${patient.phoneNumber}`);
+//     doc.text(`Grade: ${patient.grade}`);
+//     doc.text(`Weight: ${patient.weight} kg`);
+//     doc.moveDown();
+
+//     doc.text('Medicine Preparation Details:');
+//     doc.text(`DCI: ${medicinePreparation.dci}`);
+//     doc.text(`Indication: ${medicinePreparation.indication || 'N/A'}`);
+//     doc.text(`Dosage Initial: ${medicinePreparation.dosageInitial}`);
+//     doc.text(`Dosage Adapté: ${medicinePreparation.dosageAdapte}`);
+//     doc.text(`Mode Emploi: ${medicinePreparation.modeEmploi}`);
+//     doc.text(`QSP: ${medicinePreparation.qsp}`);
+//     doc.text(`Excipient: ${medicinePreparation.excipient}`);
+//     doc.text(`Preparation Date: ${new Date(medicinePreparation.preparationDate).toLocaleDateString()}`);
+//     doc.text(`Peremption Date: ${new Date(medicinePreparation.peremptionDate).toLocaleDateString()}`);
+//     doc.text(`Statut: ${medicinePreparation.statut}`);
+//     doc.text(`Nombre Gellules: ${medicinePreparation.nombreGellules}`);
+//     doc.text(`Comprimé Ecrasé: ${medicinePreparation.compriméEcrasé}`);
+//     doc.moveDown();
+
+//     // End the document
+//     doc.end();
+//   } catch (error) {
+//     console.error('Error generating PDF:', error);
+//     res.status(500).json({ error: 'Failed to generate PDF', details: error.message });
+//   }
+// });
+
+
 
 
 async function main() {

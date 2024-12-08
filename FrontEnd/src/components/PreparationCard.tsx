@@ -107,14 +107,14 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
             <select
               className={`
     rounded-[10px] px-4 py-4 h-full text-PrimaryBlack 
-    cursor-pointer focus:outline-green 
+    cursor-pointer  
     ${
       currentStatut === Statut.A_Faire
-        ? "bg-[#F9A825]"
+        ? "bg-[#F9A825] hover:bg-[#F9A825]/80"
         : currentStatut === Statut.En_Cours
-        ? "bg-[#1E88E5]"
+        ? "bg-[#1E88E5] hover:bg-[#1E88E5]/80"
         : currentStatut === Statut.Termine
-        ? "bg-[#43A047]"
+        ? "bg-[#43A047] hover:bg-[#43A047]/80"
         : "bg-white"
     }
   `}
