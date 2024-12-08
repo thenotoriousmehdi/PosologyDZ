@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { FiUser, FiLogOut } from "react-icons/fi";
-import { Link, useLocation, useNavigate } from "react-router-dom"; 
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logochu.png";
 import { CgPill } from "react-icons/cg";
 
 const Sidebar = () => {
-  const location = useLocation(); 
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState("");
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -23,14 +23,14 @@ const Sidebar = () => {
       setActiveSection(currentItem.name);
     }
   }, [location.pathname, menuItems]);
-  const user = localStorage.getItem("user") 
-  ? JSON.parse(localStorage.getItem("user")!) 
-  : null;
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user")!)
+    : null;
 
-const handleLogout = () => {
-  localStorage.removeItem("user");
-  navigate('/Login');
-};
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/Login");
+  };
 
   return (
     <>
@@ -38,11 +38,7 @@ const handleLogout = () => {
       <div className="hidden w-52 h-full bg-green xl:flex flex-col  rounded-none">
         {/* Logo */}
         <div className="flex justify-center mb-6 mt-6">
-          <img
-            src={logo}
-            alt="chu logo"
-            className="w-[45px] h-[61px] "
-          />
+          <img src={logo} alt="chu logo" className="w-[45px] h-[61px] " />
         </div>
         {/* Divider */}
         <div className="border-t border-gray-600 mb-4"></div>
@@ -62,9 +58,7 @@ const handleLogout = () => {
                 <span className="mr-3 text-2xl">{item.icon}</span>
                 <span
                   className={`flex flex-col justify-center font-poppins font-medium text-[16px] leading-[40px] ${
-                    activeSection === item.name
-                      ? "text-green"
-                      : "text-white"
+                    activeSection === item.name ? "text-green" : "text-white"
                   }`}
                 >
                   {item.name}
@@ -74,26 +68,23 @@ const handleLogout = () => {
           ))}
         </ul>
 
-{/* Logout Section */}
-<div className="border-t border-gray-600 "></div>
-<div className="flex items-center rounded-none hover:bg-white/10 py-2 px-4  cursor-pointer "
-             onClick={handleLogout}>
+        {/* Logout Section */}
+        <div className="border-t border-gray-600 "></div>
+        <div
+          className="flex items-center rounded-none hover:bg-white/10 py-2 px-4  cursor-pointer "
+          onClick={handleLogout}
+        >
           <span className="mr-3 text-2xl text-white">
             <FiLogOut />
           </span>
           <div className="text-white">
-            <p className="flex flex-col justify-center font-poppins font-medium text-[16px] leading-[40px]">Logout</p>
+            <p className="flex flex-col justify-center font-poppins font-medium text-[16px] leading-[40px]">
+              Logout
+            </p>
           </div>
         </div>
 
-
-
-
         {/* Divider */}
-       
-        
-        
-
       </div>
 
       {/* Sidebar for mobile screens */}

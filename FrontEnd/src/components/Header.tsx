@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
 interface HeaderProps {
   title: string;
   description: string;
 }
 
-const Header: React.FC<HeaderProps> = ({title, description }) => {
-
+const Header: React.FC<HeaderProps> = ({ title, description }) => {
   return (
     <div className="flex flex-col gap-[20px] w-full">
       <div className="flex justify-between items-start w-full">

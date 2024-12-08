@@ -3,14 +3,13 @@ import { TbEyeFilled } from "react-icons/tb";
 import { IoEllipsisVertical } from "react-icons/io5";
 
 interface UserCardProps {
-  id: string; 
+  id: string;
   name: string;
   phoneNumber: string;
   gender: string;
   age: string;
-  onDelete: (id: string) => void; 
+  onDelete: (id: string) => void;
 }
-
 
 const PatientCard: React.FC<UserCardProps> = ({
   id,
@@ -18,7 +17,7 @@ const PatientCard: React.FC<UserCardProps> = ({
   phoneNumber,
   gender,
   age,
-  onDelete,  
+  onDelete,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -28,12 +27,14 @@ const PatientCard: React.FC<UserCardProps> = ({
 
   const handleOptionClick = (option: string) => {
     if (option === "Supprimer") {
-      const confirmDelete = window.confirm("etes-vous sure de vouloir supprimer ce patient ?");
+      const confirmDelete = window.confirm(
+        "etes-vous sure de vouloir supprimer ce patient ?"
+      );
       if (confirmDelete) {
-        onDelete(id);  
+        onDelete(id);
       }
     }
-    setIsDropdownOpen(false); 
+    setIsDropdownOpen(false);
   };
 
   return (
@@ -60,7 +61,7 @@ const PatientCard: React.FC<UserCardProps> = ({
               {gender}
             </h1>
           </div>
-         
+
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
               {age} ans
@@ -71,21 +72,23 @@ const PatientCard: React.FC<UserCardProps> = ({
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0">
           <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group">
-            <TbEyeFilled style={{ color: '#0F5012', fontSize: '20px'}} />
+            <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
           <div className="relative">
             <div
               className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
               onClick={toggleDropdown}
             >
-              <IoEllipsisVertical style={{ color: '#0F5012', fontSize: '20px'}}  />
+              <IoEllipsisVertical
+                style={{ color: "#0F5012", fontSize: "20px" }}
+              />
             </div>
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 w-[150px] bg-white border border-gray-300 shadow-lg z-10 rounded-[10px]">
                 <ul className="flex flex-col p-2 space-y-2">
                   <li
                     className="cursor-pointer hover:bg-BorderWithoutAction/30 px-3 py-2 hover:rounded-[10px]"
-                    onClick={() => handleOptionClick('Supprimer')}
+                    onClick={() => handleOptionClick("Supprimer")}
                   >
                     Delete
                   </li>

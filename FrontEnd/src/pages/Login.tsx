@@ -1,7 +1,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Login() {
@@ -9,14 +9,14 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [error, setError] = useState<string>(""); 
+  const [error, setError] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
   const images = [
-    'src/assets/imgLogin1.png',
-    'src/assets/imgLogin2.png',
-    'src/assets/imgLogin3.png',
-    'src/assets/imgLogin4.png'
+    "src/assets/imgLogin1.png",
+    "src/assets/imgLogin2.png",
+    "src/assets/imgLogin3.png",
+    "src/assets/imgLogin4.png",
   ];
 
   useEffect(() => {
@@ -47,28 +47,30 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-  
+
     try {
-      const response = await axios.post('http://localhost:3000/users/login', {
+      const response = await axios.post("http://localhost:3000/users/login", {
         email,
         password,
       });
-  
+
       const { accessToken } = response.data;
-  
+
       if (accessToken) {
-        localStorage.setItem('authToken', accessToken); 
-        navigate('/');  
+        localStorage.setItem("authToken", accessToken);
+        navigate("/");
       } else {
         setError("No token received from server. Please try again.");
       }
     } catch (error: unknown) {
-      console.error('Error during login:', error);  
-  
+      console.error("Error during login:", error);
+
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          console.log('Axios error response:', error.response);
-          setError("Invalid credentials or something went wrong. Please try again.");
+          console.log("Axios error response:", error.response);
+          setError(
+            "Invalid credentials or something went wrong. Please try again."
+          );
         } else if (error.request) {
           setError("No response received from the server. Please try again.");
         }
@@ -77,7 +79,7 @@ export default function Login() {
       }
     }
   };
-  
+
   return (
     <div className="flex h-screen bg-[url('src/assets/layer.svg')] bg-no-repeat bg-cover justify-center xl:bg-PrimaryBlack ">
       <div
@@ -86,10 +88,11 @@ export default function Login() {
       >
         <div className="flex flex-col items-start justify-start ">
           <h1 className="font-poppins font-semibold mb-4 text-[24px] text-PrimaryBlack">
-          Bienvenue! <span className="wave-emoji">👋</span>
+            Bienvenue! <span className="wave-emoji">👋</span>
           </h1>
           <p className="font-openSans font-regular text-[16px]  text-PrimaryBlack text-opacity-80 text-start">
-          Connectez-vous à votre compte en remplissant le formulaire de connexion avec vos informations personnelles.
+            Connectez-vous à votre compte en remplissant le formulaire de
+            connexion avec vos informations personnelles.
           </p>
         </div>
 
@@ -98,7 +101,10 @@ export default function Login() {
           <div className="flex flex-col gap-[25px]">
             {/* Display error message */}
             {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <div
+                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                role="alert"
+              >
                 <span className="block sm:inline">{error}</span>
               </div>
             )}
@@ -148,7 +154,7 @@ export default function Login() {
                   onChange={handleRememberMeChange}
                 />
                 <span className="text-gray-700 font-openSans peer-checked:text-black">
-                Se souvenir de moi
+                  Se souvenir de moi
                 </span>
               </label>
             </div>
@@ -163,9 +169,9 @@ export default function Login() {
         </form>
 
         <p className=" flex justify-center items-center font-openSans text-center text-[14px] text-PrimaryBlack/80">
-        Ministère de la Santé <br/>
-        Centre Hospitalo-Universitaire de Béni Messous <br/>
-        Laboratoire de Biologie Médicale Mère-Enfant
+          Ministère de la Santé <br />
+          Centre Hospitalo-Universitaire de Béni Messous <br />
+          Laboratoire de Biologie Médicale Mère-Enfant
         </p>
       </div>
 
@@ -177,7 +183,7 @@ export default function Login() {
             className="w-[186px] h-[257px]"
           />
         </div>
-        
+
         <div className="absolute inset-0 bg-[#0F5012] bg-opacity-50 z-10" />
         {images.map((src, index) => (
           <img
@@ -185,13 +191,11 @@ export default function Login() {
             src={src}
             alt={`Login Image ${index + 1}`}
             className={`absolute inset-0 xl:object-cover xl:h-full xl:w-full xl:z-0 transition-opacity duration-1000 ${
-              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              index === currentImageIndex ? "opacity-100" : "opacity-0"
             }`}
           />
         ))}
       </div>
-
-
     </div>
   );
 }

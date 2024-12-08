@@ -16,49 +16,51 @@ interface Preparation {
 }
 
 const Preparations: React.FC = () => {
-  const [preparations, setPreparations] = useState<Preparation[]>([]); 
-  const [filteredPreparations, setFilteredPreparations] = useState<Preparation[]>([]); 
-  const [searchQuery, setSearchQuery] = useState<string>(""); 
-  const [selectedStatus, setSelectedStatus] = useState<string>(""); // State for the selected status filter
+  const [preparations, setPreparations] = useState<Preparation[]>([]);
+  const [filteredPreparations, setFilteredPreparations] = useState<
+    Preparation[]
+  >([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>(""); 
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/medicine-preparations") 
+      .get("http://localhost:3000/medicine-preparations")
       .then((response) => {
-        setPreparations(response.data); 
-        setFilteredPreparations(response.data); 
+        setPreparations(response.data);
+        setFilteredPreparations(response.data);
       })
       .catch(() => {
         console.log("Error fetching preparations");
       });
   }, []);
 
-  // Handle search input change
+ 
   const handleSearch = (query: string) => {
-    setSearchQuery(query); 
-    filterPreparations(query, selectedStatus); // Call the filter function with search query and status
+    setSearchQuery(query);
+    filterPreparations(query, selectedStatus); 
   };
 
-  // Handle status change in the select dropdown
+  
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const status = event.target.value;
-    setSelectedStatus(status); 
-    filterPreparations(searchQuery, status); // Call the filter function with search query and status
+    setSelectedStatus(status);
+    filterPreparations(searchQuery, status); 
   };
 
-  // Function to filter preparations based on search and status
+
   const filterPreparations = (query: string, status: string) => {
     const lowerCaseQuery = query.toLowerCase();
     const filtered = preparations.filter((prep) => {
       const matchesSearch = prep.dci.toLowerCase().includes(lowerCaseQuery);
-      const matchesStatus = status ? prep.statut === status : true; // Only filter by status if one is selected
+      const matchesStatus = status ? prep.statut === status : true; 
       return matchesSearch && matchesStatus;
     });
-    setFilteredPreparations(filtered); // Update filtered preparations state
+    setFilteredPreparations(filtered);
   };
 
   return (
-    <div className="flex w-full bg-Backg bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
+    <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
       <div className="z-10">
         <Sidebar />
       </div>
@@ -72,14 +74,14 @@ const Preparations: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center border border-green/30 rounded-[10px] px-4 py-5 bg-white w-[400px]">
+          <div className="flex items-center border border-green/30 focus:border-green/100 focus:outline-none rounded-[10px] px-4 py-5 bg-white w-[400px]">
             <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
             <input
               type="text"
               placeholder="Rechercher.."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
-              className="ml-3 w-full font-openSans text-[20px] outline-none text-sm text-PrimaryBlack placeholder-PrimaryBlack/50"
+              className="ml-3 w-full font-openSans text-[20px] focus:border-green/100 focus:outline-none  outline-none text-sm text-PrimaryBlack placeholder-PrimaryBlack/50"
             />
           </div>
           <div>
@@ -106,7 +108,7 @@ const Preparations: React.FC = () => {
                   dosageInitial={prep.dosageInitial}
                   dosageAdapte={prep.dosageAdapte}
                   nombreGellules={prep.nombreGellules}
-                  compriméEcrasé={prep.compriméEcrasé} 
+                  compriméEcrasé={prep.compriméEcrasé}
                   statut={prep.statut}
                 />
               ))

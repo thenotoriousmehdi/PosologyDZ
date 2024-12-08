@@ -55,7 +55,7 @@ const Patients: React.FC = () => {
   };
 
   return (
-    <div className="flex w-full bg-Backg bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
+    <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
         {isOpen && <AddPatient isOpen={isOpen} onClose={handleClosePopup} />}
       <div className="z-10">
         <Sidebar />

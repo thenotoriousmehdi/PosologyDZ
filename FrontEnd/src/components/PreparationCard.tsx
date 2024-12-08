@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { TbEyeFilled } from "react-icons/tb";
-import axios from 'axios'; // Make sure you have axios installed
+import axios from "axios";
 
-// Define your types for props
 interface PreparationCardProps {
   id: string;
   dci: string;
@@ -16,20 +15,13 @@ interface PreparationCardProps {
 enum Statut {
   A_Faire = "A_faire",
   En_Cours = "En_Cours",
-  Terminé = "Termine",
+  Termine = "Termine",
 }
 
 const statutMapping: { [key in Statut]: string } = {
   [Statut.A_Faire]: "A faire",
   [Statut.En_Cours]: "En cours",
-  [Statut.Terminé]: "Terminé",
-};
-
-// Define color mapping based on statut
-const statutColorMapping: { [key in Statut]: string } = {
-  [Statut.A_Faire]: "bg-[#F9A825]",
-  [Statut.En_Cours]: "bg-[#1E88E5]",
-  [Statut.Terminé]: "bg-[#43A047]",
+  [Statut.Termine]: "Termine",
 };
 
 const PreparationCard: React.FC<PreparationCardProps> = ({
@@ -41,31 +33,28 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   compriméEcrasé,
   statut,
 }) => {
-  // Use useState to manage the current statut of the preparation
   const [currentStatut, setCurrentStatut] = useState<Statut>(statut);
 
-  // Function to handle statut change and make API request
-  const handleStatutChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatutChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const newStatut = event.target.value as Statut;
-  
-    // Prompt for confirmation
+
     const confirmed = window.confirm(
       `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
     );
-  
+
     if (!confirmed) {
-      // Revert to the previous statut if the user cancels
       event.target.value = currentStatut;
       return;
     }
-  
+
     try {
-      // Make the API call to update the statut on the backend
       const response = await axios.patch(
         `http://localhost:3000/medicine-preparations/${id}/statut`,
         { statut: newStatut }
       );
-  
+
       // If the update is successful, update the state
       setCurrentStatut(newStatut);
       alert("Statut mis à jour avec succès !");
@@ -74,7 +63,6 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
       alert("Échec de la mise à jour du statut");
     }
   };
-  
 
   return (
     <div className="relative">
@@ -116,14 +104,32 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
 
           {/* Statut Dropdown */}
           <div>
-          <select
-         className={`rounded-[10px] px-4 py-4 h-full text-PrimaryBlack bg-white cursor-pointer focus:outline-green ${statutColorMapping[currentStatut]}`}
-         value={currentStatut}
-         onChange={handleStatutChange}
->
-              <option value={Statut.A_Faire}>{statutMapping[Statut.A_Faire]}</option>
-              <option value={Statut.En_Cours}>{statutMapping[Statut.En_Cours]}</option>
-              <option value={Statut.Terminé}>{statutMapping[Statut.Terminé]}</option>
+            <select
+              className={`
+    rounded-[10px] px-4 py-4 h-full text-PrimaryBlack 
+    cursor-pointer focus:outline-green 
+    ${
+      currentStatut === Statut.A_Faire
+        ? "bg-[#F9A825]"
+        : currentStatut === Statut.En_Cours
+        ? "bg-[#1E88E5]"
+        : currentStatut === Statut.Termine
+        ? "bg-[#43A047]"
+        : "bg-white"
+    }
+  `}
+              value={currentStatut}
+              onChange={handleStatutChange}
+            >
+              <option value={Statut.A_Faire}>
+                {statutMapping[Statut.A_Faire]}
+              </option>
+              <option value={Statut.En_Cours}>
+                {statutMapping[Statut.En_Cours]}
+              </option>
+              <option value={Statut.Termine}>
+                {statutMapping[Statut.Termine]}
+              </option>
             </select>
           </div>
         </div>
