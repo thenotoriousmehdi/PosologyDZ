@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
 import { TbEyeFilled } from "react-icons/tb";
 import { IoEllipsisVertical } from "react-icons/io5";
 
@@ -19,6 +19,7 @@ const PatientCard: React.FC<UserCardProps> = ({
   age,
   onDelete,
 }) => {
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {

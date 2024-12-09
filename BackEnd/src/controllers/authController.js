@@ -23,10 +23,10 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: "Incorrect password" });
     }
 
-    const accessToken = jwt.sign({ id: user.id }, JWT_SECRET, {
+    const accessToken = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {
       expiresIn: "1h",
     });
-
+    console.log("Generated Access Token:", accessToken);
     res.json({ accessToken, user });
   } catch (error) {
     console.error(error);
