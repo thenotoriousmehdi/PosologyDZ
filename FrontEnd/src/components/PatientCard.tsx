@@ -90,7 +90,7 @@ const PatientCard: React.FC<UserCardProps> = ({
                     className="cursor-pointer hover:bg-BorderWithoutAction/30 px-3 py-2 hover:rounded-[10px]"
                     onClick={() => handleOptionClick("Supprimer")}
                   >
-                    Delete
+                    Supprimer
                   </li>
                 </ul>
               </div>

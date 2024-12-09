@@ -49,7 +49,7 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3000/users/login", {
+      const response = await axios.post("http://localhost:3000/auth", {
         email,
         password,
       });
