@@ -2,7 +2,9 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+// Replace
 import axios from "axios";
+import api from '../utils/axiosConfig';
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -12,6 +14,7 @@ export default function Login() {
   const [error, setError] = useState<string>("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
+
   const images = [
     "src/assets/imgLogin1.png",
     "src/assets/imgLogin2.png",
@@ -43,13 +46,16 @@ export default function Login() {
   ): void => {
     setRememberMe(event.target.checked);
   };
+  
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+  
+    
 
     try {
-      const response = await axios.post("http://localhost:3000/auth", {
+      const response = await api.post("http://localhost:3000/auth", {
         email,
         password,
       });
@@ -64,20 +70,24 @@ export default function Login() {
       }
     } catch (error: unknown) {
       console.error("Error during login:", error);
-
       if (axios.isAxiosError(error)) {
         if (error.response) {
+          // Use the error message from the server if available
+          const errorMessage = error.response.data.error || 
+            "Invalid credentials or something went wrong. Please try again.";
+          
           console.log("Axios error response:", error.response);
-          setError(
-            "Invalid credentials or something went wrong. Please try again."
-          );
+          setError(errorMessage);
         } else if (error.request) {
           setError("No response received from the server. Please try again.");
+        } else {
+          setError("An error occurred during the request. Please try again.");
         }
       } else {
         setError("An unexpected error occurred. Please try again later.");
       }
     }
+      
   };
 
   return (

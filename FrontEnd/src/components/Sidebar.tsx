@@ -27,10 +27,10 @@ const Sidebar = () => {
     ? JSON.parse(localStorage.getItem("user")!)
     : null;
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/Login");
-  };
+    const handleLogout = () => {
+      localStorage.removeItem('authToken');
+      navigate('/Login', { replace: true });
+    };
 
   return (
     <>

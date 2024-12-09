@@ -4,19 +4,24 @@ import Login from "./pages/Login"
 import Preparations from "./pages/Preparations";
 import DetailsPatient from "./pages/DetailsPatient";
 import Patients from "./pages/Patients";
-//import Patients from "./pages/Patients"
+import ProtectedRoute from "./routes/ProtectedRoute";
+
 function App() {
   return (
     <Router>
-          <Routes>
+      <Routes>
+        {/* Public Route */}
+        <Route path="/Login" element={<Login/>}/>  
+        
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Patients/>}/> 
-            <Route path="/Login" element={<Login/>}/>  
-            <Route path="/Preparations" element={<Preparations/>}/>
-            <Route path="/DetailsPatient" element={<DetailsPatient/>}/>
-            
-          </Routes>
+          <Route path="/Preparations" element={<Preparations/>}/>
+          <Route path="/DetailsPatient" element={<DetailsPatient/>}/>
+        </Route>
+      </Routes>
     </Router>
   );
 }
 
-export default App
+export default App;
