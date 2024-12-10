@@ -21,14 +21,14 @@ export const updateMedicinePreparationStatus = async (req, res) => {
   const { id } = req.params;
   const { statut } = req.body;
 
-  // Validate statut
+  
   const validStatuts = ["A_faire", "En_Cours", "Termine"];
   if (!validStatuts.includes(statut)) {
     return res.status(400).json({ message: "Invalid statut value" });
   }
 
   try {
-    // Update the statut in the database
+   
     const updatedPreparation = await prisma.medicinePreparation.update({
       where: { id: parseInt(id) },
       data: {
@@ -36,7 +36,6 @@ export const updateMedicinePreparationStatus = async (req, res) => {
       },
     });
 
-    // Respond with the updated preparation data
     res.status(200).json(updatedPreparation);
   } catch (error) {
     console.error(error);

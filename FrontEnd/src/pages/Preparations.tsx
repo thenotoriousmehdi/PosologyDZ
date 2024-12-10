@@ -9,6 +9,8 @@ interface Preparation {
   id: string;
   dci: string;
   dosageInitial: number;
+  excipient : string;
+  modeEmploi: string;
   dosageAdapte: number;
   nombreGellules: number;
   compriméEcrasé: number;
@@ -106,6 +108,8 @@ const Preparations: React.FC = () => {
                   id={prep.id}
                   dci={prep.dci}
                   dosageInitial={prep.dosageInitial}
+                  excipient = {prep.excipient}
+                  modeEmploi = {prep.modeEmploi}
                   dosageAdapte={prep.dosageAdapte}
                   nombreGellules={prep.nombreGellules}
                   compriméEcrasé={prep.compriméEcrasé}

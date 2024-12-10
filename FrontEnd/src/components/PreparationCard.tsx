@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { TbEyeFilled } from "react-icons/tb";
 import axios from "axios";
+import jsPDF from "jspdf";
 
 interface PreparationCardProps {
   id: string;
   dci: string;
   dosageInitial: number;
   dosageAdapte: number;
+  excipient : string;
+  modeEmploi: string;
   nombreGellules: number;
   compriméEcrasé: number;
   statut: "A_faire" | "En_Cours" | "Termine";
@@ -29,6 +32,8 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   dci,
   dosageInitial,
   dosageAdapte,
+  excipient ,
+  modeEmploi,
   nombreGellules,
   compriméEcrasé,
   statut,
@@ -62,6 +67,26 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
       console.error("Erreur lors de la mise à jour du statut", error);
       alert("Échec de la mise à jour du statut");
     }
+  };
+
+  const handleDownloadPDF = () => {
+    // Create a new jsPDF instance
+    const doc = new jsPDF();
+
+    // Set up the document
+    doc.setFontSize(16);
+    doc.text("Fiche de Préparation Médicamenteuse", 10, 20);
+
+    // Add preparation details
+    doc.setFontSize(12);
+    doc.text(`ID: #${id}`, 10, 40);
+    doc.text(`DCI: ${dci}`, 10, 50);
+    doc.text(`Nombre de Gélules: ${nombreGellules}`, 10, 60);
+    doc.text(`Excepient à effet notoire: ${excipient}`, 10, 70);
+    doc.text(`Dosage Adapté: ${dosageAdapte} mg`, 10, 80);
+    doc.text(`Posologie, mode d'emploi: ${modeEmploi} par jour`, 10, 90);
+    
+    doc.save(`Preparation_${id}.pdf`);
   };
 
   return (
@@ -98,7 +123,10 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
 
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0 justify-center items-center">
-          <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 group">
+          <div 
+            className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 group cursor-pointer"
+            onClick={handleDownloadPDF}
+          >
             <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
 

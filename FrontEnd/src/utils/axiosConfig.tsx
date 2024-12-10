@@ -2,10 +2,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Your backend base URL
+  baseURL: 'http://localhost:3000',
 });
 
-// Request interceptor for adding token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
@@ -24,8 +23,6 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-// Response interceptor for handling unauthorized errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -35,7 +32,6 @@ api.interceptors.response.use(
     });
 
     if (error.response && error.response.status === 401) {
-      // Token is invalid or expired
       localStorage.removeItem('authToken');
       window.location.href = '/Login';
     }
