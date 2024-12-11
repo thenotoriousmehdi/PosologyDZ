@@ -8,7 +8,7 @@ interface PreparationCardProps {
   dci: string;
   dosageInitial: number;
   dosageAdapte: number;
-  excipient : string;
+  excipient: string;
   modeEmploi: string;
   nombreGellules: number;
   compriméEcrasé: number;
@@ -32,7 +32,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   dci,
   dosageInitial,
   dosageAdapte,
-  excipient ,
+  excipient,
   modeEmploi,
   nombreGellules,
   compriméEcrasé,
@@ -74,31 +74,21 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-  const title1 = "Ministère de la Santé";
-  const title2 = "Centre Hospitalo-Universitaire de Béni Messous";
-  const title3 = "Laboratoire de Biologie Médicale Mère-Enfant";
-  const titleFontSize = 16;
-  doc.setFontSize(titleFontSize);
-  const textWidth1 = doc.getTextWidth(title1);
-  const textWidth2 = doc.getTextWidth(title2);
-  const textWidth3 = doc.getTextWidth(title3);
-  const xTitle1 = (pageWidth - textWidth1) / 2;
-  const xTitle2 = (pageWidth - textWidth2) / 2;
-  const xTitle3 = (pageWidth - textWidth3) / 2;
-  doc.text(title1, xTitle1, 20);
-  doc.text(title2, xTitle2, 30);
-  doc.text(title3, xTitle3, 40);
+    const title1 = "Ministère de la Santé";
+    const title2 = "Centre Hospitalo-Universitaire de Béni Messous";
+    const title3 = "Laboratoire de Biologie Médicale Mère-Enfant";
+    const titleFontSize = 16;
+    doc.setFontSize(titleFontSize);
+    const textWidth1 = doc.getTextWidth(title1);
+    const textWidth2 = doc.getTextWidth(title2);
+    const textWidth3 = doc.getTextWidth(title3);
+    const xTitle1 = (pageWidth - textWidth1) / 2;
+    const xTitle2 = (pageWidth - textWidth2) / 2;
+    const xTitle3 = (pageWidth - textWidth3) / 2;
+    doc.text(title1, xTitle1, 20);
+    doc.text(title2, xTitle2, 30);
+    doc.text(title3, xTitle3, 40);
 
-
-
-
-
-
-
-
-  
-    
-   
     doc.setFontSize(14);
     doc.setFont("poppins", "bold");
     doc.text("Fiche de Préparation Médicamenteuse", 10, 60);
@@ -148,7 +138,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
 
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0 justify-center items-center">
-          <div 
+          <div
             className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 group cursor-pointer"
             onClick={handleDownloadPDF}
           >

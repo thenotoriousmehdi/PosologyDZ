@@ -4,6 +4,7 @@ import { PrismaClient } from "@prisma/client";
 import patientRoutes from "./routes/PatientRoutes.js"
 import medicinePreparationsRoutes from "./routes/medicinePreparationsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import usersRoutes from "./routes/usersRoutes.js"
 
 const app = express();
 const PORT = 3000;
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use("/patients", patientRoutes);
 app.use("/medicine-preparations", medicinePreparationsRoutes);
+app.use("/users", usersRoutes);
 app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {

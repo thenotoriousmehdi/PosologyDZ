@@ -5,6 +5,7 @@ import Preparations from "./pages/Preparations";
 import DetailsPatient from "./pages/DetailsPatient";
 import Patients from "./pages/Patients";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import Users from "./pages/Users";
 
 function App() {
   return (
@@ -12,10 +13,10 @@ function App() {
       <Routes>
         {/* Public Route */}
         <Route path="/Login" element={<Login/>}/>  
-        
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Patients/>}/> 
+          <Route path="Users" element={<Users/>}/>
           <Route path="/Preparations" element={<Preparations/>}/>
           <Route path="/DetailsPatient" element={<DetailsPatient/>}/>
         </Route>
