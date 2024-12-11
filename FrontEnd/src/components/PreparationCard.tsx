@@ -72,20 +72,45 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   const handleDownloadPDF = () => {
     // Create a new jsPDF instance
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Set up the document
-    doc.setFontSize(16);
-    doc.text("Fiche de Préparation Médicamenteuse", 10, 20);
+  const title1 = "Ministère de la Santé";
+  const title2 = "Centre Hospitalo-Universitaire de Béni Messous";
+  const title3 = "Laboratoire de Biologie Médicale Mère-Enfant";
+  const titleFontSize = 16;
+  doc.setFontSize(titleFontSize);
+  const textWidth1 = doc.getTextWidth(title1);
+  const textWidth2 = doc.getTextWidth(title2);
+  const textWidth3 = doc.getTextWidth(title3);
+  const xTitle1 = (pageWidth - textWidth1) / 2;
+  const xTitle2 = (pageWidth - textWidth2) / 2;
+  const xTitle3 = (pageWidth - textWidth3) / 2;
+  doc.text(title1, xTitle1, 20);
+  doc.text(title2, xTitle2, 30);
+  doc.text(title3, xTitle3, 40);
 
-    // Add preparation details
-    doc.setFontSize(12);
-    doc.text(`ID: #${id}`, 10, 40);
-    doc.text(`DCI: ${dci}`, 10, 50);
-    doc.text(`Nombre de Gélules: ${nombreGellules}`, 10, 60);
-    doc.text(`Excepient à effet notoire: ${excipient}`, 10, 70);
-    doc.text(`Dosage Adapté: ${dosageAdapte} mg`, 10, 80);
-    doc.text(`Posologie, mode d'emploi: ${modeEmploi} par jour`, 10, 90);
+
+
+
+
+
+
+
+  
     
+   
+    doc.setFontSize(14);
+    doc.setFont("poppins", "bold");
+    doc.text("Fiche de Préparation Médicamenteuse", 10, 60);
+
+    doc.setFontSize(12);
+    doc.setFont("poppins", "normal");
+    doc.text(`ID: #${id}`, 10, 70);
+    doc.text(`DCI: ${dci}`, 10, 80);
+    doc.text(`Nombre de Gélules: ${nombreGellules}`, 10, 90);
+    doc.text(`Excepient à effet notoire: ${excipient}`, 10, 100);
+    doc.text(`Dosage Adapté: ${dosageAdapte} mg`, 10, 110);
+    doc.text(`Posologie, mode d'emploi: ${modeEmploi} par jour`, 10, 120);
     doc.save(`Preparation_${id}.pdf`);
   };
 
