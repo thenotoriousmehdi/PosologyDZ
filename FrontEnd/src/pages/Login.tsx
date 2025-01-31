@@ -185,7 +185,7 @@ export default function Login() {
         </p>
       </div>
 
-      <div className="hidden xl:block xl:w-[52%] xl:relative ">
+      <div className="hidden xl:block  xl:w-[52%] xl:relative ">
         <div className="absolute inset-0 flex justify-center items-center z-20">
           <img
             src="src/assets/logochu.png"

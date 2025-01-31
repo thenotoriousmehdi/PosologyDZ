@@ -101,18 +101,39 @@ export const getPatient = async (req, res) => {
 
 export const getPatients = async (req, res) => {
   try {
-    const patients = await prisma.patient.findMany();
-
-    if (patients.length > 0) {
-      res.json(patients);
-    } else {
-      res.status(404).json({ error: "No patients found" });
-    }
+    console.log('Attempting to fetch patients...');
+    
+    // Log total patient count
+    const patientCount = await prisma.patient.count();
+    console.log(`Total patient count: ${patientCount}`);
+    
+    // Fetch all patients with detailed logging
+    const patients = await prisma.patient.findMany({
+      include: {
+        medicinePreparations: true // Optional: include related preparations
+      }
+    });
+    
+    console.log('Patients fetched:', JSON.stringify(patients, null, 2));
+    
+    return patients.length > 0 
+      ? res.json(patients)
+      : res.status(404).json({ error: "No patients found" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Detailed Patients fetch error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    res.status(500).json({ 
+      error: "Internal server error", 
+      details: error.message,
+      stack: error.stack
+    });
   }
-};
+  };
+
 
 export const deletePatient = async (req, res) => {
   const patientId = parseInt(req.params.id);

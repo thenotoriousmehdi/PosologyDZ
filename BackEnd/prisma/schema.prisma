@@ -17,9 +17,10 @@ model User {
   id          Int    @id @default(autoincrement())
   email       String @unique
   password    String
-  name   String
-  phoneNumber String
-  role        Role
+  firstName   String?
+  familyName   String?
+  //phoneNumber String
+  role        Role?
 }
 
 enum Role {
@@ -32,6 +33,8 @@ enum Grade{
   Ma
   Assistant
   Resident
+  Professor
+  Specialist
  }
 
 model Patient {
@@ -58,7 +61,7 @@ model MedicinePreparation {
   dci              String    
   indication       String?  
   dosageInitial    Float    
-  dosageAdapte     Float    
+  dosageAdapte     Float?   
   modeEmploi       Float     
   voieAdministration String? 
   qsp              Int      

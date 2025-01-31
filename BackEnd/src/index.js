@@ -5,7 +5,7 @@ import patientRoutes from "./routes/PatientRoutes.js"
 import medicinePreparationsRoutes from "./routes/medicinePreparationsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js"
-
+import testRoutes from "./routes/testRoutes.js";
 const app = express();
 const PORT = 3000;
 const prisma = new PrismaClient();
@@ -17,7 +17,7 @@ app.use("/patients", patientRoutes);
 app.use("/medicine-preparations", medicinePreparationsRoutes);
 app.use("/users", usersRoutes);
 app.use("/auth", authRoutes);
-
+app.use("/api", testRoutes);
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });

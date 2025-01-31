@@ -3,7 +3,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed data for users
+
+  
   const pharmacist = await prisma.user.create({
     data: {
       email: "mehdi2@gmail.com",
