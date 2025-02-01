@@ -2,16 +2,15 @@ import React from "react";
 interface HeaderProps {
   title: string;
   description: string;
-  patient: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title,patient, description }) => {
+const Header: React.FC<HeaderProps> = ({ title, description }) => {
   return (
     <div className="flex flex-col gap-[20px] w-full">
       <div className="flex justify-between items-start w-full">
         <div className="flex flex-col items-start justify-start flex-grow">
           <h1 className="font-poppins font-bold mb-2 text-[24px] xl:text-[32px] text-PrimaryBlack">
-            {title} <span className="font-poppins font-bold mb-2 text-[24px] xl:text-[24px] text-green"> {patient} </span>
+            {title} <span className="font-poppins font-bold mb-2 text-[24px] xl:text-[24px] text-green">  </span>
           </h1>
           <p className="font-openSans font-normal text-[16px] text-PrimaryBlack text-opacity-70 text-start">
             {description}

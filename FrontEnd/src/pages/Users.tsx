@@ -15,19 +15,21 @@ interface User {
 }
 
 const Users: React.FC = () => {
+
   const [users, setUsers] = useState<User[]>([]); 
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]); 
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]); 
   const [searchQuery, setSearchQuery] = useState<string>(""); 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenPopup = () => setIsOpen(true);
   const handleClosePopup = () => setIsOpen(false);
+
   useEffect(() => {
     axios
       .get("http://localhost:3000/users") 
       .then((response) => {
         setUsers(response.data); 
-        setFilteredPatients(response.data); 
+        setFilteredUsers(response.data); 
       })
       .catch(() => {
         console.log("Error fetching patients");
@@ -40,7 +42,7 @@ const Users: React.FC = () => {
     const filtered = users.filter((user) =>
       user.name.toLowerCase().includes(lowerCaseQuery)
     );
-    setFilteredPatients(filtered); 
+    setFilteredUsers(filtered); 
   };
 
   const handleDelete = (id: string) => {
@@ -48,7 +50,7 @@ const Users: React.FC = () => {
       .delete(`http://localhost:3000/users/${id}`) 
       .then(() => {
         setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
-        setFilteredPatients(prevUsers => prevUsers.filter(user => user.id !== id)); 
+        setFilteredUsers(prevUsers => prevUsers.filter(user => user.id !== id)); 
       })
       .catch(() => {
         console.log("Error deleting user");
@@ -84,14 +86,14 @@ const Users: React.FC = () => {
 
           <button className="bg-green py-5 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" 
           onClick={handleOpenPopup}>
-            Ajouter un patient
+            Ajouter un utilisateur
           </button>
         </div>
 
         <div className="flex-grow overflow-y-auto">
           <div className="flex flex-col gap-[20px]">
-            {filteredPatients.length > 0 ? (
-              filteredPatients.map((user: User) => (
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user: User) => (
                 <UserCard
                   key={user.id}
                   id={user.id}

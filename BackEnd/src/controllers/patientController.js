@@ -107,10 +107,9 @@ export const getPatients = async (req, res) => {
     const patientCount = await prisma.patient.count();
     console.log(`Total patient count: ${patientCount}`);
     
-    // Fetch all patients with detailed logging
     const patients = await prisma.patient.findMany({
       include: {
-        medicinePreparations: true // Optional: include related preparations
+        medicinePreparations: true 
       }
     });
     

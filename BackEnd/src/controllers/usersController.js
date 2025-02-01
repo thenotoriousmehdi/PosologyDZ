@@ -28,7 +28,7 @@ export const getUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany();
 
-    if (patients.length > 0) {
+    if (users.length > 0) {
       res.json(users);
     } else {
       res.status(404).json({ error: "No users found" });
