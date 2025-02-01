@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiUser, FiLogOut } from "react-icons/fi";
+import { FaChildren } from "react-icons/fa6";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logochu.png";
 import { CgPill } from "react-icons/cg";
@@ -10,8 +11,9 @@ const Sidebar = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const menuItems = [
-    { name: "Patients", icon: <FiUser />, path: "/" },
+    { name: "Patients", icon: <FaChildren />, path: "/" },
     { name: "Préparations", icon: <CgPill />, path: "/Preparations" },
+    { name: "Utilisateurs", icon: <FiUser />, path: "/Users" },
   ];
 
   const navigate = useNavigate();

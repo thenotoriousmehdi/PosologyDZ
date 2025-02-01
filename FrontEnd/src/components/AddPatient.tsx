@@ -4,7 +4,7 @@ import axios from "axios";
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onPatientAdded?: (patient: any) => void; // Optional callback for successful patient addition
+  onPatientAdded?: (patient: unknown) => void; // Optional callback for successful patient addition
 }
 
 interface Medicament {
@@ -21,7 +21,7 @@ interface Medicament {
   peremptionDate: string;
 }
 
-const AddPatient: React.FC<PopupProps> = ({ isOpen, onClose, onPatientAdded }) => {
+const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
   const [step, setStep] = useState(1);
   const [progress, setProgress] = useState(33);
   const [isSubmitting, setIsSubmitting] = useState(false);

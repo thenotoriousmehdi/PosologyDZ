@@ -8,8 +8,9 @@ import AddPatient from "../components/AddPatient";
 import UserCard from "../components/UserCard";
 interface User {
   id: string;
-  name: string;
-  phoneNumber: string;
+  firstName: string;
+  familyName: string;
+  email: string;
   role: string;
 
 }
@@ -22,7 +23,7 @@ const Users: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenPopup = () => setIsOpen(true);
-  const handleClosePopup = () => setIsOpen(false);
+ // const handleClosePopup = () => setIsOpen(false);
 
   useEffect(() => {
     axios
@@ -97,8 +98,8 @@ const Users: React.FC = () => {
                 <UserCard
                   key={user.id}
                   id={user.id}
-                  name={user.name}
-                  phoneNumber={user.phoneNumber}
+                  name={user.firstName}
+                  phoneNumber={user.familyName}
                   role={user.role}
                   onDelete={handleDelete} 
                 />
