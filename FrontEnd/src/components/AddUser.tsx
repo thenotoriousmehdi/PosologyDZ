@@ -1,13 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
   onUserAdded?: (patient: unknown) => void;
+  initialUser?: {
+    id?: number;
+    name: string;
+    email: string;
+    role: string;
+    phoneNumber: string;
+  };
 }
 
-const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
+const AddUser: React.FC<PopupProps> = ({ 
+  onClose, 
+  onUserAdded, 
+  initialUser 
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -19,6 +30,20 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
     confirmedPasword: '',
     phoneNumber: '',
   });
+
+  // Populate form with initial user data if editing
+  useEffect(() => {
+    if (initialUser) {
+      setPersonalInfo({
+        name: initialUser.name,
+        email: initialUser.email,
+        role: initialUser.role,
+        phoneNumber: initialUser.phoneNumber,
+        password: '',
+        confirmedPasword: '',
+      });
+    }
+  }, [initialUser]);
 
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -35,7 +60,7 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
       return false;
     }
 
-    if (personalInfo.password !== personalInfo.confirmedPasword) {
+    if (personalInfo.password && personalInfo.password !== personalInfo.confirmedPasword) {
       setFormError('Les mots de passe ne correspondent pas.');
       return false;
     }
@@ -50,20 +75,31 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post('http://localhost:3000/users', {
-        ...personalInfo
-      });
+      // Determine if it's an update or create operation
+      const submitData = { 
+        ...personalInfo,
+        // Only include password if it's not empty
+        ...(personalInfo.password ? { password: personalInfo.password } : {})
+      };
 
-      if (response.status === 201) {
+      let response;
+      if (initialUser?.id) {
+        // Update existing user
+        response = await axios.put(`http://localhost:3000/users/${initialUser.id}`, submitData);
+        alert('Utilisateur mis à jour avec succès!');
+      } else {
+        // Create new user
+        response = await axios.post('http://localhost:3000/users', submitData);
         alert('Utilisateur ajouté avec succès!');
-        onUserAdded?.(response.data.user);
-        
-        // Reset form and close
+      }
+
+      if (response.status === 200 || response.status === 201) {
+        onUserAdded?.(response.data.user || response.data.updatedUser);
         onClose();
       }
-    } catch (error: unknown) {
-      console.error('Error adding user:', error);
-      setFormError(error.response?.data?.error || 'Une erreur est survenue lors de l\'ajout de l\'utilisateur.');
+    } catch (error: any) {
+      console.error('Error:', error);
+      setFormError(error.response?.data?.error || 'Une erreur est survenue.');
     } finally {
       setIsSubmitting(false);
     }
@@ -75,7 +111,7 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
         {/* Title */}
         <div className="flex justify-between items-center h-[12%] border-b w-full rounded-t-[10px] bg-white px-[35px] py-[30px] z-10" style={{ boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)" }}>
           <h1 className="font-poppins font-bold text-[24px] text-PrimaryBlack">
-            Ajouter un utilisateur
+            {initialUser?.id ? "Modifier un utilisateur" : "Ajouter un utilisateur"}
           </h1>
           <div className="bg-[#FAFAFA] border border-green p-[4px] rounded-[10px] hover:bg-green" onClick={onClose}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeWidth={1.5} className="sm:size-10 size-6 text-green/65 hover:text-white" stroke="currentColor">
@@ -93,37 +129,60 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
               <div className="flex flex-col justify-start gap-2 w-full">
                 <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">Nom et Prénom <span className="text-delete">*</span></h1>
                 <label className="w-full">
-                  <input className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="text" name="name" placeholder="Nom et prénom du patient" required value={personalInfo.name} onChange={handlePersonalInfoChange} />
+                  <input 
+                    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                    type="text" 
+                    name="name" 
+                    placeholder="Nom et prénom du patient" 
+                    required 
+                    value={personalInfo.name} 
+                    onChange={handlePersonalInfoChange} 
+                  />
                 </label>
               </div>
 
               <div className="flex flex-col justify-start gap-2 w-full">
                 <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">Email <span className="text-delete">*</span></h1>
                 <label className="w-full">
-                  <input className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="email" name="email" placeholder="email" required value={personalInfo.email} onChange={handlePersonalInfoChange} />
+                  <input 
+                    className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                    type="email" 
+                    name="email" 
+                    placeholder="email" 
+                    required 
+                    value={personalInfo.email} 
+                    onChange={handlePersonalInfoChange} 
+                  />
                 </label>
               </div>
             </div>
 
-           
-
             {/* Phone and Role */}
-
             <div className="flex flex-col justify-start gap-2 md:w-1/2">
               <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">Numéro de téléphone</h1>
               <label className="w-full">
-                <input className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                  type="tel" placeholder="Numéro de téléphone" required name="phoneNumber" value={personalInfo.phoneNumber} onChange={handlePersonalInfoChange} />
+                <input 
+                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                  type="tel" 
+                  placeholder="Numéro de téléphone" 
+                  required 
+                  name="phoneNumber" 
+                  value={personalInfo.phoneNumber} 
+                  onChange={handlePersonalInfoChange} 
+                />
               </label>
             </div>
 
             <div className="flex flex-col justify-start gap-2 w-full">
               <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">Role <span className="text-delete">*</span></h1>
               <label className="w-full">
-                <select className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                  required name="role" value={personalInfo.role} onChange={handlePersonalInfoChange}>
+                <select 
+                  className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                  required 
+                  name="role" 
+                  value={personalInfo.role} 
+                  onChange={handlePersonalInfoChange}
+                >
                   <option value="" disabled>Role</option>
                   <option value="pharmacist">Pharmacien</option>
                   <option value="preparateur">Préparateur</option>
@@ -132,27 +191,42 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
               </label>
             </div>
 
-           
-
-             {/* Password and Confirm Password */}
-             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            {/* Password and Confirm Password */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">Mot de passe <span className="text-delete">*</span></h1>
+                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Mot de passe {!initialUser?.id && <span className="text-delete">*</span>}
+                </h1>
                 <label className="w-full">
-                  <input className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="password" name="password" placeholder="Mot de passe" required value={personalInfo.password} onChange={handlePersonalInfoChange} />
+                  <input 
+                    className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                    type="password" 
+                    name="password" 
+                    placeholder="Mot de passe" 
+                    required={!initialUser?.id}
+                    value={personalInfo.password} 
+                    onChange={handlePersonalInfoChange} 
+                  />
                 </label>
               </div>
 
               <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">Confirmer le mot de passe <span className="text-delete">*</span></h1>
+                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Confirmer le mot de passe {!initialUser?.id && <span className="text-delete">*</span>}
+                </h1>
                 <label className="w-full">
-                  <input className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="password" name="confirmedPasword" placeholder="Confirmer mot de passe" required value={personalInfo.confirmedPasword} onChange={handlePersonalInfoChange} />
+                  <input 
+                    className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                    type="password" 
+                    name="confirmedPasword" 
+                    placeholder="Confirmer mot de passe" 
+                    required={!initialUser?.id}
+                    value={personalInfo.confirmedPasword} 
+                    onChange={handlePersonalInfoChange} 
+                  />
                 </label>
               </div>
             </div>
-            
           </div>
         </div>
 
@@ -168,7 +242,7 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "En cours..." : "Enregistrer"}
+            {isSubmitting ? "En cours..." : (initialUser?.id ? "Mettre à jour" : "Enregistrer")}
           </button>
         </div>
       </div>

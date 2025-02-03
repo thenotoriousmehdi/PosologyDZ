@@ -95,3 +95,47 @@ export const createUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+export const updateUser = async (req, res) => {
+  const userId = parseInt(req.params.id);
+  const { name, email, phoneNumber, role, password } = req.body;
+
+  if (!name || !email || !role) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    // Find the user to update
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // If password is provided, hash it
+    let hashedPassword = user.password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Update user data
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        email,
+        phoneNumber,
+        role,
+        password: hashedPassword,
+      },
+    });
+
+    res.status(200).json({ message: "User updated successfully", updatedUser });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
