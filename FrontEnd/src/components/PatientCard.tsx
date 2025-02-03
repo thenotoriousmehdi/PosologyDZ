@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TbEyeFilled } from "react-icons/tb";
 import { IoEllipsisVertical } from "react-icons/io5";
-
+import { useNavigate } from "react-router-dom";
 interface UserCardProps {
   id: string;
   name: string;
@@ -22,7 +22,7 @@ const PatientCard: React.FC<UserCardProps> = ({
   const userRole = localStorage.getItem("userRole");  // Get user role from localStorage
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const navigate = useNavigate();
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -76,7 +76,8 @@ const PatientCard: React.FC<UserCardProps> = ({
 
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0">
-          <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group">
+          <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
+          onClick={() => navigate(`/patients/${id}`)} >
             <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
 
