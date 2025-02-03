@@ -41,7 +41,7 @@ export const protect = async (req, res, next) => {
 
     // Verify and decode token
     const decoded = jwt.verify(token, JWT_SECRET, {
-      algorithms: ['HS256'] // Explicitly specify allowed algorithms
+      algorithms: ['HS256']
     });
 
     // Validate token payload

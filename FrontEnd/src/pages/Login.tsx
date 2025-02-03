@@ -2,7 +2,6 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-// Replace
 import axios from "axios";
 import api from '../utils/axiosConfig';
 
@@ -52,18 +51,20 @@ export default function Login() {
     e.preventDefault();
     setError("");
   
-    
-
     try {
       const response = await api.post("http://localhost:3000/auth", {
         email,
         password,
       });
 
-      const { accessToken } = response.data;
+      const { accessToken, user } = response.data;
 
       if (accessToken) {
+        // Store the access token and role in localStorage
         localStorage.setItem("authToken", accessToken);
+        localStorage.setItem("userRole", user.role);
+
+        // Redirect to the homepage or protected page
         navigate("/");
       } else {
         setError("No token received from server. Please try again.");
@@ -72,7 +73,6 @@ export default function Login() {
       console.error("Error during login:", error);
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // Use the error message from the server if available
           const errorMessage = error.response.data.error || 
             "Invalid credentials or something went wrong. Please try again.";
           
@@ -87,7 +87,6 @@ export default function Login() {
         setError("An unexpected error occurred. Please try again later.");
       }
     }
-      
   };
 
   return (
@@ -181,7 +180,7 @@ export default function Login() {
         <p className=" flex justify-center items-center font-openSans text-center text-[14px] text-PrimaryBlack/80">
           Ministère de la Santé <br />
           Centre Hospitalo-Universitaire de Béni Messous <br />
-          Laboratoire de Biologie Médicale Mère-Enfant
+          Laboratoire d'analyse Médicale Mère-Enfant
         </p>
       </div>
 

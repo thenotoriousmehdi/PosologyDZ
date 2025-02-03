@@ -4,10 +4,10 @@ import axios from "axios";
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onPatientAdded?: (patient: unknown) => void;
+  onUserAdded?: (patient: unknown) => void;
 }
 
-const AddUser: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
+const AddUser: React.FC<PopupProps> = ({ onClose, onUserAdded }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -56,7 +56,7 @@ const AddUser: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
 
       if (response.status === 201) {
         alert('Utilisateur ajouté avec succès!');
-        onPatientAdded?.(response.data.user);
+        onUserAdded?.(response.data.user);
         
         // Reset form and close
         onClose();

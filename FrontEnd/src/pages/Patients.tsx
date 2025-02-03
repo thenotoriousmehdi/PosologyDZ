@@ -14,19 +14,20 @@ interface Patient {
 }
 
 const Patients: React.FC = () => {
-  const [patients, setPatients] = useState<Patient[]>([]); 
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]); 
-  const [searchQuery, setSearchQuery] = useState<string>(""); 
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
-
   const handleOpenPopup = () => setIsOpen(true);
   const handleClosePopup = () => setIsOpen(false);
+  const userRole = localStorage.getItem("userRole");
+  const canAddUser = userRole === "admin" || userRole === "pharmacist";
   useEffect(() => {
     axios
-      .get("http://localhost:3000/patients") 
+      .get("http://localhost:3000/patients")
       .then((response) => {
-        setPatients(response.data); 
-        setFilteredPatients(response.data); 
+        setPatients(response.data);
+        setFilteredPatients(response.data);
       })
       .catch(() => {
         console.log("Error fetching patients");
@@ -34,20 +35,24 @@ const Patients: React.FC = () => {
   }, []);
 
   const handleSearch = (query: string) => {
-    setSearchQuery(query); 
-    const lowerCaseQuery = query.toLowerCase(); 
+    setSearchQuery(query);
+    const lowerCaseQuery = query.toLowerCase();
     const filtered = patients.filter((patient) =>
       patient.name.toLowerCase().includes(lowerCaseQuery)
     );
-    setFilteredPatients(filtered); 
+    setFilteredPatients(filtered);
   };
 
   const handleDelete = (id: string) => {
     axios
-      .delete(`http://localhost:3000/patients/${id}`) 
+      .delete(`http://localhost:3000/patients/${id}`)
       .then(() => {
-        setPatients(prevPatients => prevPatients.filter(patient => patient.id !== id));
-        setFilteredPatients(prevPatients => prevPatients.filter(patient => patient.id !== id)); 
+        setPatients((prevPatients) =>
+          prevPatients.filter((patient) => patient.id !== id)
+        );
+        setFilteredPatients((prevPatients) =>
+          prevPatients.filter((patient) => patient.id !== id)
+        );
       })
       .catch(() => {
         console.log("Error deleting patient");
@@ -56,7 +61,7 @@ const Patients: React.FC = () => {
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
-        {isOpen && <AddPatient isOpen={isOpen} onClose={handleClosePopup} />}
+      {isOpen && <AddPatient isOpen={isOpen} onClose={handleClosePopup} />}
       <div className="z-10">
         <Sidebar />
       </div>
@@ -81,10 +86,14 @@ const Patients: React.FC = () => {
             />
           </div>
 
-          <button className="bg-green py-5 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" 
-          onClick={handleOpenPopup}>
-            Ajouter un patient
-          </button>
+          {canAddUser && (
+            <button
+              className="bg-green py-5 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80"
+              onClick={handleOpenPopup}
+            >
+              Ajouter un patient
+            </button>
+          )}
         </div>
 
         <div className="flex-grow overflow-y-auto">
@@ -98,7 +107,7 @@ const Patients: React.FC = () => {
                   phoneNumber={patient.phoneNumber}
                   gender={patient.gender}
                   age={patient.age}
-                  onDelete={handleDelete} 
+                  onDelete={handleDelete}
                 />
               ))
             ) : (

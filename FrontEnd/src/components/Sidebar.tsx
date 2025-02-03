@@ -8,15 +8,17 @@ import { CgPill } from "react-icons/cg";
 const Sidebar = () => {
   const location = useLocation();
   const [activeSection, setActiveSection] = useState("");
+  const navigate = useNavigate();
+
+  const userRole = localStorage.getItem("userRole");
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const menuItems = [
     { name: "Patients", icon: <FaChildren />, path: "/" },
     { name: "Préparations", icon: <CgPill />, path: "/Preparations" },
-    { name: "Utilisateurs", icon: <FiUser />, path: "/Users" },
+    ...(userRole === "admin" ? [{ name: "Utilisateurs", icon: <FiUser />, path: "/Users" }] : []), 
   ];
 
-  const navigate = useNavigate();
   useEffect(() => {
     const currentItem = menuItems.find(
       (item) => item.path === location.pathname
@@ -25,22 +27,20 @@ const Sidebar = () => {
       setActiveSection(currentItem.name);
     }
   }, [location.pathname, menuItems]);
-  // const user = localStorage.getItem("user")
-  //   ? JSON.parse(localStorage.getItem("user")!)
-  //   : null;
 
-    const handleLogout = () => {
-      localStorage.removeItem('authToken');
-      navigate('/Login', { replace: true });
-    };
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    navigate('/Login', { replace: true });
+  };
 
   return (
     <>
       {/* Sidebar for larger screens */}
-      <div className="hidden w-52 h-full bg-green xl:flex flex-col  rounded-none">
+      <div className="hidden w-52 h-full bg-green xl:flex flex-col rounded-none">
         {/* Logo */}
         <div className="flex justify-center mb-6 mt-6">
-          <img src={logo} alt="chu logo" className="w-[45px] h-[61px] " />
+          <img src={logo} alt="chu logo" className="w-[45px] h-[61px]" />
         </div>
         {/* Divider */}
         <div className="border-t border-gray-600 mb-4"></div>
@@ -53,7 +53,7 @@ const Sidebar = () => {
                 onClick={() => setActiveSection(item.name)}
                 className={`flex items-center cursor-pointer py-2 px-4 rounded-none ${
                   activeSection === item.name
-                    ? "bg-white/80  text-PrimaryBlack"
+                    ? "bg-white/80 text-PrimaryBlack"
                     : "text-white hover:text-white hover:bg-white/10"
                 }`}
               >
@@ -73,7 +73,7 @@ const Sidebar = () => {
         {/* Logout Section */}
         <div className="border-t border-gray-600 "></div>
         <div
-          className="flex items-center rounded-none hover:bg-white/10 py-2 px-4  cursor-pointer "
+          className="flex items-center rounded-none hover:bg-white/10 py-2 px-4 cursor-pointer "
           onClick={handleLogout}
         >
           <span className="mr-3 text-2xl text-white">
@@ -88,34 +88,6 @@ const Sidebar = () => {
 
         {/* Divider */}
       </div>
-
-      {/* Sidebar for mobile screens */}
-      {/* <div className="fixed bottom-0 left-0 right-0 xl:hidden">
-        <div className="bg-PrimaryBlack rounded-[30px] mx-auto my-6 shadow-lg max-w-[400px]">
-          <div className="flex justify-around py-5">
-            {menuItems.map((item) => (
-              <Link
-                to={item.path}
-                key={item.name}
-                onClick={() => setActiveSection(item.name)}
-                className={`flex flex-col items-center ${
-                  activeSection === item.name ? "text-white" : "text-gray-400"
-                }`}
-              >
-                <span
-                  className={`flex items-center justify-center w-10 h-10 rounded-full mb-1 ${
-                    activeSection === item.name
-                      ? "bg-white text-PrimaryBlack"
-                      : ""
-                  }`}
-                >
-                  {item.icon}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div> */}
     </>
   );
 };

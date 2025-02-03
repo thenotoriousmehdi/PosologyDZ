@@ -6,6 +6,7 @@ import medicinePreparationsRoutes from "./routes/medicinePreparationsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js"
 import testRoutes from "./routes/testRoutes.js";
+
 const app = express();
 const PORT = 3000;
 const prisma = new PrismaClient();

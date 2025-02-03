@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
 import PreparationCard from "../components/PreparationCard";
+import GuidePopUp from "../components/GuidePopUp";
 
 interface Preparation {
   id: string;
@@ -32,7 +33,9 @@ const Preparations: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [statusCounts, setStatusCounts] = useState<StatutCount[]>([]); 
-
+  const [isOpen, setIsOpen] = useState(false);
+  const handleOpenPopup = () => setIsOpen(true);
+  const handleClosePopup = () => setIsOpen(false);
   useEffect(() => {
     // Fetch preparations
     axios
@@ -85,6 +88,7 @@ const Preparations: React.FC = () => {
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
+      {isOpen && <GuidePopUp isOpen={isOpen} onClose={handleClosePopup} />} 
       <div className="z-10">
         <Sidebar />
       </div>
@@ -121,6 +125,11 @@ const Preparations: React.FC = () => {
                 <option value="Termine">Terminé</option>
               </select>
             </div>
+
+            <button className="bg-green py-5 px-6 xl:px-5 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" 
+          onClick={handleOpenPopup}>
+            Guide
+          </button>
           </div>
 
           {/* Display the count for each statut */}
