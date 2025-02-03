@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PatientCard from "../components/PatientCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
-import AddPatient from "../components/AddPatient";
+import AddUser from "../components/AddUser";
 import UserCard from "../components/UserCard";
 interface User {
   id: string;
-  firstName: string;
-  familyName: string;
+  name: string;
   email: string;
-  role: string;
+  role : string;
+  phoneNumber: string;
 
 }
 
@@ -23,7 +22,7 @@ const Users: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenPopup = () => setIsOpen(true);
- // const handleClosePopup = () => setIsOpen(false);
+  const handleClosePopup = () => setIsOpen(false);
 
   useEffect(() => {
     axios
@@ -60,7 +59,7 @@ const Users: React.FC = () => {
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
-        {/* {isOpen && <AddPatient isOpen={isOpen} onClose={handleClosePopup} />} */}
+         {isOpen && <AddUser isOpen={isOpen} onClose={handleClosePopup} />} 
       <div className="z-10">
         <Sidebar />
       </div>
@@ -98,8 +97,9 @@ const Users: React.FC = () => {
                 <UserCard
                   key={user.id}
                   id={user.id}
-                  name={user.firstName}
-                  phoneNumber={user.familyName}
+                  email = {user.email}
+                  name={user.name}
+                  phoneNumber={user.phoneNumber}
                   role={user.role}
                   onDelete={handleDelete} 
                 />

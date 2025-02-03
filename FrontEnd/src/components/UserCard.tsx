@@ -5,6 +5,7 @@ import { IoEllipsisVertical } from "react-icons/io5";
 interface UserCardProps {
   id: string;
   name: string;
+  email: string;
   role : string;
   phoneNumber: string;
   onDelete: (id: string) => void;
@@ -13,6 +14,7 @@ interface UserCardProps {
 const UserCard: React.FC<UserCardProps> = ({
   id,
   name,
+  email,
   phoneNumber,
   role,
   onDelete,
@@ -46,6 +48,12 @@ const UserCard: React.FC<UserCardProps> = ({
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-semibold text-[16px] text-PrimaryBlack">
               {name}
+            </h1>
+          </div>
+
+          <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
+            <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+              {email}
             </h1>
           </div>
 
