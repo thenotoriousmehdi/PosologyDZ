@@ -42,3 +42,21 @@ export const updateMedicinePreparationStatus = async (req, res) => {
     res.status(500).json({ message: "Error updating statut" });
   }
 };
+
+export const getPreparationCounts = async (req, res) => {
+  try {
+    // Use Prisma to group by statut and get counts for each status
+    const counts = await prisma.medicinePreparation.groupBy({
+      by: ["statut"],  // Group by statut field
+      _count: {         // Get count of each statut
+        statut: true,
+      },
+    });
+
+    // Return the counts
+    res.status(200).json(counts);
+  } catch (error) {
+    console.error("Error fetching preparation counts:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

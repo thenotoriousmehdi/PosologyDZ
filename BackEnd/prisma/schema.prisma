@@ -68,8 +68,9 @@ model MedicinePreparation {
   created_at       DateTime  @default(now()) 
   updated_at       DateTime  @updatedAt       
 
-  patient          Patient   @relation(fields: [patient_id], references: [id]) 
+  patient          Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
 }
+
 
 enum Statut {
   A_faire

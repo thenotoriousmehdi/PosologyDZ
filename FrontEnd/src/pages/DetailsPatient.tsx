@@ -15,7 +15,7 @@ return (
         <div>
           <Header
             title="Patients/"
-            patient="Abdelhakim DJEBAR"
+            //patient="Abdelhakim DJEBAR"
             description="Accédez aux informations de vos patients et réalisez diverses actions."
           />
         </div>

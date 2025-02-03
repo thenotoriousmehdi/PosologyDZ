@@ -9,12 +9,19 @@ interface Preparation {
   id: string;
   dci: string;
   dosageInitial: number;
-  excipient : string;
+  excipient: string;
   modeEmploi: string;
   dosageAdapte: number;
   nombreGellules: number;
   compriméEcrasé: number;
   statut: "A_faire" | "En_Cours" | "Termine";
+}
+
+interface StatutCount {
+  statut: string;
+  _count: {
+    statut: number;
+  };
 }
 
 const Preparations: React.FC = () => {
@@ -23,9 +30,11 @@ const Preparations: React.FC = () => {
     Preparation[]
   >([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedStatus, setSelectedStatus] = useState<string>(""); 
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [statusCounts, setStatusCounts] = useState<StatutCount[]>([]); 
 
   useEffect(() => {
+    // Fetch preparations
     axios
       .get("http://localhost:3000/medicine-preparations")
       .then((response) => {
@@ -35,30 +44,43 @@ const Preparations: React.FC = () => {
       .catch(() => {
         console.log("Error fetching preparations");
       });
+
+    // Fetch counts for each statut
+    axios
+      .get("http://localhost:3000/medicine-preparations/Count")
+      .then((response) => {
+        setStatusCounts(response.data);
+      })
+      .catch(() => {
+        console.log("Error fetching statut counts");
+      });
   }, []);
 
- 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    filterPreparations(query, selectedStatus); 
+    filterPreparations(query, selectedStatus);
   };
 
-  
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const status = event.target.value;
     setSelectedStatus(status);
-    filterPreparations(searchQuery, status); 
+    filterPreparations(searchQuery, status);
   };
-
 
   const filterPreparations = (query: string, status: string) => {
     const lowerCaseQuery = query.toLowerCase();
     const filtered = preparations.filter((prep) => {
       const matchesSearch = prep.dci.toLowerCase().includes(lowerCaseQuery);
-      const matchesStatus = status ? prep.statut === status : true; 
+      const matchesStatus = status ? prep.statut === status : true;
       return matchesSearch && matchesStatus;
     });
     setFilteredPreparations(filtered);
+  };
+
+  // Function to get the count for each statut
+  const getCountForStatus = (statut: string) => {
+    const count = statusCounts.find((item) => item.statut === statut);
+    return count ? count._count.statut : 0;
   };
 
   return (
@@ -75,30 +97,55 @@ const Preparations: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center border border-green/30 focus:border-green/100 focus:outline-none rounded-[10px] px-4 py-5 bg-white w-[400px]">
-            <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
-            <input
-              type="text"
-              placeholder="Rechercher.."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="ml-3 w-full font-openSans text-[20px] focus:border-green/100 focus:outline-none  outline-none text-sm text-PrimaryBlack placeholder-PrimaryBlack/50"
-            />
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center border border-green/30 focus:border-green/100 focus:outline-none rounded-[10px] px-4 py-5 bg-white w-[400px]">
+              <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
+              <input
+                type="text"
+                placeholder="Rechercher.."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="ml-3 w-full font-openSans text-[20px] focus:border-green/100 focus:outline-none outline-none text-sm text-PrimaryBlack placeholder-PrimaryBlack/50"
+              />
+            </div>
+            <div>
+              <select
+                className="border border-green/30 rounded-[10px] px-4 font-poppins font-medium hover:bg-green/10 text-[16px] py-5 h-full text-green bg-white cursor-pointer focus:outline-green"
+                value={selectedStatus}
+                onChange={handleStatusChange}
+              >
+                <option value="">Tout</option>
+                <option value="A_faire">A faire</option>
+                <option value="En_Cours">En cours</option>
+                <option value="Termine">Terminé</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <select
-              className="border border-green/30 rounded-[10px] px-4 font-poppins font-medium hover:bg-green/10 text-[16px] py-5 h-full text-green bg-white cursor-pointer focus:outline-green"
-              value={selectedStatus}
-              onChange={handleStatusChange}
-            >
-              <option value="">Tout</option>
-              <option value="A_faire">A faire</option>
-              <option value="En_Cours">En cours</option>
-              <option value="Termine">Terminé</option>
-            </select>
+
+          {/* Display the count for each statut */}
+          <div className="flex items-center gap-8 text-lg font-semibold font-poppins text-PrimaryBlack">
+            <div className="flex items-center gap-2">
+              <span className="text-[#F9A825]">A faire:</span>
+              <span className="text-PrimaryBlack">
+                {getCountForStatus("A_faire")}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#1E88E5]">En cours:</span>
+              <span className="text-PrimaryBlack">
+                {getCountForStatus("En_Cours")}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[#43A047]">Terminé:</span>
+              <span className="text-PrimaryBlack">
+                {getCountForStatus("Termine")}
+              </span>
+            </div>
           </div>
         </div>
+
         <div className="flex-grow overflow-y-auto">
           <div className="flex flex-col gap-[20px]">
             {filteredPreparations.length > 0 ? (
@@ -108,8 +155,8 @@ const Preparations: React.FC = () => {
                   id={prep.id}
                   dci={prep.dci}
                   dosageInitial={prep.dosageInitial}
-                  excipient = {prep.excipient}
-                  modeEmploi = {prep.modeEmploi}
+                  excipient={prep.excipient}
+                  modeEmploi={prep.modeEmploi}
                   dosageAdapte={prep.dosageAdapte}
                   nombreGellules={prep.nombreGellules}
                   compriméEcrasé={prep.compriméEcrasé}

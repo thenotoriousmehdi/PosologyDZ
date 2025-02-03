@@ -9,7 +9,6 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Input validation
     if (!email || !password) {
       return res.status(400).json({
         error: "Missing required fields"

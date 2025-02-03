@@ -25,9 +25,9 @@ const Sidebar = () => {
       setActiveSection(currentItem.name);
     }
   }, [location.pathname, menuItems]);
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user")!)
-    : null;
+  // const user = localStorage.getItem("user")
+  //   ? JSON.parse(localStorage.getItem("user")!)
+  //   : null;
 
     const handleLogout = () => {
       localStorage.removeItem('authToken');

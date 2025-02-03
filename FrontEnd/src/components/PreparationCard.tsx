@@ -70,7 +70,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   };
 
   const handleDownloadPDF = () => {
-    // Create a new jsPDF instance
+  
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 

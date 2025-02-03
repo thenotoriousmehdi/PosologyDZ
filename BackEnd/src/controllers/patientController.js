@@ -103,7 +103,6 @@ export const getPatients = async (req, res) => {
   try {
     console.log('Attempting to fetch patients...');
     
-    // Log total patient count
     const patientCount = await prisma.patient.count();
     console.log(`Total patient count: ${patientCount}`);
     
@@ -156,3 +155,5 @@ export const deletePatient = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
