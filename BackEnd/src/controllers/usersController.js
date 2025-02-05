@@ -115,13 +115,11 @@ export const updateUser = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // If password is provided, hash it
     let hashedPassword = user.password;
     if (password) {
       hashedPassword = await bcrypt.hash(password, 10);
     }
 
-    // Update user data
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {

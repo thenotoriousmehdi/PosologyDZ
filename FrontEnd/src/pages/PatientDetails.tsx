@@ -10,6 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
 import AddPreparation from "../components/AddPreparation";
+import { MdDelete } from "react-icons/md";
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -25,6 +26,7 @@ interface MedicinePreparation {
   statut: string;
   nombreGellules: number;
   compriméEcrasé: number;
+  onDelete: (id: string) => void;
 }
 
 interface Patient {
@@ -69,13 +71,54 @@ const PatientDetails = () => {
     fetchPatient();
   }, [id]);
 
+  const handleDeletePreparation = async (prepId: number) => {
+    if (
+      !window.confirm("Êtes-vous sûr de vouloir supprimer cette préparation ?")
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/medicine-preparations/${prepId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression");
+      }
+
+      setPatient((prevPatient) => {
+        if (!prevPatient) return null;
+
+        return {
+          ...prevPatient,
+          medicinePreparations: prevPatient.medicinePreparations.filter(
+            (prep) => prep.id !== prepId
+          ),
+        };
+      });
+    } catch (error) {
+      console.error("Error deleting preparation:", error);
+      alert("Erreur lors de la suppression de la préparation");
+    }
+  };
+
   if (loading) return <p>Recherche en cours...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!patient) return <p>Aucun patient trouvé</p>;
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
-      {isOpen && <AddPreparation patientId={patient.id} isOpen={isOpen} onClose={handleClosePopup} />}
+      {isOpen && (
+        <AddPreparation
+          patientId={patient.id}
+          isOpen={isOpen}
+          onClose={handleClosePopup}
+        />
+      )}
       <div className="z-10">
         <Sidebar />
       </div>
@@ -168,15 +211,16 @@ const PatientDetails = () => {
         </div>
 
         <div className="flex flex-col justify-start gap-4 mb-4">
-
           <div className="flex justify-between items-center">
             <h1 className="text-2xl text-PrimaryBlack font-bold">
               Préparations
             </h1>
 
-            <button className="bg-green py-4 px-4 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80"
-            onClick={handleOpenPopup}>
-              Ajouter 
+            <button
+              className="bg-green py-4 px-4 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80"
+              onClick={handleOpenPopup}
+            >
+              Ajouter
             </button>
           </div>
 
@@ -202,85 +246,99 @@ const PatientDetails = () => {
             >
               {patient.medicinePreparations.map((prep) => (
                 <SwiperSlide key={prep.id}>
-                  <div className="flex flex-col gap-3 bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        DCI:
-                      </span>{" "}
-                      {prep.dci}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Indication thérapeutique:
-                      </span>{" "}
-                      {prep.indication || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Dosage Initial (mg):
-                      </span>{" "}
-                      {prep.dosageInitial}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Dosage Adapté (mg):
-                      </span>{" "}
-                      {prep.dosageAdapte || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Mode d'Emploi (par jour):
-                      </span>{" "}
-                      {prep.modeEmploi}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Voie d'Administration:
-                      </span>{" "}
-                      {prep.voieAdministration || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        QSP (nombre de jours):
-                      </span>{" "}
-                      {prep.qsp}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Excipient à effet notoire:
-                      </span>{" "}
-                      {prep.excipient || "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Date de Préparation:
-                      </span>{" "}
-                      {new Date(prep.preparationDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Date de Péremption:
-                      </span>{" "}
-                      {new Date(prep.peremptionDate).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Statut:
-                      </span>{" "}
-                      {prep.statut}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Nombre de Gélules:
-                      </span>{" "}
-                      {prep.nombreGellules}
-                    </p>
-                    <p>
-                      <span className="font-bold font-poppins text-PrimaryBlack/80">
-                        Comprimés à Écraser:
-                      </span>{" "}
-                      {prep.compriméEcrasé}
-                    </p>
+                  <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
+                    <div className=" flex flex-col gap-3">
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          DCI:
+                        </span>{" "}
+                        {prep.dci}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Indication thérapeutique:
+                        </span>{" "}
+                        {prep.indication || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Dosage Initial (mg):
+                        </span>{" "}
+                        {prep.dosageInitial}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Dosage Adapté (mg):
+                        </span>{" "}
+                        {prep.dosageAdapte || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Mode d'Emploi (par jour):
+                        </span>{" "}
+                        {prep.modeEmploi}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Voie d'Administration:
+                        </span>{" "}
+                        {prep.voieAdministration || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          QSP (nombre de jours):
+                        </span>{" "}
+                        {prep.qsp}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Excipient à effet notoire:
+                        </span>{" "}
+                        {prep.excipient || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Date de Préparation:
+                        </span>{" "}
+                        {new Date(prep.preparationDate).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Date de Péremption:
+                        </span>{" "}
+                        {new Date(prep.peremptionDate).toLocaleDateString()}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Statut:
+                        </span>{" "}
+                        {prep.statut}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Nombre de Gélules:
+                        </span>{" "}
+                        {prep.nombreGellules}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Comprimés à Écraser:
+                        </span>{" "}
+                        {prep.compriméEcrasé}
+                      </p>
+                    </div>
+
+                    <div>
+                      <button
+                        onClick={() => handleDeletePreparation(prep.id)}
+                        className="hover:scale-110 transition-transform"
+                        aria-label="Supprimer la préparation"
+                      >
+                        <MdDelete
+                          style={{ color: "#eb3734", fontSize: "20px" }}
+                        />
+                      </button>
+                    </div>
                   </div>
                 </SwiperSlide>
               ))}

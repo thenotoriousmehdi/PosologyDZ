@@ -109,3 +109,31 @@ export const addPreparationToPatient = async (req, res) => {
     });
   }
 };
+
+
+export const deleteMedicinePreparation = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ message: "ID de préparation invalide" });
+    }
+
+    const existingPreparation = await prisma.medicinePreparation.findUnique({
+      where: { id: parseInt(id, 10) },
+    });
+
+    if (!existingPreparation) {
+      return res.status(404).json({ message: "Préparation non trouvée" });
+    }
+
+    await prisma.medicinePreparation.delete({
+      where: { id: parseInt(id, 10) },
+    });
+
+    res.status(200).json({ message: "Préparation supprimée avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression :", error);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};

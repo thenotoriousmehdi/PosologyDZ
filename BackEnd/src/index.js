@@ -19,6 +19,7 @@ app.use("/medicine-preparations", medicinePreparationsRoutes);
 app.use("/users", usersRoutes);
 app.use("/auth", authRoutes);
 app.use("/api", testRoutes);
+
 app.get("/", (req, res) => {
   res.send("Server is running!");
 });

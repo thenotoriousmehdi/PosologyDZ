@@ -72,7 +72,6 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
-
     const title1 = "Ministère de la Santé";
     const title2 = "Centre Hospitalo-Universitaire de Béni Messous";
     const title3 = "Laboratoire de Biologie Médicale Mère-Enfant";
@@ -87,11 +86,9 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     doc.text(title1, xTitle1, 20);
     doc.text(title2, xTitle2, 30);
     doc.text(title3, xTitle3, 40);
-
     doc.setFontSize(14);
     doc.setFont("poppins", "bold");
     doc.text("Fiche de Préparation Médicamenteuse", 10, 60);
-
     doc.setFontSize(12);
     doc.setFont("poppins", "normal");
     doc.text(`ID: #${id}`, 10, 70);
