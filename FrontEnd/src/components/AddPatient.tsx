@@ -231,8 +231,9 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+  
   {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     formError && (
       <div className="text-delete text-center mb-4">{formError}</div>
     );
@@ -829,7 +830,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                 onClick={handleAddMedicament}
                 className="bg-green text-white px-4 py-2 rounded-lg hover:bg-green-dark"
               >
-                Ajouter une une préparation
+                Ajouter une préparation
               </button>
             </div>
           )}

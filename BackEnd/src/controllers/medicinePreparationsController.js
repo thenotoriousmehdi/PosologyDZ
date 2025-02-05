@@ -45,18 +45,67 @@ export const updateMedicinePreparationStatus = async (req, res) => {
 
 export const getPreparationCounts = async (req, res) => {
   try {
-    // Use Prisma to group by statut and get counts for each status
+   
     const counts = await prisma.medicinePreparation.groupBy({
-      by: ["statut"],  // Group by statut field
-      _count: {         // Get count of each statut
+      by: ["statut"],  
+      _count: {         
         statut: true,
       },
     });
 
-    // Return the counts
+   
     res.status(200).json(counts);
   } catch (error) {
     console.error("Error fetching preparation counts:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const addPreparationToPatient = async (req, res) => {
+  try {
+    const { patientId } = req.params; 
+    const { medicinePreparations } = req.body; 
+
+    if (!patientId || isNaN(patientId)) {
+      return res.status(400).json({ error: "Invalid or missing patient ID" });
+    }
+
+    if (!medicinePreparations || !Array.isArray(medicinePreparations) || medicinePreparations.length === 0) {
+      return res.status(400).json({ error: "medicinePreparations must be a non-empty array" });
+    }
+
+    
+    const patient_id = parseInt(patientId, 10);
+
+   
+    const preparationsData = medicinePreparations.map((prep) => ({
+      patient_id, 
+      dci: prep.dci,
+      indication: prep.indication || null,
+      dosageInitial: Number(prep.dosageInitial),
+      dosageAdapte: Number(prep.dosageAdapte),
+      modeEmploi: Number(prep.modeEmploi || 0),
+      voieAdministration: prep.voieAdministration || null,
+      qsp: Number(prep.qsp || 0),
+      excipient: prep.excipient || null,
+      preparationDate: new Date(prep.preparationDate),
+      peremptionDate: new Date(prep.peremptionDate),
+      statut: "A_faire",
+      nombreGellules: Number(prep.qsp * prep.modeEmploi),
+      compriméEcrasé: Number((prep.dosageAdapte * prep.qsp * prep.modeEmploi) / prep.dosageInitial),
+    }));
+
+    const newPreparations = await prisma.medicinePreparation.createMany({
+      data: preparationsData,
+    });
+
+    res.status(201).json({ message: "Preparations added successfully", newPreparations });
+  } catch (error) {
+    console.error("Error adding preparation to patient:", error);
+    res.status(500).json({
+      error: "Could not add preparation to patient",
+      details: error.message,
+      fullError: error,
+    });
   }
 };

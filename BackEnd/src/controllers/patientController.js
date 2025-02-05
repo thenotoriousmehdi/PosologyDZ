@@ -85,7 +85,7 @@ export const getPatient = async (req, res) => {
     const patient = await prisma.patient.findUnique({
       where: { id: patientId },
       include: {
-        medicinePreparations: true, // Include all medicine preparations
+        medicinePreparations: true, 
       },
     });
 
