@@ -90,7 +90,7 @@ const Users: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow overflow-y-auto mb-2">
           <div className="flex flex-col gap-[20px]">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user: User) => (

@@ -97,6 +97,7 @@ const AddUser: React.FC<PopupProps> = ({
         onUserAdded?.(response.data.user || response.data.updatedUser);
         onClose();
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error:', error);
       setFormError(error.response?.data?.error || 'Une erreur est survenue.');

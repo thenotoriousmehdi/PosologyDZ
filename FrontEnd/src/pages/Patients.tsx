@@ -96,7 +96,7 @@ const Patients: React.FC = () => {
           )}
         </div>
 
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow overflow-y-auto mb-2">
           <div className="flex flex-col gap-[20px]">
             {filteredPatients.length > 0 ? (
               filteredPatients.map((patient: Patient) => (

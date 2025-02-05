@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TbEyeFilled } from "react-icons/tb";
+import { TbFileDownload } from "react-icons/tb";
 import axios from "axios";
 import jsPDF from "jspdf";
 
@@ -141,7 +141,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
             className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 group cursor-pointer"
             onClick={handleDownloadPDF}
           >
-            <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
+            <TbFileDownload style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
 
           {/* Statut Dropdown */}

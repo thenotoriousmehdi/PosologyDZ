@@ -155,7 +155,7 @@ const Preparations: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow overflow-y-auto mb-2">
           <div className="flex flex-col gap-[20px]">
             {filteredPreparations.length > 0 ? (
               filteredPreparations.map((prep: Preparation) => (
