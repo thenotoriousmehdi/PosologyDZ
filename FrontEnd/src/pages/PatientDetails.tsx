@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-
+import { useNavigate } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation, Pagination } from "swiper/modules";
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -41,6 +45,7 @@ const PatientDetails = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -59,9 +64,9 @@ const PatientDetails = () => {
     fetchPatient();
   }, [id]);
 
-  if (loading) return <p>Loading patient data...</p>;
+  if (loading) return <p>Recherche en cours...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (!patient) return <p>No patient found</p>;
+  if (!patient) return <p>Aucun patient trouvé</p>;
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
@@ -69,67 +74,153 @@ const PatientDetails = () => {
         <Sidebar />
       </div>
 
-      <div className="flex flex-col flex-grow gap-[25px] w-full pt-[35px]">
+      <div className="flex flex-col flex-grow gap-[25px] w-full pt-[35px] overflow-y-auto">
         <div>
           <Header
-            title="Patient Details"
-            description="Detailed information and history of the selected patient"
+            title={`Détails patient / ${patient.name}`}
+            description="Informations détaillées et historique du patient sélectionné."
           />
         </div>
 
         <div className="flex justify-between items-center">
-          <button className="flex items-center text-green-600 hover:text-green-800">
+          <button
+            className="flex items-center text-green-600 hover:text-green-800"
+            onClick={() => navigate(-1)}
+          >
             <FiArrowLeft size={20} />
-            <span className="ml-2">Back</span>
+            <span className="ml-2">Retour</span>
           </button>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          <h1 className="text-3xl font-bold mb-4">{patient.name}</h1>
-          <p><strong>Age:</strong> {patient.age}</p>
-          <p><strong>Gender:</strong> {patient.gender}</p>
-          <p><strong>Weight:</strong> {patient.weight} kg</p>
-          <p><strong>Phone:</strong> {patient.phoneNumber}</p>
-          <p><strong>Grade:</strong> {patient.grade}</p>
-          <p><strong>Antecedents:</strong> {patient.antecedents || "N/A"}</p>
-          <p><strong>Hospital:</strong> {patient.etablissement || "N/A"}</p>
-          <p><strong>Doctor:</strong> {patient.medicin || "N/A"}</p>
-          <p><strong>Speciality:</strong> {patient.specialite || "N/A"}</p>
+        <div className="flex flex-col justify-start gap-4">
+          <h1 className="text-2xl text-PrimaryBlack font-bold ">
+            Informations personnelles
+          </h1>
+          <div className="flex flex-col gap-2 bg-white border border-green/10  shadow-md rounded-lg p-6">
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Nom:</strong> {patient.name}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Age:</strong> {patient.age}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Sexe:</strong> {patient.gender}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Poids:</strong> {patient.weight} kg
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Numéro du parent:</strong> {patient.phoneNumber}
+            </p>
+
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Antecedents:</strong> {patient.antecedents || "N/A"}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Nom de l’établissement:</strong>{" "}
+              {patient.etablissement || "N/A"}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Nom du médecin traitant:</strong>{" "}
+              {patient.medicin || "N/A"}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Spécialité:</strong> {patient.specialite || "N/A"}
+            </p>
+            <p>
+              <strong className="font-bold font-poppins text-PrimaryBlack/80">Grade:</strong> {patient.grade}
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
-          <h2 className="text-2xl font-semibold mb-4">Medicine Preparations</h2>
-          {patient.medicinePreparations.length > 0 ? (
-            <table className="min-w-full border border-gray-200">
-              <thead>
-                <tr className="bg-gray-300">
-                  <th className="p-2 border">DCI</th>
-                  <th className="p-2 border">Dosage Initial</th>
-                  <th className="p-2 border">Dosage Adapted</th>
-                  <th className="p-2 border">Mode Emploi</th>
-                  <th className="p-2 border">QSP</th>
-                  <th className="p-2 border">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {patient.medicinePreparations.map((prep) => (
-                  <tr key={prep.id} className="text-center">
-                    <td className="p-2 border">{prep.dci}</td>
-                    <td className="p-2 border">{prep.dosageInitial}</td>
-                    <td className="p-2 border">{prep.dosageAdapte || "N/A"}</td>
-                    <td className="p-2 border">{prep.modeEmploi}</td>
-                    <td className="p-2 border">{prep.qsp}</td>
-                    <td className="p-2 border">{prep.statut}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No medicine preparations found.</p>
-          )}
-        </div>
-      </div>
+
+        <div className="flex flex-col justify-start gap-4 mb-4">
+      <h1 className="text-2xl text-PrimaryBlack font-bold">Préparations</h1>
+     
+        {patient.medicinePreparations.length > 0 ? (
+         <Swiper
+         spaceBetween={30}
+         slidesPerView={1}
+         navigation={true}
+         pagination={{ clickable: true }}
+         modules={[Navigation, Pagination]}
+         className="custom-swiper w-full"
+         breakpoints={{
+           640: {
+             slidesPerView: 1,
+           },
+           768: {
+             slidesPerView: 2,
+           },
+           1024: {
+             slidesPerView: 2,
+           },
+         }}
+       >
+            {patient.medicinePreparations.map((prep) => (
+              <SwiperSlide key={prep.id}>
+                <div className="flex flex-col gap-3 bg-white border-2 border-green-50 shadow-lg hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full">
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">DCI:</span> {prep.dci}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Indication thérapeutique:</span> {prep.indication || "N/A"}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Dosage Initial (mg):</span> {prep.dosageInitial}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Dosage Adapté (mg):</span> {prep.dosageAdapte || "N/A"}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Mode d'Emploi (par jour):</span> {prep.modeEmploi}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Voie d'Administration:</span> {prep.voieAdministration || "N/A"}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">QSP (nombre de jours):</span> {prep.qsp}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Excipient à effet notoire:</span> {prep.excipient || "N/A"}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Date de Préparation:</span> {new Date(prep.preparationDate).toLocaleDateString()}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Date de Péremption:</span> {new Date(prep.peremptionDate).toLocaleDateString()}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Statut:</span> {prep.statut}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Nombre de Gélules:</span> {prep.nombreGellules}</p>
+                  <p><span className="font-bold font-poppins text-PrimaryBlack/80">Comprimés à Écraser:</span> {prep.compriméEcrasé}</p>
+                  </div>
+              </SwiperSlide>
+            ))}
+
+            
+          </Swiper>
+        ) : (
+          <p>Aucune préparation trouvée.</p>
+        )}
+     
     </div>
+       
+      </div>
+      <style>{`
+  .custom-swiper .swiper-button-next,
+  .custom-swiper .swiper-button-prev {
+    color: #16a34a;
+    background: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .custom-swiper .swiper-button-next:hover,
+  .custom-swiper .swiper-button-prev:hover {
+    color: #15803d;
+    transform: scale(1.1);
+  }
+
+  .custom-swiper .swiper-button-next::after,
+  .custom-swiper .swiper-button-prev::after {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .custom-swiper .swiper-pagination-bullet {
+    background: #d1fae5;
+    opacity: 1;
+  }
+
+  .custom-swiper .swiper-pagination-bullet-active {
+    background: #16a34a;
+  }
+`}</style>
+    </div>
+    
   );
 };
 

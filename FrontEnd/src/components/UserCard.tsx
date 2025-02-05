@@ -64,7 +64,7 @@ const UserCard: React.FC<UserCardProps> = ({
           </div>
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-              {phoneNumber}
+              {phoneNumber || "N/A"}
             </h1>
           </div>
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
@@ -75,9 +75,9 @@ const UserCard: React.FC<UserCardProps> = ({
         </div>
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0">
-          <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group">
+          {/* <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group">
             <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
-          </div>
+          </div> */}
           <div className="relative">
             <div 
               className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group" 

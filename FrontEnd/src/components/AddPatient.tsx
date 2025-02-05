@@ -29,61 +29,69 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
 
   // State for form fields
   const [personalInfo, setPersonalInfo] = useState({
-    name: '',
-    age: '',
-    gender: '',
-    weight: '',
-    phoneNumber: '',
-    antecedents: ''
+    name: "",
+    age: "",
+    gender: "",
+    weight: "",
+    phoneNumber: "",
+    antecedents: "",
   });
 
   const [etablissementInfo, setEtablissementInfo] = useState({
-    etablissement: '',
-    medicin: '',
-    specialite: '',
-    grade: ''
+    etablissement: "",
+    medicin: "",
+    specialite: "",
+    grade: "",
   });
 
   const [medicaments, setMedicaments] = useState<Medicament[]>([
-    { 
-      id: Date.now(), 
-      dci: '',
-      indication: '',
+    {
+      id: Date.now(),
+      dci: "",
+      indication: "",
       dosageInitial: 0,
       dosageAdapte: 0,
       modeEmploi: 0,
-      voieAdministration: '',
+      voieAdministration: "",
       qsp: 0,
-      excipient: '',
-      preparationDate: '',
-      peremptionDate: ''
-    }
+      excipient: "",
+      preparationDate: "",
+      peremptionDate: "",
+    },
   ]);
 
   // Handle input changes for personal info
-  const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handlePersonalInfoChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setPersonalInfo(prev => ({
+    setPersonalInfo((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   // Handle input changes for establishment info
-  const handleEtablissementInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleEtablissementInfoChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setEtablissementInfo(prev => ({
+    setEtablissementInfo((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   // Handle medicament field changes
-  const handleMedicamentChange = (id: number, field: keyof Medicament, value: string | number) => {
-    setMedicaments(prev => 
-      prev.map(med => 
-        med.id === id ? { ...med, [field]: value } : med
-      )
+  const handleMedicamentChange = (
+    id: number,
+    field: keyof Medicament,
+    value: string | number
+  ) => {
+    setMedicaments((prev) =>
+      prev.map((med) => (med.id === id ? { ...med, [field]: value } : med))
     );
   };
 
@@ -91,16 +99,16 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
   const handleAddMedicament = () => {
     setMedicaments((prev) => [
       ...prev,
-      { 
-        id: Date.now(), 
-        dci: '',
+      {
+        id: Date.now(),
+        dci: "",
         dosageInitial: 0,
         dosageAdapte: 0,
         modeEmploi: 0,
         qsp: 0,
-        preparationDate: '',
-        peremptionDate: ''
-      }
+        preparationDate: "",
+        peremptionDate: "",
+      },
     ]);
   };
 
@@ -112,27 +120,40 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
   // Validate form before submission
   const validateForm = () => {
     // Personal Info Validation
-    if (!personalInfo.name || !personalInfo.age || !personalInfo.gender || 
-        !personalInfo.weight || !personalInfo.phoneNumber) {
-      setFormError('Veuillez remplir tous les champs obligatoires dans les informations personnelles.');
+    if (
+      !personalInfo.name ||
+      !personalInfo.age ||
+      !personalInfo.gender ||
+      !personalInfo.weight ||
+      !personalInfo.phoneNumber
+    ) {
+      setFormError(
+        "Veuillez remplir tous les champs obligatoires dans les informations personnelles."
+      );
       return false;
     }
 
     // Etablissement Validation (if second step is completed)
     if (step >= 2 && !etablissementInfo.grade) {
-      setFormError('Veuillez sélectionner un grade.');
+      setFormError("Veuillez sélectionner un grade.");
       return false;
     }
 
     // Medicaments Validation
     if (step === 3) {
-      const invalidMedicament = medicaments.find(med => 
-        !med.dci || med.dosageInitial <= 0 || med.dosageAdapte <= 0 || 
-        !med.preparationDate || !med.peremptionDate
+      const invalidMedicament = medicaments.find(
+        (med) =>
+          !med.dci ||
+          med.dosageInitial <= 0 ||
+          med.dosageAdapte <= 0 ||
+          !med.preparationDate ||
+          !med.peremptionDate
       );
 
       if (invalidMedicament) {
-        setFormError('Veuillez remplir correctement tous les champs des médicaments.');
+        setFormError(
+          "Veuillez remplir correctement tous les champs des médicaments."
+        );
         return false;
       }
     }
@@ -147,12 +168,12 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post('http://localhost:3000/patients', {
+      const response = await axios.post("http://localhost:3000/patients", {
         ...personalInfo,
         ...etablissementInfo,
         age: Number(personalInfo.age),
         weight: Number(personalInfo.weight),
-        medicinePreparations: medicaments.map(med => ({
+        medicinePreparations: medicaments.map((med) => ({
           dci: med.dci,
           indication: med.indication,
           dosageInitial: med.dosageInitial,
@@ -162,18 +183,18 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
           qsp: med.qsp,
           excipient: med.excipient,
           preparationDate: med.preparationDate,
-          peremptionDate: med.peremptionDate
-        }))
+          peremptionDate: med.peremptionDate,
+        })),
       });
 
-      alert('Patient ajouté avec succès!'); 
+      alert("Patient ajouté avec succès!");
       onPatientAdded?.(response.data);
-      
+
       // Reset form and close
       onClose();
     } catch (error) {
-      console.error('Error adding patient:', error);
-      setFormError('Une erreur est survenue lors de l\'ajout du patient.');
+      console.error("Error adding patient:", error);
+      setFormError("Une erreur est survenue lors de l'ajout du patient.");
     } finally {
       setIsSubmitting(false);
     }
@@ -210,13 +231,12 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     }
   };
 
- 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  {formError && (
-    <div className="text-delete text-center mb-4">
-      {formError}
-    </div>
-  )}
+  {
+    formError && (
+      <div className="text-delete text-center mb-4">{formError}</div>
+    );
+  }
 
   // Modify submit button to show loading state
   <button
@@ -228,537 +248,621 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     onClick={nextStep}
     disabled={isSubmitting}
   >
-    {isSubmitting ? "En cours..." : (step === 3 ? "Enregistrer" : "Suivant")}
-  </button>
+    {isSubmitting ? "En cours..." : step === 3 ? "Enregistrer" : "Suivant"}
+  </button>;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-PrimaryBlack bg-opacity-55">
-    <div className="flex flex-col bg-white rounded-[10px] shadow-lg mx-[20px] my-[20px] w-full h-[calc(100vh-150px)] md:mx-[50px] md:my-[40px] xl:mx-[250px] xl:my-[50px] xl:w-[calc(100%-200px)] xl:h-[calc(100vh-150px)]">
-      {/* Title */}
-      <div
-        className="flex justify-between items-center h-[12%] border-b w-full rounded-t-[10px] bg-white px-[35px] py-[30px] z-10"
-        style={{ boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)" }}
-      >
-        <h1 className="font-poppins font-bold text-[24px] text-PrimaryBlack">
-          Ajouter un patient
-        </h1>
+      <div className="flex flex-col bg-white rounded-[10px] shadow-lg mx-[20px] my-[20px] w-full h-[calc(100vh-150px)] md:mx-[50px] md:my-[40px] xl:mx-[250px] xl:my-[50px] xl:w-[calc(100%-200px)] xl:h-[calc(100vh-150px)]">
+        {/* Title */}
         <div
-          className="bg-[#FAFAFA] border border-green p-[4px] rounded-[10px] hover:bg-green"
-          onClick={onClose}
+          className="flex justify-between items-center h-[12%] border-b w-full rounded-t-[10px] bg-white px-[35px] py-[30px] z-10"
+          style={{ boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)" }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            className="sm:size-10 size-6 text-green/65 hover:text-white"
-            stroke="currentColor"
+          <h1 className="font-poppins font-bold text-[24px] text-PrimaryBlack">
+            Ajouter un patient
+          </h1>
+          <div
+            className="bg-[#FAFAFA] border border-green p-[4px] rounded-[10px] hover:bg-green"
+            onClick={onClose}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="h-[3px] w-full bg-gray-200">
-        <div
-          className="h-full bg-green rounded-r-[10px]"
-          style={{
-            width: `${progress}%`,
-            transition: "width 0.5s ease-in-out",
-          }}
-        ></div>
-      </div>
-
-      {/* Step Content */}
-      <div className="flex flex-col gap-[35px] h-[76%] p-12 overflow-y-auto">
-        {/* Header */}
-        <div className="flex justify-between gap-8 items-center">
-          <h1 className="font-poppins font-semibold text-[16px] text-green">
-            {getHeaderText()}
-          </h1>
-          <div className="flex-1 border-t-[0.5px] border-[#E0E1E2]"></div>
-          <h1 className="font-openSans font-normal text-[16px] text-PrimaryBlack/60">
-            {step}/3
-          </h1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              className="sm:size-10 size-6 text-green/65 hover:text-white"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </div>
         </div>
 
-        {/* Step 1 */}
-        {step === 1 && (
-          <div className="flex flex-col gap-[30px]">
-            {/* first line */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Nom et Prénom
-                  <span className="text-delete">*</span>
-                </h1>
+        {/* Progress Bar */}
+        <div className="h-[3px] w-full bg-gray-200">
+          <div
+            className="h-full bg-green rounded-r-[10px]"
+            style={{
+              width: `${progress}%`,
+              transition: "width 0.5s ease-in-out",
+            }}
+          ></div>
+        </div>
 
-                <label className="w-full">
-                  <input
-                    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="text"
-                    name="name"
-                    placeholder="Nom et prénom du patient"
-                    pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
-                    required
-                    value={personalInfo.name}
-                    onChange={handlePersonalInfoChange}
-                  />
-                </label>
+        {/* Step Content */}
+        <div className="flex flex-col gap-[35px] h-[76%] p-12 overflow-y-auto">
+          {/* Header */}
+          <div className="flex justify-between gap-8 items-center">
+            <h1 className="font-poppins font-semibold text-[16px] text-green">
+              {getHeaderText()}
+            </h1>
+            <div className="flex-1 border-t-[0.5px] border-[#E0E1E2]"></div>
+            <h1 className="font-openSans font-normal text-[16px] text-PrimaryBlack/60">
+              {step}/3
+            </h1>
+          </div>
+
+          {/* Step 1 */}
+          {step === 1 && (
+            <div className="flex flex-col gap-[30px]">
+              {/* first line */}
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Nom et Prénom
+                    <span className="text-delete">*</span>
+                  </h1>
+
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      name="name"
+                      placeholder="Nom et prénom du patient"
+                      pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
+                      required
+                      value={personalInfo.name}
+                      onChange={handlePersonalInfoChange}
+                    />
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Age
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="number"
+                      name="age"
+                      placeholder="Age"
+                      pattern="^(?:1[01][0-9]|[1-9][0-9]?)$"
+                      required
+                      value={personalInfo.age}
+                      onChange={handlePersonalInfoChange}
+                    />
+                  </label>
+                </div>
               </div>
+              {/* second line */}
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Sexe
+                    <span className="text-delete">*</span>
+                  </h1>
 
-              <div className="flex flex-col justify-start gap-2 w-full">
+                  <label className="w-full">
+                    <select
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      required
+                      name="gender"
+                      value={personalInfo.gender}
+                      onChange={handlePersonalInfoChange}
+                    >
+                      <option value="" disabled selected>
+                        Sexe
+                      </option>
+                      <option value="garçon">Garçon</option>
+                      <option value="fille">Fille</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Poids(kg)
+                    <span className="text-delete">*</span>
+                  </h1>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="number"
+                      placeholder="Poids"
+                      pattern="^(?:[1-9][0-9]{0,2}|300)$"
+                      required
+                      name="weight"
+                      value={personalInfo.weight}
+                      onChange={handlePersonalInfoChange}
+                    />
+                  </label>
+                </div>
+              </div>
+              {/* Third line */}
+
+              <div className="flex flex-col justify-start gap-2 md:w-1/2">
                 <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Age
+                  Numéro de téléphone
                   <span className="text-delete">*</span>
                 </h1>
+
                 <label className="w-full">
                   <input
                     className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="number"
-                    name="age"
-                    placeholder="Age"
-                    pattern="^(?:1[01][0-9]|[1-9][0-9]?)$"
+                    type="tel"
+                    placeholder="Numéro de téléphone"
+                    pattern="^0[5-9][0-9]{8}$"
                     required
-                    value={personalInfo.age}
-                    onChange={handlePersonalInfoChange}
-                  />
-                </label>
-              </div>
-            </div>
-            {/* second line */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Sexe
-                  <span className="text-delete">*</span>
-                </h1>
-
-                <label className="w-full">
-                  <select
-                    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    required
-                    name="gender"
-                    value={personalInfo.gender}
-                    onChange={handlePersonalInfoChange}
-                  >
-                    <option value="" disabled selected>
-                      Sexe
-                    </option>
-                    <option value="garçon">Garçon</option>
-                    <option value="fille">Fille</option>
-                  </select>
-                </label>
-              </div>
-
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Poids(kg)
-                  <span className="text-delete">*</span>
-                </h1>
-                <label className="w-full">
-                  <input
-                    className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="number"
-                    placeholder="Poids"
-                    pattern="^(?:[1-9][0-9]{0,2}|300)$"
-                    required
-                    name="weight"
-                    value={personalInfo.weight}
-                    onChange={handlePersonalInfoChange}
-                  />
-                </label>
-              </div>
-            </div>
-            {/* Third line */}
-
-            <div className="flex flex-col justify-start gap-2 md:w-1/2">
-              <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                Numéro de téléphone
-                <span className="text-delete">*</span>
-              </h1>
-
-              <label className="w-full">
-                <input
-                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                  type="tel"
-                  placeholder="Numéro de téléphone"
-                  pattern="^0[5-9][0-9]{8}$"
-                  required
-                  name="phoneNumber"
+                    name="phoneNumber"
                     value={personalInfo.phoneNumber}
                     onChange={handlePersonalInfoChange}
-                />
-              </label>
-            </div>
+                  />
+                </label>
+              </div>
 
-            {/* fourth */}
-            <div className="flex flex-col justify-start gap-2 w-full">
-              <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                Antécédents Médicaux
-              </h1>
+              {/* fourth */}
+              <div className="flex flex-col justify-start gap-2 w-full">
+                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                  Antécédents Médicaux
+                </h1>
 
-              <label className="w-full">
-                <textarea
-                  className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                  placeholder="Citez les Antécédents Médicaux du patient"
+                <label className="w-full">
+                  <textarea
+                    className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                    placeholder="Citez les Antécédents Médicaux du patient"
                     name="antecedents"
                     value={personalInfo.antecedents}
                     onChange={handlePersonalInfoChange}
-                />
-              </label>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2 (Empty for now, to be added) */}
-        {step === 2 && (
-          <div className="flex flex-col gap-[30px]">
-            {/* first line */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Nom de l’établissement
-                </h1>
-
-                <label className="w-full">
-                  <input
-                    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="text"
-                    placeholder="Nom de l’établissement"
-                    pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
-
-                    name="etablissement"
-                    value={etablissementInfo.etablissement}
-                    onChange={handleEtablissementInfoChange}
-                  />
-                </label>
-              </div>
-
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Nom du médecin traitant
-                </h1>
-
-                <label className="w-full">
-                  <input
-                    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    type="text"
-                    placeholder="Nom du médecin traitant"
-                    pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
-
-                    name="medicin"
-                    value={etablissementInfo.medicin}
-                    onChange={handleEtablissementInfoChange}
                   />
                 </label>
               </div>
             </div>
+          )}
 
-            {/* second line */}
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Spécialité
-                </h1>
-
-                <label className="w-full">
-                  <select className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                  name="specialite"
-                  value={etablissementInfo.specialite}
-                  onChange={handleEtablissementInfoChange}>
-                    <option value="" disabled selected>
-                      Spécialité
-                    </option>
-                    <option value="garçon">Garçon</option>
-                    <option value="fille">Fille</option>
-                  </select>
-                </label>
-              </div>
-
-              <div className="flex flex-col justify-start gap-2 w-full">
-                <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                  Grade
-                  <span className="text-delete">*</span>
-                </h1>
-
-                <label className="w-full">
-                  <select
-                    className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                    required
-                    name="grade"
-                  value={etablissementInfo.grade}
-                  onChange={handleEtablissementInfoChange}
-                  >
-                    <option value="" disabled selected>
-                      Grade
-                    </option>
-                    <option value="MA">Maitre assistant(e)</option>
-                    <option value="Assistant">Assistant(e)</option>
-                    <option value="Resident">Resident(e)</option>
-                  </select>
-                </label>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3 (Empty for now, to be added) */}
-        {step === 3 && (
-          <div className="flex flex-col gap-[30px]">
-            {medicaments.map((medicament, index) => (
-              <div key={medicament.id}>
-                {/* Medication Header */}
-                <div className="flex justify-between gap-8 items-center">
-                  <h1 className="font-poppins font-semibold text-[20px] text-green">
-                    Medicament {index + 1}
+          {/* Step 2 (Empty for now, to be added) */}
+          {step === 2 && (
+            <div className="flex flex-col gap-[30px]">
+              {/* first line */}
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Nom de l’établissement
                   </h1>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteMedicament(medicament.id)}
-                    className="text-delete bg-transparent border-none cursor-pointer hover:underline"
-                  >
-                    Supprimer
-                  </button>
+
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      placeholder="Nom de l’établissement"
+                      pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
+                      name="etablissement"
+                      value={etablissementInfo.etablissement}
+                      onChange={handleEtablissementInfoChange}
+                    />
+                  </label>
                 </div>
-                <div className="flex-1 border-t-[0.5px] border-[#E0E1E2] mb-4"></div>
 
-                {/* Medication Form */}
-                <div className="flex flex-col gap-[30px]">
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    {/* First Line */}
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        DCI
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <input
-                        className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                        type="text"
-                        placeholder="DCI"
-                        required
-                        name="dci"
-                        value={medicament.dci}
-                        onChange={(e) => handleMedicamentChange(medicament.id, 'dci', e.target.value)}
-                      />
-                    </div>
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Nom du médecin traitant
+                  </h1>
 
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Indication thérapeutique
-                      </h1>
-                      <input
-                        className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                        type="text"
-                        placeholder="Indication thérapeutique"
-                        name="indication"
-                        value={medicament.indication}
-                        onChange={(e) => handleMedicamentChange(medicament.id, 'indication', e.target.value)}
-                      />
-                    </div>
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      placeholder="Nom du médecin traitant"
+                      pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
+                      name="medicin"
+                      value={etablissementInfo.medicin}
+                      onChange={handleEtablissementInfoChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* second line */}
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Spécialité
+                  </h1>
+
+                  <label className="w-full">
+                    <select
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      name="specialite"
+                      value={etablissementInfo.specialite}
+                      onChange={handleEtablissementInfoChange}
+                    >
+                      <option value="" disabled selected>
+                        Spécialité
+                      </option>
+                      <option value="generaliste">Médecin généraliste</option>
+                      <option value="pediatre">Pédiatre</option>
+                      <option value="gynecologue">
+                        Gynécologue/Obstétricien
+                      </option>
+                      <option value="cardiologue">Cardiologue</option>
+                      <option value="dermatologue">Dermatologue</option>
+                      <option value="ophtalmologue">Ophtalmologue</option>
+                      <option value="orl">
+                        ORL (Oto-Rhino-Laryngologiste)
+                      </option>
+                      <option value="endocrinologue">Endocrinologue</option>
+                      <option value="orthopediste">Orthopédiste</option>
+                      <option value="gastro">Gastro-entérologue</option>
+                      <option value="psychiatre">Psychiatre</option>
+                      <option value="neurologue">Neurologue</option>
+                      <option value="pneumologue">Pneumologue</option>
+                      <option value="urologue">Urologue</option>
+                      <option value="rhumatologue">Rhumatologue</option>
+                      <option value="hematologue">Hématologue</option>
+                      <option value="oncologue">Oncologue</option>
+                      <option value="nephrologue">Néphrologue</option>
+                      <option value="chirurgien">Chirurgien</option>
+                      <option value="allergologue">Allergologue</option>
+                      <option value="medecin_sport">Médecin du sport</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Grade
+                    <span className="text-delete">*</span>
+                  </h1>
+
+                  <label className="w-full">
+                    <select
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      required
+                      name="grade"
+                      value={etablissementInfo.grade}
+                      onChange={handleEtablissementInfoChange}
+                    >
+                      <option value="" disabled selected>
+                        Grade
+                      </option>
+                      <option value="MA">Maitre assistant(e)</option>
+                      <option value="Assistant">Assistant(e)</option>
+                      <option value="Resident">Resident(e)</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3 (Empty for now, to be added) */}
+          {step === 3 && (
+            <div className="flex flex-col gap-[30px]">
+              {medicaments.map((medicament, index) => (
+                <div key={medicament.id}>
+                  {/* Medication Header */}
+                  <div className="flex justify-between gap-8 items-center">
+                    <h1 className="font-poppins font-semibold text-[20px] text-green">
+                      Medicament {index + 1}
+                    </h1>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteMedicament(medicament.id)}
+                      className="text-delete bg-transparent border-none cursor-pointer hover:underline"
+                    >
+                      Supprimer
+                    </button>
                   </div>
+                  <div className="flex-1 border-t-[0.5px] border-[#E0E1E2] mb-4"></div>
 
-                  {/* second line */}
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Dosage initial(mg)
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <label className="w-full">
+                  {/* Medication Form */}
+                  <div className="flex flex-col gap-[30px]">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* First Line */}
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          DCI
+                          <span className="text-delete">*</span>
+                        </h1>
                         <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="number"
-                          placeholder="Dosage initial"
+                          className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                          type="text"
+                          placeholder="DCI"
                           required
-                          name="dosageInitial"
-                          value={medicament.dosageInitial}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'dosageInitial', e.target.value)}
+                          name="dci"
+                          value={medicament.dci}
+                          onChange={(e) =>
+                            handleMedicamentChange(
+                              medicament.id,
+                              "dci",
+                              e.target.value
+                            )
+                          }
                         />
-                      </label>
-                    </div>
+                      </div>
 
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Dosage adapté(mg)
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <label className="w-full">
-                        <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="number"
-                          placeholder="Dosage adapté"
-                          required
-                          name="dosageAdapte"
-                          value={medicament.dosageAdapte}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'dosageAdapte', e.target.value)}
-                        />
-                      </label>
-                    </div>
-                  </div>
-                  {/* third line */}
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Posologie, mode d’emploi (par jour)
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <label className="w-full">
-                        <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="number"
-                          placeholder="Posologie, mode d’emploi"
-                          required
-                          name="modeEmploi"
-                          value={medicament.modeEmploi}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'modeEmploi', e.target.value)}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Voie d’administration
-                      </h1>
-
-                      <label className="w-full">
-                        <select className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                         name="voieAdministration"
-                         value={medicament.voieAdministration}
-                         onChange={(e) => handleMedicamentChange(medicament.id, 'voieAdministration', e.target.value)}>
-                          <option value="" disabled selected>
-                            Voie d’administration
-                          </option>
-                          <option value="Orale">Orale</option>
-                        </select>
-                      </label>
-                    </div>
-                  </div>
-                  {/* fourth line */}
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        QSP (nombre de jours)
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <label className="w-full">
-                        <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="number"
-                          placeholder="QSP"
-                          required
-                          name="qsp"
-                          value={medicament.qsp}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'qsp', e.target.value)}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Excipient à effet notoire
-                      </h1>
-                      <label className="w-full">
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Indication thérapeutique
+                        </h1>
                         <input
                           className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
                           type="text"
-                          placeholder="Excipient à effet notoire"
-                          name="excipient"
-                          value={medicament.excipient}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'excipient', e.target.value)}
+                          placeholder="Indication thérapeutique"
+                          name="indication"
+                          value={medicament.indication}
+                          onChange={(e) =>
+                            handleMedicamentChange(
+                              medicament.id,
+                              "indication",
+                              e.target.value
+                            )
+                          }
                         />
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* fidth line */}
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Date de préparation
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <label className="w-full">
-                        <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="date"
-                          placeholder="Date de préparation"
-                          required
-                          name="preparationDate"
-                          value={medicament.preparationDate}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'preparationDate', e.target.value)}
-                        />
-                      </label>
+                      </div>
                     </div>
 
-                    <div className="flex flex-col justify-start gap-2 w-full">
-                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                        Date de péremption
-                        <span className="text-delete">*</span>
-                      </h1>
-                      <label className="w-full">
-                        <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="date"
-                          placeholder="Date de péremption"
-                          required
-                          name="peremptionDate"
-                          value={medicament.peremptionDate}
-                          onChange={(e) => handleMedicamentChange(medicament.id, 'peremptionDate', e.target.value)}
-                        />
-                      </label>
+                    {/* second line */}
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Dosage initial(mg)
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="number"
+                            placeholder="Dosage initial"
+                            required
+                            name="dosageInitial"
+                            value={medicament.dosageInitial}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "dosageInitial",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Dosage adapté(mg)
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="number"
+                            placeholder="Dosage adapté"
+                            required
+                            name="dosageAdapte"
+                            value={medicament.dosageAdapte}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "dosageAdapte",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    {/* third line */}
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Posologie, mode d’emploi (par jour)
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="number"
+                            placeholder="Posologie, mode d’emploi"
+                            required
+                            name="modeEmploi"
+                            value={medicament.modeEmploi}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "modeEmploi",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Voie d’administration
+                        </h1>
+
+                        <label className="w-full">
+                          <select
+                            className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            name="voieAdministration"
+                            value={medicament.voieAdministration}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "voieAdministration",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="" disabled selected>
+                              Voie d’administration
+                            </option>
+                            <option value="Orale">Orale</option>
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+                    {/* fourth line */}
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          QSP (nombre de jours)
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="number"
+                            placeholder="QSP"
+                            required
+                            name="qsp"
+                            value={medicament.qsp}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "qsp",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Excipient à effet notoire
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="text"
+                            placeholder="Excipient à effet notoire"
+                            name="excipient"
+                            value={medicament.excipient}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "excipient",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* fidth line */}
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Date de préparation
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="date"
+                            placeholder="Date de préparation"
+                            required
+                            name="preparationDate"
+                            value={medicament.preparationDate}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "preparationDate",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Date de péremption
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="date"
+                            placeholder="Date de péremption"
+                            required
+                            name="peremptionDate"
+                            value={medicament.peremptionDate}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "peremptionDate",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
+                  {/* Add more lines for additional fields */}
                 </div>
-                {/* Add more lines for additional fields */}
-              </div>
-            ))}
+              ))}
 
-            {/* Add Button */}
-            <button
-              type="button"
-              onClick={handleAddMedicament}
-              className="bg-green text-white px-4 py-2 rounded-lg hover:bg-green-dark"
-            >
-              Ajouter une une préparation
-            </button>
-          </div>
-        )}
-      </div>
+              {/* Add Button */}
+              <button
+                type="button"
+                onClick={handleAddMedicament}
+                className="bg-green text-white px-4 py-2 rounded-lg hover:bg-green-dark"
+              >
+                Ajouter une une préparation
+              </button>
+            </div>
+          )}
+        </div>
 
-      {/* Buttons */}
-      <div
-        className="flex justify-between items-center h-[12%] border-b w-full rounded-b-[10px] bg-white px-[35px] py-[40px] z-10"
-        style={{ boxShadow: "0px 4px 10px 4px rgba(29, 28, 28, 0.10)" }}
-      >
-        {/* Conditionally render the "Retour" button */}
-        {step > 1 && (
-          <button
-            className="bg-none text-PrimaryBlack/70 hover:text-PrimaryBlack rounded-[10px] font-poppins font-medium text-[16px]"
-            onClick={previousStep}
-          >
-            Retour
-          </button>
-        )}
-
-        {/* Change button text based on the step */}
-        <button
-          className={`${
-            step === 1 ? "ml-auto" : ""
-          } bg-green py-4 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80`}
-          onClick={nextStep}
+        {/* Buttons */}
+        <div
+          className="flex justify-between items-center h-[12%] border-b w-full rounded-b-[10px] bg-white px-[35px] py-[40px] z-10"
+          style={{ boxShadow: "0px 4px 10px 4px rgba(29, 28, 28, 0.10)" }}
         >
-          {step === 3 ? "Enregistrer" : "Suivant"}
-        </button>
+          {/* Conditionally render the "Retour" button */}
+          {step > 1 && (
+            <button
+              className="bg-none text-PrimaryBlack/70 hover:text-PrimaryBlack rounded-[10px] font-poppins font-medium text-[16px]"
+              onClick={previousStep}
+            >
+              Retour
+            </button>
+          )}
+
+          {/* Change button text based on the step */}
+          <button
+            className={`${
+              step === 1 ? "ml-auto" : ""
+            } bg-green py-4 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80`}
+            onClick={nextStep}
+          >
+            {step === 3 ? "Enregistrer" : "Suivant"}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 
 export default AddPatient;
-

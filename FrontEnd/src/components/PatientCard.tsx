@@ -39,7 +39,7 @@ const PatientCard: React.FC<UserCardProps> = ({
     setIsDropdownOpen(false);
   };
 
-  // Conditionally render the dropdown based on user role
+  
   const canAccessDropdown = userRole === "admin" || userRole === "pharmacist";
 
   return (

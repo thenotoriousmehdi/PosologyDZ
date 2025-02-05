@@ -38,7 +38,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   compriméEcrasé,
   statut,
 }) => {
-  const [currentStatut, setCurrentStatut] = useState<Statut>(statut);
+  const [currentStatut, setCurrentStatut] = useState<Statut>(statut as Statut);
 
   const handleStatutChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -55,12 +55,11 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     }
 
     try {
-      const response = await axios.patch(
+      await axios.patch(
         `http://localhost:3000/medicine-preparations/${id}/statut`,
         { statut: newStatut }
       );
 
-      // If the update is successful, update the state
       setCurrentStatut(newStatut);
       alert("Statut mis à jour avec succès !");
     } catch (error) {
