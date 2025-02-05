@@ -92,7 +92,9 @@ export const addPreparationToPatient = async (req, res) => {
       peremptionDate: new Date(prep.peremptionDate),
       statut: "A_faire",
       nombreGellules: Number(prep.qsp * prep.modeEmploi),
-      compriméEcrasé: Number((prep.dosageAdapte * prep.qsp * prep.modeEmploi) / prep.dosageInitial),
+      compriméEcrasé : parseFloat(((prep.dosageAdapte * prep.qsp * prep.modeEmploi) / prep.dosageInitial).toFixed(2)),
+
+
     }));
 
     const newPreparations = await prisma.medicinePreparation.createMany({

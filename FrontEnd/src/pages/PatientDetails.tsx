@@ -324,7 +324,7 @@ const PatientDetails = () => {
                         <span className="font-bold font-poppins text-PrimaryBlack/80">
                           Comprimés à Écraser:
                         </span>{" "}
-                        {prep.compriméEcrasé}
+                        {(prep.compriméEcrasé).toFixed(2)}
                       </p>
                     </div>
 

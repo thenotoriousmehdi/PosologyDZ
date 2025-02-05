@@ -64,7 +64,7 @@ model MedicinePreparation {
   peremptionDate   DateTime  
   statut           Statut
   nombreGellules   Int      
-  compriméEcrasé   Int       
+  compriméEcrasé   Float       
   created_at       DateTime  @default(now()) 
   updated_at       DateTime  @updatedAt       
 
