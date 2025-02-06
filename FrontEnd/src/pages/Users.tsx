@@ -72,7 +72,7 @@ const Users: React.FC = () => {
           />
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex flex-wrap gap-4 justify-between">
           <div className="flex items-center border border-green/30 focus:border-green/100 focus:outline-none rounded-[10px] px-4 py-5 bg-white w-[400px]">
             <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
             <input
@@ -84,13 +84,13 @@ const Users: React.FC = () => {
             />
           </div>
 
-          <button className="bg-green py-5 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" 
+          <button className="bg-green py-5 px-4 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" 
           onClick={handleOpenPopup}>
             Ajouter un utilisateur
           </button>
         </div>
 
-        <div className="flex-grow overflow-y-auto mb-2">
+        <div className="flex-grow overflow-y-auto mb-28 xl:mb-2">
           <div className="flex flex-col gap-[20px]">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user: User) => (

@@ -101,8 +101,8 @@ const Preparations: React.FC = () => {
           />
         </div>
 
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-wrap justify-between gap-4 items-center">
+          <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center border border-green/30 focus:border-green/100 focus:outline-none rounded-[10px] px-4 py-5 bg-white w-[400px]">
               <FiSearch style={{ color: "#0F5012", fontSize: "25px" }} />
               <input
@@ -125,6 +125,7 @@ const Preparations: React.FC = () => {
                 <option value="Termine">Terminé</option>
               </select>
             </div>
+
 
             <button className="bg-green py-5 px-6 xl:px-5 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80" 
           onClick={handleOpenPopup}>
@@ -153,9 +154,13 @@ const Preparations: React.FC = () => {
               </span>
             </div>
           </div>
+
+
+
+
         </div>
 
-        <div className="flex-grow overflow-y-auto mb-2">
+        <div className="flex-grow overflow-y-auto mb-28 xl:mb-2">
           <div className="flex flex-col gap-[20px]">
             {filteredPreparations.length > 0 ? (
               filteredPreparations.map((prep: Preparation) => (

@@ -88,6 +88,42 @@ const Sidebar = () => {
 
         {/* Divider */}
       </div>
+      {/* Sidebar for mobile screens */}
+      <div className="fixed bottom-0 left-0 right-0 xl:hidden">
+        <div className="bg-green rounded-[15px] mx-auto my-6 shadow-lg max-w-[400px]">
+          <div className="flex justify-around py-5">
+            {menuItems.map((item) => (
+              <Link
+                to={item.path}
+                key={item.name}
+                onClick={() => setActiveSection(item.name)}
+                className={`flex flex-col items-center ${
+                  activeSection === item.name ? "text-white" : "text-white"
+                }`}
+              >
+                <span
+                  className={`flex items-center justify-center w-10 h-10 rounded-[10px] mb-1 ${
+                    activeSection === item.name
+                      ? "bg-white text-PrimaryBlack"
+                      : ""
+                  }`}
+                >
+                  {item.icon}
+                </span>   
+              </Link>
+            ))}
+            {/* Added Logout Button for Mobile */}
+            <button
+              onClick={handleLogout}
+              className="flex flex-col items-center text-white"
+            >
+              <span className="flex items-center justify-center w-10 h-10 rounded-[10px] mb-1">
+                <FiLogOut />
+              </span>
+            </button>
+          </div>
+        </div>
+      </div> 
     </>
   );
 };
