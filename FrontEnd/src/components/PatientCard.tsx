@@ -19,7 +19,7 @@ const PatientCard: React.FC<UserCardProps> = ({
   age,
   onDelete,
 }) => {
-  const userRole = localStorage.getItem("userRole");  // Get user role from localStorage
+  const userRole = localStorage.getItem("userRole"); 
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
@@ -74,14 +74,12 @@ const PatientCard: React.FC<UserCardProps> = ({
           </div>
         </div>
 
-        {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0">
           <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
           onClick={() => navigate(`/patients/${id}`)} >
             <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
 
-          {/* Conditionally render this part based on user role */}
           {canAccessDropdown && (
             <div className="relative">
               <div
