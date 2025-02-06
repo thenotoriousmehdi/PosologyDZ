@@ -139,3 +139,72 @@ export const deleteMedicinePreparation = async (req, res) => {
     res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
+
+
+export const updateMedicinePreparation = async (req, res) => {
+  const { id } = req.params;
+  const {
+    dci,
+    indication,
+    dosageInitial,
+    dosageAdapte,
+    modeEmploi,
+    voieAdministration,
+    qsp,
+    excipient,
+    preparationDate,
+    peremptionDate,
+    statut,
+  } = req.body;
+
+  try {
+    // Ensure the ID is valid
+    const preparationId = parseInt(id, 10);
+    if (isNaN(preparationId)) {
+      return res.status(400).json({ message: "Invalid preparation ID" });
+    }
+
+    // Check if the preparation exists
+    const existingPreparation = await prisma.medicinePreparation.findUnique({
+      where: { id: preparationId },
+    });
+
+    if (!existingPreparation) {
+      return res.status(404).json({ message: "Preparation not found" });
+    }
+
+    // Validate statut values
+    const validStatuts = ["A_faire", "En_Cours", "Termine"];
+    if (statut && !validStatuts.includes(statut)) {
+      return res.status(400).json({ message: "Invalid statut value" });
+    }
+
+  
+    const updatedPreparation = await prisma.medicinePreparation.update({
+      where: { id: preparationId },
+      data: {
+        dci,
+        indication,
+        dosageInitial: dosageInitial ? Number(dosageInitial) : undefined,
+        dosageAdapte: dosageAdapte ? Number(dosageAdapte) : undefined,
+        modeEmploi: modeEmploi ? Number(modeEmploi) : undefined,
+        voieAdministration,
+        qsp: qsp ? Number(qsp) : undefined,
+        excipient,
+        preparationDate: preparationDate ? new Date(preparationDate) : undefined,
+        peremptionDate: peremptionDate ? new Date(peremptionDate) : undefined,
+        statut,
+        nombreGellules: qsp && modeEmploi ? Number(qsp * modeEmploi) : undefined,
+        compriméEcrasé:
+          dosageAdapte && qsp && modeEmploi && dosageInitial
+            ? parseFloat(((dosageAdapte * qsp * modeEmploi) / dosageInitial).toFixed(2))
+            : undefined,
+      },
+    });
+
+    res.status(200).json({ message: "Preparation updated successfully", updatedPreparation });
+  } catch (error) {
+    console.error("Error updating medicine preparation:", error);
+    res.status(500).json({ message: "Error updating preparation", error: error.message });
+  }
+};

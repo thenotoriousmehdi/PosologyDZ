@@ -31,7 +31,7 @@ const AddUser: React.FC<PopupProps> = ({
     phoneNumber: '',
   });
 
-  // Populate form with initial user data if editing
+
   useEffect(() => {
     if (initialUser) {
       setPersonalInfo({
