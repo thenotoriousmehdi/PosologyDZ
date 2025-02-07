@@ -5,7 +5,6 @@ import { PrismaClient } from '@prisma/client';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Ensure JWT_SECRET is available
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET environment variable is not set');
 }
@@ -16,7 +15,7 @@ export const protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     
-    // Log sanitized auth info for debugging
+   
     console.log('Auth Check:', {
       path: req.path,
       hasAuthHeader: !!authHeader,
@@ -39,12 +38,11 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    // Verify and decode token
+
     const decoded = jwt.verify(token, JWT_SECRET, {
       algorithms: ['HS256']
     });
 
-    // Validate token payload
     if (!decoded.userId || !decoded.email) {
       return res.status(401).json({
         error: 'Invalid token',
@@ -52,7 +50,7 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    // Verify user still exists and is active
+    
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
       select: {
@@ -60,7 +58,7 @@ export const protect = async (req, res, next) => {
         email: true,
         role: true,
         isActive: true
-        // Add other needed fields, but exclude sensitive data
+      
       }
     });
 
@@ -71,7 +69,7 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    // Attach verified user data to request
+    
     req.user = user;
     
     next();
@@ -98,7 +96,7 @@ export const protect = async (req, res, next) => {
   }
 };
 
-// Role-based middleware
+
 export const requireRole = (roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -119,7 +117,7 @@ export const requireRole = (roles) => {
   };
 };
 
-// Protected route example
+
 router.get('/preparations', 
   protect, 
   requireRole(['ADMIN', 'STAFF']), 

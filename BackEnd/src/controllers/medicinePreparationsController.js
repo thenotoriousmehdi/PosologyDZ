@@ -158,13 +158,13 @@ export const updateMedicinePreparation = async (req, res) => {
   } = req.body;
 
   try {
-    // Ensure the ID is valid
+    
     const preparationId = parseInt(id, 10);
     if (isNaN(preparationId)) {
       return res.status(400).json({ message: "Invalid preparation ID" });
     }
 
-    // Check if the preparation exists
+   
     const existingPreparation = await prisma.medicinePreparation.findUnique({
       where: { id: preparationId },
     });
@@ -173,7 +173,7 @@ export const updateMedicinePreparation = async (req, res) => {
       return res.status(404).json({ message: "Preparation not found" });
     }
 
-    // Validate statut values
+   
     const validStatuts = ["A_faire", "En_Cours", "Termine"];
     if (statut && !validStatuts.includes(statut)) {
       return res.status(400).json({ message: "Invalid statut value" });
