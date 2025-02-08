@@ -11,6 +11,7 @@ import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
 import AddPreparation from "../components/AddPreparation";
 import { MdDelete } from "react-icons/md";
+import { RiEdit2Fill } from "react-icons/ri";
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -145,7 +146,12 @@ const PatientDetails = () => {
           <h1 className="text-2xl text-PrimaryBlack font-bold ">
             Informations personnelles
           </h1>
-          <div className="flex flex-col gap-2 bg-white border-2 border-green-50  rounded-lg p-6">
+
+
+
+          <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
+
+          <div className=" flex flex-col gap-3">
             <p>
               <strong className="font-bold font-poppins text-PrimaryBlack/80">
                 Nom:
@@ -207,6 +213,21 @@ const PatientDetails = () => {
               </strong>{" "}
               {patient.grade}
             </p>
+
+</div>
+
+            <button
+                      
+                        className="hover:scale-110 transition-transform"
+                        aria-label="Modifier les infos personnelles"
+                      >
+                        <RiEdit2Fill 
+                          style={{ color: "#0F5012", fontSize: "20px" }}
+                        />
+                      </button>
+
+
+
           </div>
         </div>
 
@@ -328,16 +349,28 @@ const PatientDetails = () => {
                       </p>
                     </div>
 
-                    <div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="hover:scale-110 transition-transform"
+                        aria-label="Modifier la preparation"
+                      >
+                        <RiEdit2Fill 
+                          style={{ color: "#0F5012", fontSize: "20px" }}
+                        />
+                      </button>
+
+
+                  
                       <button
                         onClick={() => handleDeletePreparation(prep.id)}
                         className="hover:scale-110 transition-transform"
                         aria-label="Supprimer la préparation"
                       >
                         <MdDelete
-                          style={{ color: "#eb3734", fontSize: "20px" }}
+                          style={{ color: "#FF3A3A", fontSize: "20px" }}
                         />
                       </button>
+
                     </div>
                   </div>
                 </SwiperSlide>
