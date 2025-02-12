@@ -51,13 +51,13 @@ const AddPreparation: React.FC<PopupProps> = ({
 
   const [medicaments, setMedicaments] = useState<Medicament[]>([initialMedicament]);
 
-  // Initialize form with existing preparation data if available
+
   useEffect(() => {
     if (existingPreparation?.medicinePreparations) {
       setMedicaments(
         existingPreparation.medicinePreparations.map(prep => ({
           ...prep,
-          id: prep.id || Date.now() // Ensure each preparation has an id
+          id: prep.id || Date.now()
         }))
       );
     }

@@ -4,7 +4,7 @@ import axios from "axios";
 interface PopupProps {
   isOpen: boolean;
   onClose: () => void;
-  onPatientAdded?: (patient: unknown) => void; // Optional callback for successful patient addition
+  onPatientAdded?: (patient: unknown) => void; 
 }
 
 interface Medicament {

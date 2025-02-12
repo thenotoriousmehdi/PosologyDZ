@@ -12,6 +12,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import AddPreparation from "../components/AddPreparation";
 import { MdDelete } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
+import EditPatient from "../components/EditPatient";
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -50,9 +51,14 @@ const PatientDetails = () => {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const handleOpenPopup = () => setIsOpen(true);
-  const handleClosePopup = () => setIsOpen(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isAddPrepOpen, setIsAddPrepOpen] = useState(false);
+  
+  const handleOpenEditPopup = () => setIsEditOpen(true);
+  const handleCloseEditPopup = () => setIsEditOpen(false);
+  
+  const handleOpenAddPrepPopup = () => setIsAddPrepOpen(true);
+  const handleCloseAddPrepPopup = () => setIsAddPrepOpen(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -113,13 +119,8 @@ const PatientDetails = () => {
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
-      {isOpen && (
-        <AddPreparation
-          patientId={patient.id}
-          isOpen={isOpen}
-          onClose={handleClosePopup}
-        />
-      )}
+      {isEditOpen && <EditPatient patientId={patient.id} isOpen={isEditOpen} onClose={handleCloseEditPopup} />}
+      {isAddPrepOpen && <AddPreparation patientId={patient.id} isOpen={isAddPrepOpen} onClose={handleCloseAddPrepPopup} />}
       <div className="z-10">
         <Sidebar />
       </div>
@@ -220,6 +221,7 @@ const PatientDetails = () => {
                       
                         className="hover:scale-110 transition-transform"
                         aria-label="Modifier les infos personnelles"
+                        onClick={handleOpenEditPopup}
                       >
                         <RiEdit2Fill 
                           style={{ color: "#0F5012", fontSize: "20px" }}
@@ -239,7 +241,7 @@ const PatientDetails = () => {
 
             <button
               className="bg-green py-4 px-4 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80"
-              onClick={handleOpenPopup}
+              onClick={handleOpenAddPrepPopup}
             >
               Ajouter
             </button>

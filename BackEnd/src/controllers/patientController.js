@@ -158,4 +158,58 @@ export const deletePatient = async (req, res) => {
   }
 };
 
+export const updatePatient = async (req, res) => {
+  const patientId = parseInt(req.params.id);
+
+  try {
+    // Check if the patient exists
+    const existingPatient = await prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    if (!existingPatient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    // Extract fields from request body (excluding medicinePreparations)
+    const {
+      name,
+      age,
+      gender,
+      weight,
+      phoneNumber,
+      grade,
+      antecedents = null,
+      etablissement = null,
+      medicin = null,
+      specialite = null,
+    } = req.body;
+
+    // Update the patient (excluding medicinePreparations)
+    const updatedPatient = await prisma.patient.update({
+      where: { id: patientId },
+      data: {
+        name,
+        age: Number(age),
+        gender,
+        weight: Number(weight),
+        phoneNumber,
+        antecedents,
+        etablissement,
+        medicin,
+        specialite,
+        grade,
+      },
+    });
+
+    res.status(200).json({ message: "Patient updated successfully", updatedPatient });
+  } catch (error) {
+    console.error("Error updating patient:", error);
+    res.status(500).json({
+      error: "Internal server error",
+      details: error.message,
+    });
+  }
+};
+
 
