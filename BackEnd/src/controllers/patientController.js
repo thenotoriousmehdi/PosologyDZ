@@ -171,7 +171,7 @@ export const updatePatient = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    // Extract fields from request body (excluding medicinePreparations)
+    // Extract fields from request body
     const {
       name,
       age,
@@ -179,26 +179,26 @@ export const updatePatient = async (req, res) => {
       weight,
       phoneNumber,
       grade,
-      antecedents = null,
-      etablissement = null,
-      medicin = null,
-      specialite = null,
+      antecedents,
+      etablissement,
+      medicin,
+      specialite,
     } = req.body;
 
-    // Update the patient (excluding medicinePreparations)
+    // Update the patient
     const updatedPatient = await prisma.patient.update({
       where: { id: patientId },
       data: {
-        name,
-        age: Number(age),
-        gender,
-        weight: Number(weight),
-        phoneNumber,
-        antecedents,
-        etablissement,
-        medicin,
-        specialite,
-        grade,
+        name: name ?? existingPatient.name,
+        age: age !== undefined ? Number(age) : existingPatient.age,
+        gender: gender ?? existingPatient.gender,
+        weight: weight !== undefined ? Number(weight) : existingPatient.weight,
+        phoneNumber: phoneNumber ?? existingPatient.phoneNumber,
+        grade: grade ?? existingPatient.grade,
+        antecedents: antecedents ?? existingPatient.antecedents,
+        etablissement: etablissement ?? existingPatient.etablissement,
+        medicin: medicin ?? existingPatient.medicin,
+        specialite: specialite ?? existingPatient.specialite,
       },
     });
 
@@ -211,5 +211,3 @@ export const updatePatient = async (req, res) => {
     });
   }
 };
-
-
