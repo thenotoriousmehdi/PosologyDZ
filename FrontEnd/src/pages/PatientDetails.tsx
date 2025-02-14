@@ -61,8 +61,6 @@ interface Patient {
   medicinePreparations: MedicinePreparation[];
 }
 
-
-
 const PatientDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -81,10 +79,15 @@ const PatientDetails: React.FC = () => {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/patients/${id}`);
+        const response = await axios.get(
+          `http://localhost:3000/patients/${id}`
+        );
         setPatient(response.data);
       } catch (err: any) {
-        setError(err.response?.data?.message || "Erreur lors de la récupération du patient.");
+        setError(
+          err.response?.data?.message ||
+            "Erreur lors de la récupération du patient."
+        );
       } finally {
         setLoading(false);
       }
@@ -94,10 +97,15 @@ const PatientDetails: React.FC = () => {
   }, [id]);
 
   const handleDeletePreparation = async (prepId: number) => {
-    if (!window.confirm("Êtes-vous sûr de vouloir supprimer cette préparation ?")) return;
+    if (
+      !window.confirm("Êtes-vous sûr de vouloir supprimer cette préparation ?")
+    )
+      return;
 
     try {
-      await axios.delete(`http://localhost:3000/medicine-preparations/${prepId}`);
+      await axios.delete(
+        `http://localhost:3000/medicine-preparations/${prepId}`
+      );
 
       setPatient((prevPatient) =>
         prevPatient
@@ -109,6 +117,7 @@ const PatientDetails: React.FC = () => {
             }
           : null
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       alert("Erreur lors de la suppression de la préparation.");
     }
@@ -118,60 +127,151 @@ const PatientDetails: React.FC = () => {
   if (error) return <p>Error: {error}</p>;
   if (!patient) return <p>Aucun patient trouvé</p>;
 
-
   const handleDownloadPDF = (preparation: MedicinePreparation) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight(); 
+    const bottomMargin = 10; 
     const addInlinePair = (
-      leftText: string, 
-      leftValue: string, 
-      rightText: string, 
-      rightValue: string, 
+      leftText: string,
+      leftValue: string,
+      rightText: string,
+      rightValue: string,
       y: number,
       leftStart: number = 10,
       rightStart: number = pageWidth / 2
     ) => {
-      doc.text(`${leftText}: ${leftValue}`, leftStart, y);
-      doc.text(`${rightText}: ${rightValue}`, rightStart, y);
-    };
-    const title1 = "Ministère de la Santé";
-    const title2 = "Centre Hospitalo-Universitaire de Béni Messous";
-    const title3 = "Laboratoire de Biologie Médicale Mère-Enfant";
-    const titleFontSize = 16;
-    doc.setFontSize(titleFontSize);
-    const textWidth1 = doc.getTextWidth(title1);
-    const textWidth2 = doc.getTextWidth(title2);
-    const textWidth3 = doc.getTextWidth(title3);
-    const xTitle1 = (pageWidth - textWidth1) / 2;
-    const xTitle2 = (pageWidth - textWidth2) / 2;
-    const xTitle3 = (pageWidth - textWidth3) / 2;
-    doc.text(title1, xTitle1, 20);
-    doc.text(title2, xTitle2, 30);
-    doc.text(title3, xTitle3, 40);
-    doc.setFontSize(14);
-    doc.setFont("poppins", "bold");
-    doc.text("Informations du prescrepteur", 10, 60);
-    doc.setFontSize(12);
-    doc.setFont("poppins", "normal");
-    addInlinePair("Nom et prénom:", patient.medicin || 'N/A', "Specialite:", patient.specialite || 'N/A', 70);
-    addInlinePair("Lieu d’exercice:", patient.etablissement || 'N/A', "Service:", patient.service || 'N/A', 80);
-    doc.setFontSize(14);
-    doc.setFont("poppins", "bold");
-    doc.text("Produit Concerné", 10, 90);
-    addInlinePair("DCI:", preparation.dci || 'N/A', "Nom commercial:", preparation.nomCom || 'N/A', 100);
-    addInlinePair("Voie d’administration:", preparation.voieAdministration || 'N/A', " Form galinique:", 'Gellule', 110);
-    addInlinePair("Dosage initial:", String(preparation.dosageInitial) || 'N/A', "Numéro de lot:", preparation.numLot || 'N/A' , 120);
+      doc.setFont("poppins", "bold");
+      doc.text(leftText + ":", leftStart, y);
+      doc.setFont("poppins", "normal");
+      doc.text(leftValue, leftStart + doc.getTextWidth(leftText + ": ") + 2, y);
 
+      doc.setFont("poppins", "bold");
+      doc.text(rightText + ":", rightStart, y);
+      doc.setFont("poppins", "normal");
+      doc.text(
+        rightValue,
+        rightStart + doc.getTextWidth(rightText + ": ") + 2,
+        y
+      );
+    };
+
+    const title1 =
+      "Centre Hospitalo-Universitaire de Béni Messous, ISSAD HASSANI";
+    const title2 =
+      "Laboratoire Central de Biologie Médicale Mère et Enfant";
+    const title3 = "P' F. Djennane";
+    doc.setFontSize(14);
+  
+    doc.text(title1, (pageWidth - doc.getTextWidth(title1)) / 2, 20);
+    doc.text(title2, (pageWidth - doc.getTextWidth(title2)) / 2, 30);
+    doc.text(title3, (pageWidth - doc.getTextWidth(title3)) / 2, 40);
+
+    doc.setFontSize(8);
+    const title4 = ("Fiche inspirée de l'ANSM et adaptée au préparatoire du Laboratoire Central de Biologie Médicale Mère et Enfant. CHU Béni Messous");
+    doc.text(title4, (pageWidth - doc.getTextWidth(title4)) / 2, pageHeight - bottomMargin);
+
+    doc.setFontSize(14);
+    doc.setFont("poppins", "bold");
+    doc.text("Informations du prescripteur", 10, 60);
+    doc.setFontSize(11);
+    doc.setFont("poppins", "normal");
+
+    addInlinePair(
+      "Nom et prénom",
+      patient.medicin || "N/A",
+      "Spécialité",
+      patient.specialite || "N/A",
+      70
+    );
+    addInlinePair(
+      "Lieu d’exercice",
+      patient.etablissement || "N/A",
+      "Service",
+      patient.service || "N/A",
+      80
+    );
+
+    doc.setFontSize(14);
+    doc.setFont("poppins", "bold");
+    doc.text("Produit Concerné", 10, 100);
+    doc.setFontSize(11);
+    doc.setFont("poppins", "normal");
+
+    addInlinePair(
+      "DCI",
+      preparation.dci || "N/A",
+      "Nom commercial",
+      preparation.nomCom || "N/A",
+      110
+    );
+
+    addInlinePair(
+      "Voie d’administration",
+      preparation.voieAdministration || "N/A",
+      "Forme galénique",
+      "Gellule",
+      120
+    );
+
+    addInlinePair(
+      "Dosage initial",
+      String(preparation.dosageInitial) || "N/A",
+      "Numéro de lot",
+      preparation.numLot || "N/A",
+      130
+    );
+
+    doc.setFontSize(14);
+    doc.setFont("poppins", "bold");
+    doc.text("Description de l’erreur médicamenteuse", 10, 150);
+    doc.setFontSize(11);
+    doc.setFont("poppins", "normal");
+
+    doc.setFont("poppins", "bold");
+    doc.text("Description de l'erreur:", 10, 160);
+    doc.setFont("poppins", "normal");
+    doc.text(preparation.erreurDescription || "N/A", 50, 160);
+    doc.setFont("poppins", "bold");
+    doc.text("Actions entreprises:", 10, 170);
+    doc.setFont("poppins", "normal");
+    doc.text(preparation.actionsEntreprises || "N/A", 50, 170);
+    // addInlinePair("Description de l'erreur", preparation.erreurDescription || "N/A", " " , " " , 140);
+    // addInlinePair("Actions entreprises", preparation.actionsEntreprises || "N/A", " " , " " , 150);
+    // doc.text("Description de l'erreur", preparation.erreurDescription || "N/A" , 10, 140);
+    // doc.text("Actions entreprises", preparation.actionsEntreprises || "N/A", 10, 150);
+
+    addInlinePair(
+      "Conséquences pour le patient",
+      preparation.consequences || "N/A",
+      "Cause de l’erreur",
+      preparation.erreurCause || "N/A",
+      180
+    );
+    addInlinePair(
+      "Nature de l’erreur",
+      preparation.erreurNature || "N/A",
+      "Évitabilité de l’erreur",
+      preparation.erreurEvitabilite || "N/A",
+      190
+    );
+
+    doc.setFont("poppins", "bold");
+    doc.text("Date de survenue:", 10, 200);
+    doc.setFont("poppins", "normal");
+    doc.text(
+      preparation.dateSurvenue 
+        ? new Date(preparation.dateSurvenue).toLocaleDateString("fr-FR") 
+        : "N/A", 
+      40, 
+      200
+    );
     
-    //doc.text(`Nom et prenom: ${patient.medicin}`, 10, 70);
-    // doc.text(`DCI: ${preparation.dci}`, 10, 80);
-    // doc.text(`Nombre de Gélules: ${preparation.nombreGellules}`, 10, 90);
-    // doc.text(`Excepient à effet notoire: ${preparation.excipient}`, 10, 100);
-    // doc.text(`Dosage Adapté: ${preparation.dosageAdapte} mg`, 10, 110);
-    // doc.text(`Posologie, mode d'emploi: ${preparation.modeEmploi} par jour`, 10, 120);
+    doc.text(`Signature du notificateur`, 140, 230);
+
+   
     doc.save(`Preparation_${id}.pdf`);
   };
-
 
   return (
     <div className="flex w-full bg-white bg-no-repeat bg-cover pr-[35px] gap-[35px] h-screen">
@@ -431,42 +531,42 @@ const PatientDetails: React.FC = () => {
                         </span>{" "}
                         {prep.compriméEcrasé.toFixed(2)}
                       </p>
-
-                     
                     </div>
-<div className="flex flex-col justify-end items-end gap-4">
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="hover:scale-110 transition-transform"
-                        aria-label="Modifier la preparation"
-                      >
-                        <RiEdit2Fill
-                          style={{ color: "#0F5012", fontSize: "20px" }}
-                        />
-                      </button>
+                    <div className="flex flex-col justify-end items-end gap-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          className="hover:scale-110 transition-transform"
+                          aria-label="Modifier la preparation"
+                        >
+                          <RiEdit2Fill
+                            style={{ color: "#0F5012", fontSize: "20px" }}
+                          />
+                        </button>
 
-                      <button
-                        onClick={() => handleDeletePreparation(prep.id)}
-                        className="hover:scale-110 transition-transform"
-                        aria-label="Supprimer la préparation"
-                      >
-                        <MdDelete
-                          style={{ color: "#FF3A3A", fontSize: "20px" }}
-                        />
-                      </button>
-                    </div>
+                        <button
+                          onClick={() => handleDeletePreparation(prep.id)}
+                          className="hover:scale-110 transition-transform"
+                          aria-label="Supprimer la préparation"
+                        >
+                          <MdDelete
+                            style={{ color: "#FF3A3A", fontSize: "20px" }}
+                          />
+                        </button>
+                      </div>
 
-                    {prep.erreur && (
-                        <div className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer"
-                        onClick={handleDownloadPDF}>
-                          <TbFileDownload className="text-white text-[20px] group-hover:text-green" /> 
-                          <p className="text-white hover:text-green"> Fiche d'EM</p>
+                      {prep.erreur && (
+                        <div
+                          className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer"
+                          onClick={() => handleDownloadPDF(prep)}
+                        >
+                          <TbFileDownload className="text-white text-[20px] group-hover:text-green" />
+                          <p className="text-white hover:text-green">
+                            {" "}
+                            Fiche d'EM
+                          </p>
                         </div>
                       )}
-
-  </div>
-
-                    
+                    </div>
                   </div>
                 </SwiperSlide>
               ))}

@@ -631,7 +631,7 @@ const AddPreparation: React.FC<PopupProps> = ({
                                 Consequences
                               </option>
                               <option value="Aucune">Aucune</option>
-                              <option value="Event">
+                              <option value="Événement indésirable">
                                 Événement indésirable
                               </option>
                               <option value="Autre">Autre</option>
@@ -662,14 +662,14 @@ const AddPreparation: React.FC<PopupProps> = ({
                                 Cause
                               </option>
                               <option value="Omission">Omission</option>
-                              <option value="DefautI">
+                              <option value="Défaut d'informations">
                                 Défaut d'informations
                               </option>
-                              <option value="DefautP">
+                              <option value="Défaut de présentation">
                                 Défaut de présentation
                               </option>
-                              <option value="Manque">
-                                Manque de lisibilité{" "}
+                              <option value="Manque de lisibilité">
+                                Manque de lisibilité
                               </option>
                               <option value="Autre">Autre</option>
                             </select>
@@ -701,11 +701,11 @@ const AddPreparation: React.FC<PopupProps> = ({
                               <option value="" disabled selected>
                                 Nature
                               </option>
-                              <option value="RisqueE">Risque d'erreur</option>
-                              <option value="ErreurP">
+                              <option value="Risque d'erreur">Risque d'erreur</option>
+                              <option value="Erreur potentielle">
                                 Erreur potentielle
                               </option>
-                              <option value="ErreurA">Erreur averée</option>
+                              <option value="Erreur averée">Erreur averée</option>
                             </select>
                           </label>
                         </div>
