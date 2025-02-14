@@ -36,8 +36,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
   const [progress, setProgress] = useState(33);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [checked, setChecked] = useState(false);
-  // State for form fields
+  
   const [personalInfo, setPersonalInfo] = useState({
     name: "",
     age: "",

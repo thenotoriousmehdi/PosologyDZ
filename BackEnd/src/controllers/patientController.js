@@ -182,7 +182,6 @@ export const updatePatient = async (req, res) => {
   const patientId = parseInt(req.params.id);
 
   try {
-    // Check if the patient exists
     const existingPatient = await prisma.patient.findUnique({
       where: { id: patientId },
     });
@@ -191,7 +190,6 @@ export const updatePatient = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    // Extract fields from request body
     const {
       name,
       age,
@@ -201,6 +199,7 @@ export const updatePatient = async (req, res) => {
       grade,
       antecedents,
       etablissement,
+      service,
       medicin,
       specialite,
     } = req.body;
@@ -217,6 +216,7 @@ export const updatePatient = async (req, res) => {
         grade: grade ?? existingPatient.grade,
         antecedents: antecedents ?? existingPatient.antecedents,
         etablissement: etablissement ?? existingPatient.etablissement,
+        service: service ?? existingPatient.service,
         medicin: medicin ?? existingPatient.medicin,
         specialite: specialite ?? existingPatient.specialite,
       },

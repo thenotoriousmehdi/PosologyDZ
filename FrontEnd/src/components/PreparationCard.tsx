@@ -8,10 +8,25 @@ interface PreparationCardProps {
   dci: string;
   dosageInitial: number;
   dosageAdapte: number;
-  excipient: string;
-  modeEmploi: string;
   nombreGellules: number;
   compriméEcrasé: number;
+  nomCom: string;
+  indication?: string;
+  modeEmploi: number;
+  voieAdministration?: string;
+  qsp: number;
+  excipient?: string;
+  preparationDate: string;
+  peremptionDate: string;
+  erreur: boolean;
+  numLot?: string;
+  erreurDescription?: string;
+  actionsEntreprises?: string;
+  consequences?: string;
+  erreurCause?: string;
+  erreurNature?: string;
+  erreurEvitabilite?: string;
+  dateSurvenue?: string | null;
   statut: "A_faire" | "En_Cours" | "Termine";
 }
 
@@ -32,10 +47,25 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   dci,
   dosageInitial,
   dosageAdapte,
-  excipient,
-  modeEmploi,
   nombreGellules,
   compriméEcrasé,
+  nomCom,
+  indication,
+  modeEmploi,
+  voieAdministration,
+  qsp,
+  excipient,
+  preparationDate,
+  peremptionDate,
+  erreur,
+  numLot,
+  erreurDescription,
+  actionsEntreprises,
+  consequences,
+  erreurCause,
+  erreurNature,
+  erreurEvitabilite,
+  dateSurvenue,
   statut,
 }) => {
   const [currentStatut, setCurrentStatut] = useState<Statut>(statut as Statut);
@@ -69,7 +99,6 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   };
 
   const handleDownloadPDF = () => {
-  
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const title1 = "Ministère de la Santé";

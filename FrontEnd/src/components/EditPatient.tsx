@@ -21,6 +21,7 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
     etablissement: "",
     medicin: "",
     specialite: "",
+    service: "",
     grade: "",
   });
 
@@ -45,6 +46,7 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
           });
           setEtablissementInfo({
             etablissement: data.etablissement || "",
+            service: data.service,
             medicin: data.medicin || "",
             specialite: data.specialite || "",
             grade: data.grade || "",
@@ -69,13 +71,14 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
   };
 
   const handleEtablissementInfoChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setEtablissementInfo({
       ...etablissementInfo,
       [e.target.name]: e.target.value,
     });
   };
+  
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -286,24 +289,77 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
                     />
                   </label>
                 </div>
-
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                    Nom du médecin traitant
+                    Service
+                    <span className="text-delete">*</span>
                   </h1>
 
                   <label className="w-full">
-                    <input
+                    <select
                       className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                      type="text"
-                      placeholder="Nom du médecin traitant"
-                      pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
-                      name="medicin"
-                      value={etablissementInfo.medicin}
+                      name="service"
+                      required
+                      value={etablissementInfo.service}
                       onChange={handleEtablissementInfoChange}
-                    />
+                    >
+                      <option value="" disabled selected>
+                        Service
+                      </option>
+                      <option value="urgences">Urgences</option>
+                      <option value="medecine_interne">Médecine interne</option>
+                      <option value="pediatrie">Pédiatrie</option>
+                      <option value="gynecologie_obstetrique">
+                        Gynécologie et obstétrique
+                      </option>
+                      <option value="cardiologie">Cardiologie</option>
+                      <option value="neurologie">Neurologie</option>
+                      <option value="pneumologie">Pneumologie</option>
+                      <option value="gastro_enterologie">
+                        Gastro-entérologie
+                      </option>
+                      <option value="dermatologie">Dermatologie</option>
+                      <option value="psychiatrie">Psychiatrie</option>
+                      <option value="chirurgie_generale">
+                        Chirurgie générale
+                      </option>
+                      <option value="chirurgie_orthopedique">
+                        Chirurgie orthopédique
+                      </option>
+                      <option value="chirurgie_cardiaque">
+                        Chirurgie cardiaque
+                      </option>
+                      <option value="chirurgie_plastique">
+                        Chirurgie plastique et reconstructrice
+                      </option>
+                      <option value="chirurgie_pediatrique">
+                        Chirurgie pédiatrique
+                      </option>
+                      <option value="radiologie_imagerie">
+                        Radiologie et imagerie médicale
+                      </option>
+                      <option value="laboratoire_analyses">
+                        Laboratoire d'analyses
+                      </option>
+                      <option value="pharmacie_hospitaliere">
+                        Pharmacie hospitalière
+                      </option>
+                      <option value="rehabilitation_physiotherapie">
+                        Réhabilitation et physiothérapie
+                      </option>
+                      <option value="oncologie">Oncologie</option>
+                      <option value="nephrologie">Néphrologie</option>
+                      <option value="urologie">Urologie</option>
+                      <option value="orl">ORL (Oto-Rhino-Laryngologie)</option>
+                      <option value="ophtalmologie">Ophtalmologie</option>
+                      <option value="anesthesie_reanimation">
+                        Anesthésie-réanimation
+                      </option>
+                    </select>
                   </label>
                 </div>
+                
+                
               </div>
 
               {/* Fifth Line */}
@@ -352,6 +408,28 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
                   </label>
                 </div>
 
+                <div className="flex flex-col justify-start gap-2 w-full">
+                  <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                    Nom du médecin traitant
+                  </h1>
+
+                  <label className="w-full">
+                    <input
+                      className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                      type="text"
+                      placeholder="Nom du médecin traitant"
+                      pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
+                      name="medicin"
+                      value={etablissementInfo.medicin}
+                      onChange={handleEtablissementInfoChange}
+                    />
+                  </label>
+                </div>
+              </div>
+
+
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                     Grade

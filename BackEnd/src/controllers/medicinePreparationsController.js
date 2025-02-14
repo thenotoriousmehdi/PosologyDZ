@@ -63,8 +63,8 @@ export const getPreparationCounts = async (req, res) => {
 
 export const addPreparationToPatient = async (req, res) => {
   try {
-    const { patientId } = req.params; 
-    const { medicinePreparations } = req.body; 
+    const { patientId } = req.params;
+    const { medicinePreparations } = req.body;
 
     if (!patientId || isNaN(patientId)) {
       return res.status(400).json({ error: "Invalid or missing patient ID" });
@@ -74,43 +74,47 @@ export const addPreparationToPatient = async (req, res) => {
       return res.status(400).json({ error: "medicinePreparations must be a non-empty array" });
     }
 
-    
     const patient_id = parseInt(patientId, 10);
 
-   
     const preparationsData = medicinePreparations.map((prep) => ({
-      patient_id, 
+      patient_id,
       dci: prep.dci,
+      nomCom: prep.nomCom,
       indication: prep.indication || null,
       dosageInitial: Number(prep.dosageInitial),
-      dosageAdapte: Number(prep.dosageAdapte),
-      modeEmploi: Number(prep.modeEmploi || 0),
+      dosageAdapte: prep.dosageAdapte ? Number(prep.dosageAdapte) : null,
+      modeEmploi: Number(prep.modeEmploi),
       voieAdministration: prep.voieAdministration || null,
-      qsp: Number(prep.qsp || 0),
+      qsp: Number(prep.qsp),
       excipient: prep.excipient || null,
       preparationDate: new Date(prep.preparationDate),
       peremptionDate: new Date(prep.peremptionDate),
+      erreur: prep.erreur || false,
+      numLot: prep.numLot || null,
+      erreurDescription: prep.erreurDescription || null,
+      actionsEntreprises: prep.actionsEntreprises || null,
+      consequences: prep.consequences || null,
+      erreurCause: prep.erreurCause || null,
+      erreurNature: prep.erreurNature || null,
+      erreurEvitabilite: prep.erreurEvitabilite || null,
+      dateSurvenue: prep.dateSurvenue ? new Date(prep.dateSurvenue) : null,
       statut: "A_faire",
       nombreGellules: Number(prep.qsp * prep.modeEmploi),
-      compriméEcrasé : parseFloat(((prep.dosageAdapte * prep.qsp * prep.modeEmploi) / prep.dosageInitial).toFixed(2)),
-
-
+      compriméEcrasé:
+        prep.dosageAdapte && prep.qsp && prep.modeEmploi && prep.dosageInitial
+          ? parseFloat(((prep.dosageAdapte * prep.qsp * prep.modeEmploi) / prep.dosageInitial).toFixed(2))
+          : null,
     }));
 
-    const newPreparations = await prisma.medicinePreparation.createMany({
-      data: preparationsData,
-    });
+    await prisma.medicinePreparation.createMany({ data: preparationsData });
 
-    res.status(201).json({ message: "Preparations added successfully", newPreparations });
+    res.status(201).json({ message: "Preparations added successfully" });
   } catch (error) {
     console.error("Error adding preparation to patient:", error);
-    res.status(500).json({
-      error: "Could not add preparation to patient",
-      details: error.message,
-      fullError: error,
-    });
+    res.status(500).json({ error: "Could not add preparation to patient", details: error.message });
   }
 };
+
 
 
 export const deleteMedicinePreparation = async (req, res) => {
@@ -143,62 +147,30 @@ export const deleteMedicinePreparation = async (req, res) => {
 
 export const updateMedicinePreparation = async (req, res) => {
   const { id } = req.params;
-  const {
-    dci,
-    indication,
-    dosageInitial,
-    dosageAdapte,
-    modeEmploi,
-    voieAdministration,
-    qsp,
-    excipient,
-    preparationDate,
-    peremptionDate,
-    statut,
-  } = req.body;
+  const data = req.body;
 
   try {
-    
     const preparationId = parseInt(id, 10);
     if (isNaN(preparationId)) {
       return res.status(400).json({ message: "Invalid preparation ID" });
     }
 
-   
-    const existingPreparation = await prisma.medicinePreparation.findUnique({
-      where: { id: preparationId },
-    });
-
+    const existingPreparation = await prisma.medicinePreparation.findUnique({ where: { id: preparationId } });
     if (!existingPreparation) {
       return res.status(404).json({ message: "Preparation not found" });
     }
 
-   
-    const validStatuts = ["A_faire", "En_Cours", "Termine"];
-    if (statut && !validStatuts.includes(statut)) {
-      return res.status(400).json({ message: "Invalid statut value" });
-    }
-
-  
     const updatedPreparation = await prisma.medicinePreparation.update({
       where: { id: preparationId },
       data: {
-        dci,
-        indication,
-        dosageInitial: dosageInitial ? Number(dosageInitial) : undefined,
-        dosageAdapte: dosageAdapte ? Number(dosageAdapte) : undefined,
-        modeEmploi: modeEmploi ? Number(modeEmploi) : undefined,
-        voieAdministration,
-        qsp: qsp ? Number(qsp) : undefined,
-        excipient,
-        preparationDate: preparationDate ? new Date(preparationDate) : undefined,
-        peremptionDate: peremptionDate ? new Date(peremptionDate) : undefined,
-        statut,
-        nombreGellules: qsp && modeEmploi ? Number(qsp * modeEmploi) : undefined,
-        compriméEcrasé:
-          dosageAdapte && qsp && modeEmploi && dosageInitial
-            ? parseFloat(((dosageAdapte * qsp * modeEmploi) / dosageInitial).toFixed(2))
-            : undefined,
+        ...data,
+        dosageInitial: data.dosageInitial ? Number(data.dosageInitial) : undefined,
+        dosageAdapte: data.dosageAdapte ? Number(data.dosageAdapte) : undefined,
+        modeEmploi: data.modeEmploi ? Number(data.modeEmploi) : undefined,
+        qsp: data.qsp ? Number(data.qsp) : undefined,
+        preparationDate: data.preparationDate ? new Date(data.preparationDate) : undefined,
+        peremptionDate: data.peremptionDate ? new Date(data.peremptionDate) : undefined,
+        dateSurvenue: data.dateSurvenue ? new Date(data.dateSurvenue) : undefined,
       },
     });
 
