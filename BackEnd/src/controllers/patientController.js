@@ -15,13 +15,21 @@ export const createPatient = async (req, res) => {
       etablissement = null,
       medicin = null,
       specialite = null,
+      service,
       medicinePreparations = [],
     } = req.body;
 
     if (!name || !age || !gender || !weight || !phoneNumber || !grade) {
       return res.status(400).json({
         error: "Missing required fields",
-        requiredFields: ["name", "age", "gender", "weight", "phoneNumber", "grade"],
+        requiredFields: [
+          "name",
+          "age",
+          "gender",
+          "weight",
+          "phoneNumber",
+          "grade",
+        ],
       });
     }
 
@@ -36,16 +44,19 @@ export const createPatient = async (req, res) => {
         etablissement,
         medicin,
         specialite,
+        service,
         grade,
         medicinePreparations: {
           create: medicinePreparations.map((prep) => {
             const nombreGellules = Number(prep.qsp * prep.modeEmploi);
             const compriméEcrasé = Number(
-              (prep.dosageAdapte * prep.qsp * prep.modeEmploi) / prep.dosageInitial
+              (prep.dosageAdapte * prep.qsp * prep.modeEmploi) /
+                prep.dosageInitial
             );
 
             return {
               dci: prep.dci,
+              nomCom: prep.nomCom,
               indication: prep.indication || null,
               dosageInitial: Number(prep.dosageInitial),
               dosageAdapte: Number(prep.dosageAdapte),
@@ -55,6 +66,17 @@ export const createPatient = async (req, res) => {
               excipient: prep.excipient || null,
               preparationDate: new Date(prep.preparationDate),
               peremptionDate: new Date(prep.peremptionDate),
+              erreur: Boolean(prep.erreur),
+              numLot: prep.numLot || null,
+              erreurDescription: prep.erreurDescription || null,
+              actionsEntreprises: prep.actionsEntreprises || null,
+              consequences: prep.consequences || null,
+              erreurCause: prep.erreurCause || null,
+              erreurNature: prep.erreurNature || null,
+              erreurEvitabilite: prep.erreurEvitabilite || null,
+              dateSurvenue: prep.dateSurvenue
+                ? new Date(prep.dateSurvenue)
+                : null,
               statut: "A_faire",
               nombreGellules,
               compriméEcrasé,
@@ -85,7 +107,7 @@ export const getPatient = async (req, res) => {
     const patient = await prisma.patient.findUnique({
       where: { id: patientId },
       include: {
-        medicinePreparations: true, 
+        medicinePreparations: true,
       },
     });
 
@@ -100,40 +122,38 @@ export const getPatient = async (req, res) => {
   }
 };
 
-
 export const getPatients = async (req, res) => {
   try {
-    console.log('Attempting to fetch patients...');
-    
+    console.log("Attempting to fetch patients...");
+
     const patientCount = await prisma.patient.count();
     console.log(`Total patient count: ${patientCount}`);
-    
+
     const patients = await prisma.patient.findMany({
       include: {
-        medicinePreparations: true 
-      }
+        medicinePreparations: true,
+      },
     });
-    
-    console.log('Patients fetched:', JSON.stringify(patients, null, 2));
-    
-    return patients.length > 0 
+
+    console.log("Patients fetched:", JSON.stringify(patients, null, 2));
+
+    return patients.length > 0
       ? res.json(patients)
       : res.status(404).json({ error: "No patients found" });
   } catch (error) {
-    console.error('Detailed Patients fetch error:', {
+    console.error("Detailed Patients fetch error:", {
       message: error.message,
       stack: error.stack,
-      name: error.name
+      name: error.name,
     });
-    
-    res.status(500).json({ 
-      error: "Internal server error", 
+
+    res.status(500).json({
+      error: "Internal server error",
       details: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
   }
-  };
-
+};
 
 export const deletePatient = async (req, res) => {
   const patientId = parseInt(req.params.id);
@@ -202,7 +222,9 @@ export const updatePatient = async (req, res) => {
       },
     });
 
-    res.status(200).json({ message: "Patient updated successfully", updatedPatient });
+    res
+      .status(200)
+      .json({ message: "Patient updated successfully", updatedPatient });
   } catch (error) {
     console.error("Error updating patient:", error);
     res.status(500).json({
