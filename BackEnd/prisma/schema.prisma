@@ -40,11 +40,11 @@ model Patient {
   phoneNumber String   
   antecedents String?   
   etablissement String? 
+  service String 
   medicin     String?  
   specialite  String?  
   grade       Grade   
   medicinePreparations MedicinePreparation[]
-
   createdAt   DateTime @default(now())  
   updatedAt   DateTime @updatedAt      
 }
@@ -52,7 +52,8 @@ model Patient {
 model MedicinePreparation {
   id               Int       @id @default(autoincrement())
   patient_id       Int       
-  dci              String    
+  dci              String
+  nomCom           String    
   indication       String?  
   dosageInitial    Float    
   dosageAdapte     Float?   
@@ -61,13 +62,21 @@ model MedicinePreparation {
   qsp              Int      
   excipient        String?   
   preparationDate  DateTime  
-  peremptionDate   DateTime  
+  peremptionDate   DateTime
+  erreur             Boolean   @default(false)
+  numLot        String? 
+  erreurDescription     String?
+  actionsEntreprises   String?
+  consequences   String?
+  erreurCause   String?
+  erreurNature   String?
+  erreurEvitabilite  String?
+  dateSurvenue  DateTime?
   statut           Statut
   nombreGellules   Int      
   compriméEcrasé   Float       
   created_at       DateTime  @default(now()) 
   updated_at       DateTime  @updatedAt       
-
   patient          Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
 }
 
