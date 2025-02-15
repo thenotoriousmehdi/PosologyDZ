@@ -70,22 +70,25 @@ const Preparations: React.FC = () => {
     setSelectedStatus(status);
     filterPreparations(searchQuery, status);
   };
-
+  
   const filterPreparations = (query: string, status: string) => {
     const lowerCaseQuery = query.toLowerCase();
-
+  
     const filtered = preparations.filter((prep) => {
       const matchesSearch = 
         prep.dci.toLowerCase().includes(lowerCaseQuery) || 
         prep.id.toString().includes(lowerCaseQuery); 
-
-      const matchesStatus = status ? prep.statut === status : true;
-      
+  
+      const matchesStatus = status 
+        ? (status === "EM" ? prep.erreur === true : prep.statut === status) 
+        : true;
+  
       return matchesSearch && matchesStatus;
     });
-
+  
     setFilteredPreparations(filtered);
-};
+  };
+  
 
 
 
@@ -131,6 +134,7 @@ const Preparations: React.FC = () => {
                 <option value="A_faire">A faire</option>
                 <option value="En_Cours">En cours</option>
                 <option value="Termine">Terminé</option>
+                <option value="EM">Erreur médicamenteuse</option>
               </select>
             </div>
 
