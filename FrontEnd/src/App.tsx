@@ -8,6 +8,7 @@ import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import Forbidden from "./pages/Forbidden";
 import Users from "./pages/Users";
 import NotFound from "./pages/NotFound";
+import PreparationDetails from "./pages/PreparationDetails";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           </Route>
           <Route path="/Preparations" element={<Preparations />} />
           <Route path="/patients/:id" element={<PatientDetails />} />
+          <Route path="/preparation/:id" element={<PreparationDetails />} />
           <Route path="/403" element={<Forbidden />} />
         </Route>
         <Route path="*" element={<NotFound />} />

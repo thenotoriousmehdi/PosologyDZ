@@ -180,3 +180,26 @@ export const updateMedicinePreparation = async (req, res) => {
     res.status(500).json({ message: "Error updating preparation", error: error.message });
   }
 };
+
+
+export const getMedicinePreparationById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const preparation = await prisma.medicinePreparation.findUnique({
+      where: { id: parseInt(id, 10) },
+      include: {
+        patient: true,
+      },
+    });
+
+    if (!preparation) {
+      return res.status(404).json({ message: "Medicine preparation not found" });
+    }
+
+    res.status(200).json(preparation);
+  } catch (error) {
+    console.error("Error fetching medicine preparation by ID:", error);
+    res.status(500).json({ message: "Error retrieving medicine preparation." });
+  }
+};

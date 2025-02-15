@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { TbFileDownload } from "react-icons/tb";
 import axios from "axios";
 import jsPDF from "jspdf";
-
+import { TbEyeFilled } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
 interface PreparationCardProps {
   id: string;
   dci: string;
@@ -39,7 +40,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   statut,
 }) => {
   const [currentStatut, setCurrentStatut] = useState<Statut>(statut as Statut);
-
+  const navigate = useNavigate();
   const handleStatutChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -134,6 +135,12 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
 
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0 justify-center items-center">
+
+        <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
+          onClick={() => navigate(`/preparation/${id}`)} >
+            <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
+          </div>
+
           <div
             className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 group cursor-pointer"
             onClick={handleDownloadPDF}
