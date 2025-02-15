@@ -45,7 +45,7 @@ const PatientCard: React.FC<UserCardProps> = ({
   return (
     <div className="relative">
       <div
-        className="flex flex-col lg:flex-row justify-between items-center p-[25px] w-full h-auto lg:h-[110px] rounded-[10px] border-[0.5px] border-green/30 bg-[#FEFEFE] hover:bg-green/10 gap-2 md:gap-10 xl:gap-16"
+        className="flex flex-col xl:flex-row justify-between items-center p-[25px] w-full h-auto xl:h-[110px] rounded-[10px] border-[0.5px] border-green/30 bg-[#FEFEFE] hover:bg-green/10 gap-2 md:gap-10 xl:gap-16"
         style={{ boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)" }}
       >
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 w-full">

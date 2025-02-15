@@ -14,6 +14,7 @@ interface Preparation {
   modeEmploi: string;
   dosageAdapte: number;
   nombreGellules: number;
+  erreur: boolean;
   compriméEcrasé: number;
   statut: "A_faire" | "En_Cours" | "Termine";
 }
@@ -181,6 +182,7 @@ const Preparations: React.FC = () => {
                   dosageAdapte={prep.dosageAdapte}
                   nombreGellules={prep.nombreGellules}
                   compriméEcrasé={prep.compriméEcrasé}
+                  erreur={prep.erreur}
                   statut={prep.statut}
                 />
               ))

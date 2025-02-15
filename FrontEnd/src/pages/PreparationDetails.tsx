@@ -89,23 +89,6 @@ const PreparationDetails: React.FC = () => {
     fetchPreparation();
   }, [id]);
 
-  const handleDeletePreparation = async (prepId: number) => {
-    if (
-      !window.confirm("Êtes-vous sûr de vouloir supprimer cette préparation ?")
-    )
-      return;
-
-    try {
-      await axios.delete(
-        `http://localhost:3000/medicine-preparations/${prepId}`
-      );
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      alert("Erreur lors de la suppression de la préparation.");
-    }
-  };
-
   if (loading) return <p>Recherche en cours...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!preparation) return <p>Aucune preparation trouvé</p>;
@@ -374,10 +357,15 @@ const PreparationDetails: React.FC = () => {
                 </span>{" "}
                 {preparation.compriméEcrasé.toFixed(2)}
               </p>
+
+              <p>
+                <span className="font-bold font-poppins text-PrimaryBlack/80">
+                  Erreur médicamenteuse?
+                </span>{" "}
+                {preparation.erreur ? "Oui" : "Non"}
+              </p>
             </div>
             <div className="flex flex-col justify-end items-end gap-4">
-             
-
               {preparation.erreur && (
                 <div
                   className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer"
@@ -389,19 +377,16 @@ const PreparationDetails: React.FC = () => {
               )}
             </div>
           </div>
-
-        
         </div>
-
 
         <div className="flex flex-col justify-start gap-4 mb-4">
           <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
             <div className=" flex flex-col gap-3">
-            <h1 className="font-bold text-2xl font-poppins text-PrimaryBlack">
-                 Patient
+              <h1 className="font-bold text-2xl font-poppins text-PrimaryBlack">
+                Patient
               </h1>
 
-            <p>
+              <p>
                 <span className="font-bold font-poppins text-PrimaryBlack/80">
                   ID
                 </span>{" "}
@@ -415,17 +400,14 @@ const PreparationDetails: React.FC = () => {
               </p>
               <p>
                 <span className="font-bold font-poppins text-PrimaryBlack/80">
-                Contact
+                  Contact
                 </span>{" "}
                 {preparation.patient?.phoneNumber || "N/A"}
               </p>
-              
             </div>
-            
           </div>
         </div>
       </div>
-      
     </div>
   );
 };

@@ -13,6 +13,7 @@ interface PreparationCardProps {
   modeEmploi: string;
   nombreGellules: number;
   compriméEcrasé: number;
+  erreur: boolean;
   statut: "A_faire" | "En_Cours" | "Termine";
 }
 
@@ -37,6 +38,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   modeEmploi,
   nombreGellules,
   compriméEcrasé,
+  erreur,
   statut,
 }) => {
   const [currentStatut, setCurrentStatut] = useState<Statut>(statut as Statut);
@@ -70,7 +72,6 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   };
 
   const handleDownloadPDF = () => {
-  
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const title1 = "Ministère de la Santé";
@@ -104,7 +105,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   return (
     <div className="relative">
       <div
-        className="flex flex-col lg:flex-row justify-between items-center p-[25px] w-full h-auto lg:h-[110px] rounded-[10px] border-[0.5px] border-green/30 bg-[#FEFEFE] hover:bg-green/10 gap-2 md:gap-10 xl:gap-16"
+        className="flex flex-col xl:flex-row justify-between items-center p-[25px] w-full h-auto xl:h-[110px] rounded-[10px] border-[0.5px] border-green/30 bg-[#FEFEFE] hover:bg-green/10 gap-2 md:gap-10 xl:gap-16"
         style={{ boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)" }}
       >
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6 w-full">
@@ -113,31 +114,39 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
               {dci}
             </h1>
           </div>
-
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
               {dosageInitial}mg -- {dosageAdapte}mg
             </h1>
           </div>
-
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
               {nombreGellules} gel/{compriméEcrasé} comp
             </h1>
           </div>
-
-          <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
+          <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[100px] flex items-center">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
               #{id}
             </h1>
+            
+            <div className="w-8 ml-10">
+              {erreur && <span className="text-delete">EM</span>}
+            </div>
           </div>
         </div>
 
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0 justify-center items-center">
+          {/* {erreur && (
+            <div className="bg-[#FAFAFA] border border-delete p-[12px] sm:p-[13px] rounded-[10px] hover:bg-delete/10 transition group">
+              <h1 className="text-delete">EM</h1>
+            </div>
+          )} */}
 
-        <div className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
-          onClick={() => navigate(`/preparation/${id}`)} >
+          <div
+            className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"
+            onClick={() => navigate(`/preparation/${id}`)}
+          >
             <TbEyeFilled style={{ color: "#0F5012", fontSize: "20px" }} />
           </div>
 
