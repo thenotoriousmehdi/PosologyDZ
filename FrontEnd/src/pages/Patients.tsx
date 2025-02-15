@@ -37,11 +37,15 @@ const Patients: React.FC = () => {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     const lowerCaseQuery = query.toLowerCase();
+
     const filtered = patients.filter((patient) =>
-      patient.name.toLowerCase().includes(lowerCaseQuery)
+      patient.name.toLowerCase().includes(lowerCaseQuery) ||
+      patient.id.toString().includes(lowerCaseQuery) 
     );
+
     setFilteredPatients(filtered);
-  };
+};
+
 
   const handleDelete = (id: string) => {
     axios

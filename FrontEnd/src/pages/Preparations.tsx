@@ -72,15 +72,22 @@ const Preparations: React.FC = () => {
 
   const filterPreparations = (query: string, status: string) => {
     const lowerCaseQuery = query.toLowerCase();
+
     const filtered = preparations.filter((prep) => {
-      const matchesSearch = prep.dci.toLowerCase().includes(lowerCaseQuery);
+      const matchesSearch = 
+        prep.dci.toLowerCase().includes(lowerCaseQuery) || 
+        prep.id.toString().includes(lowerCaseQuery); 
+
       const matchesStatus = status ? prep.statut === status : true;
+      
       return matchesSearch && matchesStatus;
     });
-    setFilteredPreparations(filtered);
-  };
 
-  // Function to get the count for each statut
+    setFilteredPreparations(filtered);
+};
+
+
+
   const getCountForStatus = (statut: string) => {
     const count = statusCounts.find((item) => item.statut === statut);
     return count ? count._count.statut : 0;

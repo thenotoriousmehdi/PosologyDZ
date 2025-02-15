@@ -5,11 +5,8 @@ import { FiArrowLeft } from "react-icons/fi";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
-import { Navigation, Pagination } from "swiper/modules";
-import AddPreparation from "../components/AddPreparation";
 import { MdDelete } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
-import EditPatient from "../components/EditPatient";
 import { TbFileDownload } from "react-icons/tb";
 //import axios from "axios";
 import jsPDF from "jspdf";
@@ -379,22 +376,7 @@ const PreparationDetails: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-col justify-end items-end gap-4">
-              <div className="flex items-center gap-2">
-                <button
-                  className="hover:scale-110 transition-transform"
-                  aria-label="Modifier la preparation"
-                >
-                  <RiEdit2Fill style={{ color: "#0F5012", fontSize: "20px" }} />
-                </button>
-
-                <button
-                  onClick={() => handleDeletePreparation(preparation.id)}
-                  className="hover:scale-110 transition-transform"
-                  aria-label="Supprimer la préparation"
-                >
-                  <MdDelete style={{ color: "#FF3A3A", fontSize: "20px" }} />
-                </button>
-              </div>
+             
 
               {preparation.erreur && (
                 <div
@@ -443,39 +425,7 @@ const PreparationDetails: React.FC = () => {
           </div>
         </div>
       </div>
-      <style>{`
-  .custom-swiper .swiper-button-next,
-  .custom-swiper .swiper-button-prev {
-    color: #16a34a;
-    background: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-  }
-
-  .custom-swiper .swiper-button-next:hover,
-  .custom-swiper .swiper-button-prev:hover {
-    color: #15803d;
-    transform: scale(1.1);
-  }
-
-  .custom-swiper .swiper-button-next::after,
-  .custom-swiper .swiper-button-prev::after {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-
-  .custom-swiper .swiper-pagination-bullet {
-    background: #d1fae5;
-    opacity: 1;
-  }
-
-  .custom-swiper .swiper-pagination-bullet-active {
-    background: #16a34a;
-  }
-`}</style>
+      
     </div>
   );
 };
