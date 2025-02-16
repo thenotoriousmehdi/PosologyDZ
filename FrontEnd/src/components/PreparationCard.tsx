@@ -137,11 +137,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
 
         {/* Action buttons */}
         <div className="mt-4 md:mt-0 flex gap-4 flex-shrink-0 justify-center items-center">
-          {/* {erreur && (
-            <div className="bg-[#FAFAFA] border border-delete p-[12px] sm:p-[13px] rounded-[10px] hover:bg-delete/10 transition group">
-              <h1 className="text-delete">EM</h1>
-            </div>
-          )} */}
+          
 
           <div
             className="bg-[#FAFAFA] border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 group"

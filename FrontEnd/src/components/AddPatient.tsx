@@ -1240,7 +1240,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
           className="flex justify-between items-center h-[12%] border-b w-full rounded-b-[10px] bg-white px-[35px] py-[40px] z-10"
           style={{ boxShadow: "0px 4px 10px 4px rgba(29, 28, 28, 0.10)" }}
         >
-          {/* Conditionally render the "Retour" button */}
+         
           {step > 1 && (
             <button
               className="bg-none text-PrimaryBlack/70 hover:text-PrimaryBlack rounded-[10px] font-poppins font-medium text-[16px]"
@@ -1250,7 +1250,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
             </button>
           )}
 
-          {/* Change button text based on the step */}
+  
           <button
             className={`${
               step === 1 ? "ml-auto" : ""

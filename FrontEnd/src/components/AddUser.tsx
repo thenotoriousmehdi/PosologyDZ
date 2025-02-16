@@ -231,12 +231,12 @@ const AddUser: React.FC<PopupProps> = ({
           </div>
         </div>
 
-        {/* Error */}
+       
         {formError && (
           <div className="text-delete text-center mb-4">{formError}</div>
         )}
 
-        {/* Submit Button */}
+       
         <div className="flex justify-end items-center h-[12%] border-b w-full rounded-b-[10px] bg-white px-[35px] py-[40px] z-10" style={{ boxShadow: "0px 4px 10px 4px rgba(29, 28, 28, 0.10)" }}>
           <button
             className="bg-green py-4 px-8 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80"
