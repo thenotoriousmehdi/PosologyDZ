@@ -52,7 +52,7 @@ export default function Login() {
     setError("");
   
     try {
-      const response = await api.post("http://localhost:3000/auth", {
+      const response = await api.post("/auth", {
         email,
         password,
       });
@@ -60,11 +60,8 @@ export default function Login() {
       const { accessToken, user } = response.data;
 
       if (accessToken) {
-        // Store the access token and role in localStorage
         localStorage.setItem("authToken", accessToken);
         localStorage.setItem("userRole", user.role);
-
-        // Redirect to the homepage or protected page
         navigate("/");
       } else {
         setError("No token received from server. Please try again.");

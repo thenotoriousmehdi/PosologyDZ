@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import PatientCard from "../components/PatientCard";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
 import AddPatient from "../components/AddPatient";
+import api from "../utils/axiosConfig";
 interface Patient {
   id: string;
   name: string;
@@ -23,8 +23,8 @@ const Patients: React.FC = () => {
   const userRole = localStorage.getItem("userRole");
   const canAddUser = userRole === "admin" || userRole === "pharmacist";
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/patients")
+    api
+      .get("/patients")
       .then((response) => {
         setPatients(response.data);
         setFilteredPatients(response.data);
@@ -48,8 +48,8 @@ const Patients: React.FC = () => {
 
 
   const handleDelete = (id: string) => {
-    axios
-      .delete(`http://localhost:3000/patients/${id}`)
+    api
+      .delete(`/patients/${id}`)
       .then(() => {
         setPatients((prevPatients) =>
           prevPatients.filter((patient) => patient.id !== id)

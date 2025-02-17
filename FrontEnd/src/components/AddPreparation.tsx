@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 
 interface PopupProps {
   isOpen: boolean;
@@ -157,7 +157,7 @@ const AddPreparation: React.FC<PopupProps> = ({
 
       if (existingPreparation) {
         // Update existing preparation
-        response = await axios.put(
+        response = await api.put(
           `http://localhost:3000/medicine-preparations/${patientId}/${existingPreparation.id}`,
           preparationData
         );
@@ -167,7 +167,7 @@ const AddPreparation: React.FC<PopupProps> = ({
         }
       } else {
         // Create new preparation
-        response = await axios.post(
+        response = await api.post(
           `http://localhost:3000/medicine-preparations/${patientId}`,
           preparationData
         );

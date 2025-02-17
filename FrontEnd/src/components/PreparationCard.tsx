@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { TbFileDownload } from "react-icons/tb";
-import axios from "axios";
 import jsPDF from "jspdf";
 import { TbEyeFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/axiosConfig";
 interface PreparationCardProps {
   id: string;
   dci: string;
@@ -58,8 +58,8 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     }
 
     try {
-      await axios.patch(
-        `http://localhost:3000/medicine-preparations/${id}/statut`,
+      await api.patch(
+        `/medicine-preparations/${id}/statut`,
         { statut: newStatut }
       );
 

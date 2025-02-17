@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 
 interface PopupProps {
   isOpen: boolean;
@@ -92,7 +92,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     }));
   };
 
-  // Handle input changes for establishment info
+  
   const handleEtablissementInfoChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -103,7 +103,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     }));
   };
 
-  // Handle medicament field changes
+  
   const handleMedicamentChange = (
     id: number,
     field: keyof Medicament,
@@ -114,7 +114,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     );
   };
 
-  // Function to add a new medicament
+ 
   const handleAddMedicament = () => {
     setMedicaments((prev) => [
       ...prev,
@@ -144,12 +144,12 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     ]);
   };
 
-  // Function to delete a specific medicament by ID
+ 
   const handleDeleteMedicament = (id: number) => {
     setMedicaments((prev) => prev.filter((medicament) => medicament.id !== id));
   };
 
-  // Validate form before submission
+
   const validateForm = () => {
     if (
       !personalInfo.name ||
@@ -164,13 +164,13 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
       return false;
     }
 
-    // Etablissement Validation (if second step is completed)
+   
     if (step >= 2 && !etablissementInfo.grade) {
       setFormError("Veuillez sélectionner un grade.");
       return false;
     }
 
-    // Medicaments Validation
+    
     if (step === 3) {
       const invalidMedicament = medicaments.find(
         (med) =>
@@ -193,13 +193,13 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     return true;
   };
 
-  // Submit form
+ 
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post("http://localhost:3000/patients", {
+      const response = await api.post("/patients", {
         ...personalInfo,
         ...etablissementInfo,
         age: Number(personalInfo.age),
@@ -231,7 +231,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
       alert("Patient ajouté avec succès!");
       onPatientAdded?.(response.data);
 
-      // Reset form and close
+      
       onClose();
     } catch (error) {
       console.error("Error adding patient:", error);
@@ -279,7 +279,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     );
   }
 
-  // Modify submit button to show loading state
+  
   <button
     className={`${
       step === 1 ? "ml-auto" : ""

@@ -16,7 +16,7 @@ import EditPatient from "../components/EditPatient";
 import { TbFileDownload } from "react-icons/tb";
 //import axios from "axios";
 import jsPDF from "jspdf";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -79,8 +79,8 @@ const PatientDetails: React.FC = () => {
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/patients/${id}`
+        const response = await api.get(
+          `/patients/${id}`
         );
         setPatient(response.data);
       } catch (err: any) {
@@ -103,8 +103,8 @@ const PatientDetails: React.FC = () => {
       return;
 
     try {
-      await axios.delete(
-        `http://localhost:3000/medicine-preparations/${prepId}`
+      await api.delete(
+        `/medicine-preparations/${prepId}`
       );
 
       setPatient((prevPatient) =>

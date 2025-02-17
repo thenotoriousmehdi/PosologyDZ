@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 
 interface PopupProps {
   isOpen: boolean;
@@ -53,7 +53,6 @@ const AddUser: React.FC<PopupProps> = ({
     }));
   };
 
-  // Validate form before submission
   const validateForm = () => {
     if (!personalInfo.name || !personalInfo.email || !personalInfo.role) {
       setFormError('Veuillez remplir tous les champs obligatoires dans les informations personnelles.');
@@ -69,27 +68,25 @@ const AddUser: React.FC<PopupProps> = ({
     return true;
   };
 
-  // Submit form
+ 
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
     try {
-      // Determine if it's an update or create operation
       const submitData = { 
         ...personalInfo,
-        // Only include password if it's not empty
         ...(personalInfo.password ? { password: personalInfo.password } : {})
       };
 
       let response;
       if (initialUser?.id) {
-        // Update existing user
-        response = await axios.put(`http://localhost:3000/users/${initialUser.id}`, submitData);
+
+        response = await api.put(`/users/${initialUser.id}`, submitData);
         alert('Utilisateur mis à jour avec succès!');
       } else {
-        // Create new user
-        response = await axios.post('http://localhost:3000/users', submitData);
+  
+        response = await api.post('/users', submitData);
         alert('Utilisateur ajouté avec succès!');
       }
 

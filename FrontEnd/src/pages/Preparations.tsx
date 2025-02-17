@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
 import PreparationCard from "../components/PreparationCard";
 import GuidePopUp from "../components/GuidePopUp";
+import api from "../utils/axiosConfig";
 
 interface Preparation {
   id: string;
@@ -39,8 +39,8 @@ const Preparations: React.FC = () => {
   const handleClosePopup = () => setIsOpen(false);
   useEffect(() => {
     // Fetch preparations
-    axios
-      .get("http://localhost:3000/medicine-preparations")
+    api
+      .get("/medicine-preparations")
       .then((response) => {
         setPreparations(response.data);
         setFilteredPreparations(response.data);
@@ -50,8 +50,8 @@ const Preparations: React.FC = () => {
       });
 
     // Fetch counts for each statut
-    axios
-      .get("http://localhost:3000/medicine-preparations/Count")
+    api
+      .get("/medicine-preparations/Count")
       .then((response) => {
         setStatusCounts(response.data);
       })

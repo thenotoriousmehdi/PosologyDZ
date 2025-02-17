@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 
 interface PopupProps {
   isOpen: boolean;
@@ -32,8 +32,8 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
   useEffect(() => {
     if (isOpen && patientId) {
       setLoading(true);
-      axios
-        .get(`http://localhost:3000/patients/${patientId}`)
+      api
+        .get(`/patients/${patientId}`)
         .then((response) => {
           const data = response.data;
           setPersonalInfo({
@@ -84,8 +84,8 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    axios
-      .put(`http://localhost:3000/patients/${patientId}`, {
+    api
+      .put(`/patients/${patientId}`, {
         ...personalInfo,
         ...etablissementInfo,
       })

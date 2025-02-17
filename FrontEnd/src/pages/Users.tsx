@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { FiSearch } from "react-icons/fi";
 import AddUser from "../components/AddUser";
 import UserCard from "../components/UserCard";
+import api from "../utils/axiosConfig";
 interface User {
   id: string;
   name: string;
@@ -25,8 +25,8 @@ const Users: React.FC = () => {
   const handleClosePopup = () => setIsOpen(false);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/users") 
+    api
+      .get("/users") 
       .then((response) => {
         setUsers(response.data); 
         setFilteredUsers(response.data); 
@@ -46,8 +46,8 @@ const Users: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    axios
-      .delete(`http://localhost:3000/users/${id}`) 
+    api
+      .delete(`/users/${id}`) 
       .then(() => {
         setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
         setFilteredUsers(prevUsers => prevUsers.filter(user => user.id !== id)); 

@@ -5,12 +5,9 @@ import { FiArrowLeft } from "react-icons/fi";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { useNavigate } from "react-router-dom";
-import { MdDelete } from "react-icons/md";
-import { RiEdit2Fill } from "react-icons/ri";
 import { TbFileDownload } from "react-icons/tb";
-//import axios from "axios";
 import jsPDF from "jspdf";
-import axios from "axios";
+import api from "../utils/axiosConfig";
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -71,8 +68,8 @@ const PreparationDetails: React.FC = () => {
   useEffect(() => {
     const fetchPreparation = async () => {
       try {
-        const response = await axios.get<MedicinePreparation>(
-          `http://localhost:3000/medicine-preparations/${id}`
+        const response = await api.get<MedicinePreparation>(
+          `/medicine-preparations/${id}`
         );
         setPreparation(response.data);
         setPatient(response.data.patient);
