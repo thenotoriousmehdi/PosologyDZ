@@ -28,7 +28,6 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch patient details when modal opens
   useEffect(() => {
     if (isOpen && patientId) {
       setLoading(true);
@@ -136,9 +135,7 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
         </div>
 
         <div className="flex flex-col gap-[35px] h-[76%] p-12 overflow-y-auto">
-          {/* {formError && (
-          <div className="text-delete text-center mb-4">{formError}</div>
-        )} */}
+       
 
           <div className="flex flex-col gap-[30px]">
             {/* Medication Form */}

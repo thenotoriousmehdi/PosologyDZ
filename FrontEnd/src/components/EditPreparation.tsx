@@ -37,7 +37,7 @@ interface Medicament {
   dateSurvenue?: string | null;
 }
 
-const AddPreparation: React.FC<PopupProps> = ({
+const EditPreparation: React.FC<PopupProps> = ({
   onClose,
   onPreparationAdded,
   onPreparationUpdated,
@@ -807,4 +807,4 @@ const AddPreparation: React.FC<PopupProps> = ({
   );
 };
 
-export default AddPreparation;
+export default EditPreparation;

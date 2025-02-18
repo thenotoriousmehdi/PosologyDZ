@@ -14,7 +14,8 @@ import { MdDelete } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
 import EditPatient from "../components/EditPatient";
 import { TbFileDownload } from "react-icons/tb";
-//import axios from "axios";
+
+
 import jsPDF from "jspdf";
 import api from "../utils/axiosConfig";
 interface MedicinePreparation {
@@ -63,70 +64,106 @@ interface Patient {
 
 const PatientDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isAddPrepOpen, setIsAddPrepOpen] = useState(false);
+    const [patient, setPatient] = useState<Patient | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isAddPrepOpen, setIsAddPrepOpen] = useState(false);
+    const [selectedPreparation, setSelectedPreparation] = useState<MedicinePreparation | null>(null); // Track selected preparation for modification
+  
 
   const handleOpenEditPopup = () => setIsEditOpen(true);
-  const handleCloseEditPopup = () => setIsEditOpen(false);
-
-  const handleOpenAddPrepPopup = () => setIsAddPrepOpen(true);
-  const handleCloseAddPrepPopup = () => setIsAddPrepOpen(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchPatient = async () => {
+    const handleCloseEditPopup = () => setIsEditOpen(false);
+  
+    const handleOpenAddPrepPopup = () => {
+      setSelectedPreparation(null); // Reset for create mode
+      setIsAddPrepOpen(true);
+    };
+  
+    const handleCloseAddPrepPopup = () => {
+      setSelectedPreparation(null); // Reset selected preparation
+      setIsAddPrepOpen(false);
+    };
+  
+    const handleOpenModifyPrepPopup = (preparation: MedicinePreparation) => {
+      setSelectedPreparation(preparation); // Set preparation for update mode
+      setIsAddPrepOpen(true);
+    };
+  
+    const navigate = useNavigate();
+    useEffect(() => {
+      const fetchPatient = async () => {
+        try {
+          const response = await api.get(`/patients/${id}`);
+          setPatient(response.data);
+        } catch (err: any) {
+          setError(
+            err.response?.data?.message ||
+              "Erreur lors de la récupération du patient."
+          );
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchPatient();
+    }, [id]);
+  
+    const handleDeletePreparation = async (prepId: number) => {
+      if (
+        !window.confirm("Êtes-vous sûr de vouloir supprimer cette préparation ?")
+      )
+        return;
+  
       try {
-        const response = await api.get(
-          `/patients/${id}`
+        await api.delete(`/medicine-preparations/${prepId}`);
+        setPatient((prevPatient) =>
+          prevPatient
+            ? {
+                ...prevPatient,
+                medicinePreparations: prevPatient.medicinePreparations.filter(
+                  (prep) => prep.id !== prepId
+                ),
+              }
+            : null
         );
-        setPatient(response.data);
-      } catch (err: any) {
-        setError(
-          err.response?.data?.message ||
-            "Erreur lors de la récupération du patient."
-        );
-      } finally {
-        setLoading(false);
+      } catch (error) {
+        alert("Erreur lors de la suppression de la préparation.");
       }
     };
-
-    fetchPatient();
-  }, [id]);
-
-  const handleDeletePreparation = async (prepId: number) => {
-    if (
-      !window.confirm("Êtes-vous sûr de vouloir supprimer cette préparation ?")
-    )
-      return;
-
-    try {
-      await api.delete(
-        `/medicine-preparations/${prepId}`
-      );
-
+  
+    const handlePreparationAdded = (newPreparation: any) => {
       setPatient((prevPatient) =>
         prevPatient
           ? {
               ...prevPatient,
-              medicinePreparations: prevPatient.medicinePreparations.filter(
-                (prep) => prep.id !== prepId
+              medicinePreparations: [
+                ...prevPatient.medicinePreparations,
+                newPreparation,
+              ],
+            }
+          : null
+      );
+    };
+  
+    const handlePreparationUpdated = (updatedPreparation: any) => {
+      setPatient((prevPatient) =>
+        prevPatient
+          ? {
+              ...prevPatient,
+              medicinePreparations: prevPatient.medicinePreparations.map((prep) =>
+                prep.id === updatedPreparation.id ? updatedPreparation : prep
               ),
             }
           : null
       );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      alert("Erreur lors de la suppression de la préparation.");
-    }
-  };
+    };
 
   if (loading) return <p>Recherche en cours...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!patient) return <p>Aucun patient trouvé</p>;
 
+  
   const handleDownloadPDF = (preparation: MedicinePreparation) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -236,11 +273,7 @@ const PatientDetails: React.FC = () => {
     doc.text("Actions entreprises:", 10, 170);
     doc.setFont("poppins", "normal");
     doc.text(preparation.actionsEntreprises || "N/A", 50, 170);
-    // addInlinePair("Description de l'erreur", preparation.erreurDescription || "N/A", " " , " " , 140);
-    // addInlinePair("Actions entreprises", preparation.actionsEntreprises || "N/A", " " , " " , 150);
-    // doc.text("Description de l'erreur", preparation.erreurDescription || "N/A" , 10, 140);
-    // doc.text("Actions entreprises", preparation.actionsEntreprises || "N/A", 10, 150);
-
+  
     addInlinePair(
       "Conséquences pour le patient",
       preparation.consequences || "N/A",
@@ -283,11 +316,21 @@ const PatientDetails: React.FC = () => {
         />
       )}
       {isAddPrepOpen && (
-        <AddPreparation
-          patientId={patient.id}
-          isOpen={isAddPrepOpen}
-          onClose={handleCloseAddPrepPopup}
-        />
+       <AddPreparation
+        patientId={patient.id}
+        isOpen={isAddPrepOpen}
+        onClose={handleCloseAddPrepPopup}
+        onPreparationAdded={handlePreparationAdded}
+        onPreparationUpdated={handlePreparationUpdated}
+        existingPreparation={
+          selectedPreparation
+            ? {
+                id: selectedPreparation.id,
+                medicinePreparations: [selectedPreparation],
+              }
+            : undefined
+        }
+      />
       )}
       <div className="z-10">
         <Sidebar />
@@ -534,14 +577,13 @@ const PatientDetails: React.FC = () => {
                     </div>
                     <div className="flex flex-col justify-end items-end gap-4">
                       <div className="flex items-center gap-2">
-                        <button
-                          className="hover:scale-110 transition-transform"
-                          aria-label="Modifier la preparation"
-                        >
-                          <RiEdit2Fill
-                            style={{ color: "#0F5012", fontSize: "20px" }}
-                          />
-                        </button>
+                      <button
+              onClick={() => handleOpenModifyPrepPopup(prep)}
+              className="text-blue-500 hover:text-blue-700"
+              title="Modifier la préparation"
+            >
+              <RiEdit2Fill size={24} />
+            </button> |
 
                         <button
                           onClick={() => handleDeletePreparation(prep.id)}
