@@ -69,24 +69,24 @@ const PatientDetails: React.FC = () => {
     const [error, setError] = useState("");
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isAddPrepOpen, setIsAddPrepOpen] = useState(false);
-    const [selectedPreparation, setSelectedPreparation] = useState<MedicinePreparation | null>(null); // Track selected preparation for modification
+    const [selectedPreparation, setSelectedPreparation] = useState<MedicinePreparation | null>(null); 
   
 
   const handleOpenEditPopup = () => setIsEditOpen(true);
     const handleCloseEditPopup = () => setIsEditOpen(false);
   
     const handleOpenAddPrepPopup = () => {
-      setSelectedPreparation(null); // Reset for create mode
+      setSelectedPreparation(null); 
       setIsAddPrepOpen(true);
     };
   
     const handleCloseAddPrepPopup = () => {
-      setSelectedPreparation(null); // Reset selected preparation
+      setSelectedPreparation(null); 
       setIsAddPrepOpen(false);
     };
   
     const handleOpenModifyPrepPopup = (preparation: MedicinePreparation) => {
-      setSelectedPreparation(preparation); // Set preparation for update mode
+      setSelectedPreparation(preparation); 
       setIsAddPrepOpen(true);
     };
   
