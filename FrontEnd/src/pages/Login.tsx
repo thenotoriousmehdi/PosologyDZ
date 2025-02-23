@@ -174,19 +174,19 @@ export default function Login() {
           </div>
         </form>
 
-        <p className=" flex justify-center items-center font-openSans text-center text-[14px] text-PrimaryBlack/80">
+        {/* <p className=" flex justify-center items-center font-openSans text-center text-[14px] text-PrimaryBlack/80">
           Ministère de la Santé <br />
           Centre Hospitalo-Universitaire de Béni Messous <br />
           Laboratoire d'analyse Médicale Mère-Enfant
-        </p>
+        </p> */}
       </div>
 
       <div className="hidden xl:block  xl:w-[52%] xl:relative ">
         <div className="absolute inset-0 flex justify-center items-center z-20">
           <img
-            src="src/assets/logochu.png"
+            src="src/assets/pharmacyLogo.svg"
             alt="Logo Chu"
-            className="w-[186px] h-[257px]"
+            className="w-[250px] h-[250px]"
           />
         </div>
 

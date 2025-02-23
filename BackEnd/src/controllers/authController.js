@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-
+import dotenv from "dotenv";
+dotenv.config();
 const prisma = new PrismaClient();
-const JWT_SECRET = "mehdi123";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const login = async (req, res) => {
   try {
@@ -15,14 +16,15 @@ export const login = async (req, res) => {
       });
     }
 
-  
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
         id: true,
         email: true,
         password: true,
-        role: true
+        role: true,
+        name: true, 
+        phoneNumber: true
       }
     });
 
@@ -31,25 +33,22 @@ export const login = async (req, res) => {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
     if (!isPasswordValid) {
       return res.status(400).json({ error: "Incorrect password" });
     }
-
 
     const accessToken = jwt.sign(
       { 
         id: user.id,
         email: user.email,
         role: user.role,
-        firstName: user.firstName,
-        familyName: user.familyName
+        name: user.name, 
+        phoneNumber: user.phoneNumber
       },
       JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-  
     const { password: _, ...userWithoutPassword } = user;
 
     res.json({
