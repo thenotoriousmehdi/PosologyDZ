@@ -14,8 +14,6 @@ import { MdDelete } from "react-icons/md";
 import { RiEdit2Fill } from "react-icons/ri";
 import EditPatient from "../components/EditPatient";
 import { TbFileDownload } from "react-icons/tb";
-
-
 import jsPDF from "jspdf";
 import api from "../utils/axiosConfig";
 interface MedicinePreparation {
@@ -437,11 +435,13 @@ const PatientDetails: React.FC = () => {
             </div>
 
             <button
-              className="hover:scale-110 transition-transform"
+              className="hover:scale-110 transition-transform text-blue-500 hover:text-blue-700"
+  
               aria-label="Modifier les infos personnelles"
+              
               onClick={handleOpenEditPopup}
             >
-              <RiEdit2Fill style={{ color: "#0F5012", fontSize: "20px" }} />
+              <RiEdit2Fill style={{ fontSize: "20px" }} />
             </button>
           </div>
         </div>
@@ -582,8 +582,8 @@ const PatientDetails: React.FC = () => {
               className="text-blue-500 hover:text-blue-700"
               title="Modifier la préparation"
             >
-              <RiEdit2Fill size={24} />
-            </button> |
+              <RiEdit2Fill size={20} />
+            </button> 
 
                         <button
                           onClick={() => handleDeletePreparation(prep.id)}

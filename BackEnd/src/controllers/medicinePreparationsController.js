@@ -145,61 +145,63 @@ export const deleteMedicinePreparation = async (req, res) => {
 };
 
 
-export const updateMedicinePreparation = async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-
+export const updateMedicinePreparationsForPatient = async (req, res) => {
   try {
-    const preparationId = parseInt(id, 10);
-    if (isNaN(preparationId)) {
-      return res.status(400).json({ message: "Invalid preparation ID" });
+    const { patientId, preparationId } = req.params;
+    const { medicinePreparations } = req.body;
+
+    if (!patientId || isNaN(patientId)) {
+      return res.status(400).json({ error: "Invalid patient ID" });
     }
 
-    const existingPreparation = await prisma.medicinePreparation.findUnique({
-      where: { id: preparationId },
-    });
-
-    if (!existingPreparation) {
-      return res.status(404).json({ message: "Preparation not found" });
+    if (!medicinePreparations || !Array.isArray(medicinePreparations)) {
+      return res.status(400).json({ error: "Invalid medicine preparations data" });
     }
 
+    // Update existing preparation
     const updatedPreparation = await prisma.medicinePreparation.update({
-      where: { id: preparationId },
-      data: {
-        dci: data.dci || existingPreparation.dci,
-        nomCom: data.nomCom || existingPreparation.nomCom,
-        indication: data.indication ?? existingPreparation.indication,
-        dosageInitial: data.dosageInitial !== undefined ? parseFloat(data.dosageInitial) : existingPreparation.dosageInitial,
-        dosageAdapte: data.dosageAdapte !== undefined ? parseFloat(data.dosageAdapte) : existingPreparation.dosageAdapte,
-        modeEmploi: data.modeEmploi !== undefined ? parseFloat(data.modeEmploi) : existingPreparation.modeEmploi,
-        voieAdministration: data.voieAdministration ?? existingPreparation.voieAdministration,
-        qsp: data.qsp !== undefined ? parseInt(data.qsp, 10) : existingPreparation.qsp,
-        excipient: data.excipient ?? existingPreparation.excipient,
-        preparationDate: data.preparationDate ? new Date(data.preparationDate) : existingPreparation.preparationDate,
-        peremptionDate: data.peremptionDate ? new Date(data.peremptionDate) : existingPreparation.peremptionDate,
-        erreur: data.erreur !== undefined ? Boolean(data.erreur) : existingPreparation.erreur,
-        numLot: data.numLot ?? existingPreparation.numLot,
-        erreurDescription: data.erreurDescription ?? existingPreparation.erreurDescription,
-        actionsEntreprises: data.actionsEntreprises ?? existingPreparation.actionsEntreprises,
-        consequences: data.consequences ?? existingPreparation.consequences,
-        erreurCause: data.erreurCause ?? existingPreparation.erreurCause,
-        erreurNature: data.erreurNature ?? existingPreparation.erreurNature,
-        erreurEvitabilite: data.erreurEvitabilite ?? existingPreparation.erreurEvitabilite,
-        dateSurvenue: data.dateSurvenue ? new Date(data.dateSurvenue) : existingPreparation.dateSurvenue,
-        statut: data.statut ?? existingPreparation.statut,
-        nombreGellules: data.nombreGellules !== undefined ? parseInt(data.nombreGellules, 10) : existingPreparation.nombreGellules,
-        compriméEcrasé: data.compriméEcrasé !== undefined ? parseFloat(data.compriméEcrasé) : existingPreparation.compriméEcrasé,
+      where: {
+        id: parseInt(preparationId),
+        patient_id: parseInt(patientId)
       },
+      data: {
+        dci: medicinePreparations[0].dci,
+        nomCom: medicinePreparations[0].nomCom,
+        indication: medicinePreparations[0].indication || null,
+        dosageInitial: Number(medicinePreparations[0].dosageInitial),
+        dosageAdapte: medicinePreparations[0].dosageAdapte ? Number(medicinePreparations[0].dosageAdapte) : null,
+        modeEmploi: Number(medicinePreparations[0].modeEmploi),
+        voieAdministration: medicinePreparations[0].voieAdministration || null,
+        qsp: Number(medicinePreparations[0].qsp),
+        excipient: medicinePreparations[0].excipient || null,
+        preparationDate: new Date(medicinePreparations[0].preparationDate),
+        peremptionDate: new Date(medicinePreparations[0].peremptionDate),
+        erreur: medicinePreparations[0].erreur || false,
+        numLot: medicinePreparations[0].numLot || null,
+        erreurDescription: medicinePreparations[0].erreurDescription || null,
+        actionsEntreprises: medicinePreparations[0].actionsEntreprises || null,
+        consequences: medicinePreparations[0].consequences || null,
+        erreurCause: medicinePreparations[0].erreurCause || null,
+        erreurNature: medicinePreparations[0].erreurNature || null,
+        erreurEvitabilite: medicinePreparations[0].erreurEvitabilite || null,
+        dateSurvenue: medicinePreparations[0].dateSurvenue ? new Date(medicinePreparations[0].dateSurvenue) : null,
+        nombreGellules: Number(medicinePreparations[0].qsp * medicinePreparations[0].modeEmploi),
+        compriméEcrasé:
+          medicinePreparations[0].dosageAdapte && 
+          medicinePreparations[0].qsp && 
+          medicinePreparations[0].modeEmploi && 
+          medicinePreparations[0].dosageInitial
+            ? parseFloat(((medicinePreparations[0].dosageAdapte * medicinePreparations[0].qsp * medicinePreparations[0].modeEmploi) / medicinePreparations[0].dosageInitial).toFixed(2))
+            : null,
+      }
     });
 
-    res.status(200).json({ message: "Preparation updated successfully", updatedPreparation });
+    res.status(200).json(updatedPreparation);
   } catch (error) {
     console.error("Error updating medicine preparation:", error);
-    res.status(500).json({ message: "Error updating preparation", error: error.message });
+    res.status(500).json({ error: "Could not update preparation", details: error.message });
   }
 };
-
-
 
 export const getMedicinePreparationById = async (req, res) => {
   const { id } = req.params;

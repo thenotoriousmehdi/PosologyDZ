@@ -73,13 +73,15 @@ const AddPreparation: React.FC<PopupProps> = ({
 
   const [medicaments, setMedicaments] = useState<Medicament[]>([initialMedicament]);
 
-
   useEffect(() => {
     if (existingPreparation?.medicinePreparations) {
       setMedicaments(
         existingPreparation.medicinePreparations.map(prep => ({
           ...prep,
-          id: prep.id || Date.now()
+          id: prep.id || Date.now(),
+          preparationDate: prep.preparationDate ? new Date(prep.preparationDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          peremptionDate: prep.peremptionDate ? new Date(prep.peremptionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          dateSurvenue: prep.dateSurvenue ? new Date(prep.dateSurvenue).toISOString().split('T')[0] : null,
         }))
       );
     }
@@ -132,7 +134,7 @@ const AddPreparation: React.FC<PopupProps> = ({
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-
+  
     setIsSubmitting(true);
     try {
       let response;
@@ -147,8 +149,8 @@ const AddPreparation: React.FC<PopupProps> = ({
           voieAdministration: med.voieAdministration || null,
           qsp: Number(med.qsp || 0),
           excipient: med.excipient || null,
-          preparationDate: new Date(med.preparationDate),
-          peremptionDate: new Date(med.peremptionDate),
+          preparationDate: med.preparationDate,
+          peremptionDate: med.peremptionDate,
           erreur: Boolean(med.erreur),
           numLot: med.numLot || null,
           erreurDescription: med.erreurDescription || null,
@@ -157,30 +159,29 @@ const AddPreparation: React.FC<PopupProps> = ({
           erreurCause: med.erreurCause || null,
           erreurNature: med.erreurNature || null,
           erreurEvitabilite: med.erreurEvitabilite || null,
-          dateSurvenue: med.dateSurvenue ? new Date(med.dateSurvenue) : null,
+          dateSurvenue: med.dateSurvenue || null,
         })),
       };
-
+  
       if (existingPreparation) {
-        // Update existing preparation
         response = await api.put(
-          `http://localhost:3000/medicine-preparations/${patientId}/${existingPreparation.id}`,
+          `/medicine-preparations/${patientId}/${existingPreparation.id}`,
           preparationData
         );
         alert("Préparation mise à jour avec succès!");
-        if (onPreparationUpdated) {
-          onPreparationUpdated(response.data);
-        }
       } else {
         // Create new preparation
         response = await api.post(
-          `http://localhost:3000/medicine-preparations/${patientId}`,
+          `/medicine-preparations/${patientId}`,
           preparationData
         );
         alert("Préparation ajoutée avec succès!");
-        if (onPreparationAdded) {
-          onPreparationAdded(response.data);
-        }
+      }
+  
+      if (existingPreparation && onPreparationUpdated) {
+        onPreparationUpdated(response.data);
+      } else if (onPreparationAdded) {
+        onPreparationAdded(response.data);
       }
       
       onClose();

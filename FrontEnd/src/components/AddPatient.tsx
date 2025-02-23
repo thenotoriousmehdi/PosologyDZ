@@ -272,14 +272,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
     }
   };
 
-  {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    formError && (
-      <div className="text-delete text-center mb-4">{formError}</div>
-    );
-  }
-
-  
+   
   <button
     className={`${
       step === 1 ? "ml-auto" : ""
@@ -333,9 +326,15 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
             }}
           ></div>
         </div>
+        
+   
+       
 
         {/* Step Content */}
         <div className="flex flex-col gap-[35px] h-[76%] p-12 overflow-y-auto">
+        {formError && (
+            <div className="text-delete text-center mb-4">{formError}</div>
+          )}
           {/* Header */}
           <div className="flex justify-between gap-8 items-center">
             <h1 className="font-poppins font-semibold text-[16px] text-green">
