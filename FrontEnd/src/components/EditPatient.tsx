@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import api from "../utils/axiosConfig";
 
@@ -25,8 +26,8 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
     grade: "",
   });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [, setLoading] = useState(true);
+  const [, setError] = useState("");
 
   useEffect(() => {
     if (isOpen && patientId) {

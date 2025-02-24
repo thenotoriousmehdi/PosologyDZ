@@ -46,7 +46,7 @@ export const login = async (req, res) => {
         phoneNumber: user.phoneNumber
       },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "12h" }
     );
 
     const { password: _, ...userWithoutPassword } = user;

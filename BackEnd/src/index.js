@@ -2,10 +2,12 @@ import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import { authenticate } from "./middlewares/authMiddleware.js";
-import patientRoutes from "./routes/PatientRoutes.js"
+import patientRoutes from "./routes/patientRoutes.js"
 import medicinePreparationsRoutes from "./routes/medicinePreparationsRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import usersRoutes from "./routes/usersRoutes.js"
+import usersRoutes from "./routes/usersRoutes.js";
+import 'dotenv/config';
+
 
 const app = express();
 const PORT = 3000;

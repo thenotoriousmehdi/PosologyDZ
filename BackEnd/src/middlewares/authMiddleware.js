@@ -1,15 +1,14 @@
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
-
-dotenv.config();
 const prisma = new PrismaClient();
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!process.env.JWT_SECRET) {
   throw new Error("JWT_SECRET environment variable is not set");
 }
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authenticate = async (req, res, next) => {
   try {

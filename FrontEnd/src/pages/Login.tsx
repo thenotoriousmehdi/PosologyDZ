@@ -2,6 +2,11 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/pharmacyLogo.svg";
+import imgLogin1 from "../assets/imgLogin1.png";
+import imgLogin2 from "../assets/imgLogin2.png";
+import imgLogin3 from "../assets/imgLogin3.png";
+import imgLogin4 from "../assets/imgLogin4.png"
 import axios from "axios";
 import api from '../utils/axiosConfig';
 
@@ -14,12 +19,7 @@ export default function Login() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const navigate = useNavigate();
 
-  const images = [
-    "src/assets/imgLogin1.png",
-    "src/assets/imgLogin2.png",
-    "src/assets/imgLogin3.png",
-    "src/assets/imgLogin4.png",
-  ];
+  const images = [imgLogin1, imgLogin2, imgLogin3, imgLogin4];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -184,7 +184,7 @@ export default function Login() {
       <div className="hidden xl:block  xl:w-[52%] xl:relative ">
         <div className="absolute inset-0 flex justify-center items-center z-20">
           <img
-            src="src/assets/pharmacyLogo.svg"
+            src={logo}
             alt="Logo Chu"
             className="w-[250px] h-[250px]"
           />
@@ -192,15 +192,15 @@ export default function Login() {
 
         <div className="absolute inset-0 bg-[#0F5012] bg-opacity-50 z-10" />
         {images.map((src, index) => (
-          <img
-            key={src}
-            src={src}
-            alt={`Login Image ${index + 1}`}
-            className={`absolute inset-0 xl:object-cover xl:h-full xl:w-full xl:z-0 transition-opacity duration-1000 ${
-              index === currentImageIndex ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        ))}
+      <img
+        key={index}
+        src={src}
+        alt={`Login Image ${index + 1}`}
+        className={`absolute inset-0 xl:object-cover xl:h-full xl:w-full xl:z-0 transition-opacity duration-1000 ${
+          index === currentImageIndex ? "opacity-100" : "opacity-0"
+        }`}
+      />
+    ))}
       </div>
     </div>
   );

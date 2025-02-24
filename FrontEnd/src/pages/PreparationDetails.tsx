@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -56,7 +57,7 @@ interface Patient {
 const PreparationDetails: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
 
-  const [patient, setPatient] = useState<Patient | null>(null);
+  const [, setPatient] = useState<Patient | null>(null);
   const [preparation, setPreparation] = useState<MedicinePreparation | null>(
     null
   );
