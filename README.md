@@ -1,11 +1,7 @@
 # CHU BENI-MESSOUS - Laboratoire Mère et Enfant
 
-This is a web application for managing patient records and medication preparations.
-
-## Features
-- Pharmacist and preparer roles.
-- Patient and preparation management.
-
+A web application designed to digitize the process of posology adaptation, enabling efficient management of patient records and pediatric medication preparations for the pharmacy of a public hospital.
+ 
 ## Technologies
 - Frontend: React + Tailwind CSS
 - Backend: Express.js
