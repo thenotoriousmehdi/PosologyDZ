@@ -45,21 +45,23 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
 }) => {
   const [currentStatut, setCurrentStatut] = useState<Statut>(statut as Statut);
   const navigate = useNavigate();
+
   const handleStatutChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatut = event.target.value as Statut;
   
-    if (newStatut === "Terminé") {
-      // Prompt for additional data
-      const numeroGelluleInput = prompt("Veuillez entrer le numéro de gélule:");
-      const volumeExipientInput = prompt(
-        "Veuillez entrer le volume de l’excipient:"
-      );
+    const updateData: { statut: Statut; numeroGellule?: number; volumeExipient?: number } = {
+      statut: newStatut,
+    };
+  
+    if (newStatut === Statut.Termine) {
+      const numeroGelluleInput = prompt("Veuillez entrer le numéro de gélule utilisée:");
+      const volumeExipientInput = prompt("Veuillez entrer le volume de l’excipient ajouté (ml):");
   
       if (!numeroGelluleInput || !volumeExipientInput) {
         alert("Les deux champs sont requis pour terminer la préparation.");
-        event.target.value = currentStatut; // Reset selection
+        event.target.value = currentStatut; 
         return;
       }
   
@@ -68,61 +70,33 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   
       if (isNaN(numeroGellule) || isNaN(volumeExipient)) {
         alert("Veuillez entrer des valeurs numériques valides.");
-        event.target.value = currentStatut; // Reset selection
+        event.target.value = currentStatut; 
         return;
       }
   
-      const confirmed = window.confirm(
-        `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" avec:\n- Numéro Gélule: ${numeroGellule}\n- Volume Excipient: ${volumeExipient}`
-      );
+      updateData.numeroGellule = numeroGellule;
+      updateData.volumeExipient = volumeExipient;
+    }
   
-      if (!confirmed) {
-        event.target.value = currentStatut; // Reset selection
-        return;
-      }
+    const confirmed = window.confirm(
+      `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
+    );
   
-      try {
-        // Fetch the current preparation data
-        const { data: currentPreparation } = await api.get(
-          `/medicine-preparations/${patientId}/${id}`
-        );
+    if (!confirmed) {
+      event.target.value = currentStatut; // Reset selection
+      return;
+    }
   
-        // Send a full update including the new status and additional fields
-        await api.put(`/medicine-preparations/${patientId}/${id}`, {
-          ...currentPreparation,
-          statut: newStatut,
-          numeroGellule,
-          volumeExipient,
-        });
-  
-        setCurrentStatut(newStatut);
-        alert("Statut et informations mises à jour avec succès !");
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour", error);
-        alert("Échec de la mise à jour du statut et des informations.");
-      }
-    } else {
-      // Normal status update
-      const confirmed = window.confirm(
-        `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
-      );
-  
-      if (!confirmed) {
-        event.target.value = currentStatut; // Reset selection
-        return;
-      }
-  
-      try {
-        await api.patch(`/medicine-preparations/${id}/statut`, { statut: newStatut });
-  
-        setCurrentStatut(newStatut);
-        alert("Statut mis à jour avec succès !");
-      } catch (error) {
-        console.error("Erreur lors de la mise à jour du statut", error);
-        alert("Échec de la mise à jour du statut");
-      }
+    try {
+      await api.patch(`/medicine-preparations/${id}/statut`, updateData);
+      setCurrentStatut(newStatut);
+      alert("Statut mis à jour avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du statut", error);
+      alert("Échec de la mise à jour du statut");
     }
   };
+  
   
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
