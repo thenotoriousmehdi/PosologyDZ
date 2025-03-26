@@ -41,6 +41,8 @@ interface MedicinePreparation {
   erreurEvitabilite?: string;
   dateSurvenue?: string | null;
   statut: string;
+  numeroGellule?: number | null;
+  volumeExipient?: number | null;
   onDelete: (id: string) => void;
 }
 
@@ -68,7 +70,8 @@ const PatientDetails: React.FC = () => {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isAddPrepOpen, setIsAddPrepOpen] = useState(false);
     const [selectedPreparation, setSelectedPreparation] = useState<MedicinePreparation | null>(null); 
-  
+    const userRole = localStorage.getItem("userRole");
+    const canEditPatient = userRole === "admin" || userRole === "pharmacist";
 
   const handleOpenEditPopup = () => setIsEditOpen(true);
     const handleCloseEditPopup = () => setIsEditOpen(false);
@@ -433,16 +436,18 @@ const PatientDetails: React.FC = () => {
                 {patient.grade}
               </p>
             </div>
+            {canEditPatient && (
+           <button
+           className="hover:scale-110 transition-transform text-blue-500 hover:text-blue-700"
 
-            <button
-              className="hover:scale-110 transition-transform text-blue-500 hover:text-blue-700"
-  
-              aria-label="Modifier les infos personnelles"
-              
-              onClick={handleOpenEditPopup}
-            >
-              <RiEdit2Fill style={{ fontSize: "20px" }} />
-            </button>
+           aria-label="Modifier les infos personnelles"
+           
+           onClick={handleOpenEditPopup}
+         >
+           <RiEdit2Fill style={{ fontSize: "20px" }} />
+         </button>
+          )}
+            
           </div>
         </div>
 
@@ -573,6 +578,18 @@ const PatientDetails: React.FC = () => {
                           Comprimés à Écraser:
                         </span>{" "}
                         {prep.compriméEcrasé.toFixed(2)}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Numéro de Gellule:
+                        </span>{" "}
+                        {prep.numeroGellule || "N/A"}
+                      </p>
+                      <p>
+                        <span className="font-bold font-poppins text-PrimaryBlack/80">
+                          Volume de l'excipient ajouté (ml):
+                        </span>{" "}
+                        {prep.volumeExipient?.toFixed(2) || "N/A"}
                       </p>
                     </div>
                     <div className="flex flex-col justify-end items-end gap-4">

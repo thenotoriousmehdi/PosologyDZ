@@ -19,29 +19,42 @@ export const getMedicinePreparations = async (req, res) => {
 
 export const updateMedicinePreparationStatus = async (req, res) => {
   const { id } = req.params;
-  const { statut } = req.body;
+  const { statut, numeroGellule, volumeExipient } = req.body;
 
-  
   const validStatuts = ["A_faire", "En_Cours", "Termine"];
   if (!validStatuts.includes(statut)) {
     return res.status(400).json({ message: "Invalid statut value" });
   }
 
   try {
-   
+    // Define the update data
+    let updateData = { statut };
+
+    // If the status is "Terminé", validate and include the new fields
+    if (statut === "Termine") {
+      if (numeroGellule === undefined || volumeExipient === undefined) {
+        return res.status(400).json({
+          message: "Numero Gellule and Volume Exipient are required for 'Terminé' status",
+        });
+      }
+
+      updateData.numeroGellule = parseInt(numeroGellule);
+      updateData.volumeExipient = parseFloat(volumeExipient);
+    }
+
+    // Update the medicine preparation
     const updatedPreparation = await prisma.medicinePreparation.update({
       where: { id: parseInt(id) },
-      data: {
-        statut: statut,
-      },
+      data: updateData,
     });
 
     res.status(200).json(updatedPreparation);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error updating statut" });
+    res.status(500).json({ message: "Error updating preparation status" });
   }
 };
+
 
 export const getPreparationCounts = async (req, res) => {
   try {
@@ -185,6 +198,8 @@ export const updateMedicinePreparationsForPatient = async (req, res) => {
         erreurNature: medicinePreparations[0].erreurNature || null,
         erreurEvitabilite: medicinePreparations[0].erreurEvitabilite || null,
         dateSurvenue: medicinePreparations[0].dateSurvenue ? new Date(medicinePreparations[0].dateSurvenue) : null,
+        numeroGellule: medicinePreparations[0].numeroGellule ? Number(medicinePreparations[0].numeroGellule) : null,
+        volumeExipient: medicinePreparations[0].volumeExipient ? Number(medicinePreparations[0].volumeExipient) : null,
         nombreGellules: Number(medicinePreparations[0].qsp * medicinePreparations[0].modeEmploi),
         compriméEcrasé:
           medicinePreparations[0].dosageAdapte && 

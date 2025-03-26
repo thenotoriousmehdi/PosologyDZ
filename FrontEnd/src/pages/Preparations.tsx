@@ -16,6 +16,9 @@ interface Preparation {
   nombreGellules: number;
   erreur: boolean;
   compriméEcrasé: number;
+  patient?: {   
+    name: string;
+  };
   statut: "A_faire" | "En_Cours" | "Termine";
 }
 
@@ -178,6 +181,7 @@ const Preparations: React.FC = () => {
               filteredPreparations.map((prep: Preparation) => (
                 <PreparationCard
                   key={prep.id}
+                  name={prep.patient?.name ?? "N/A"}  
                   id={prep.id}
                   dci={prep.dci}
                   dosageInitial={prep.dosageInitial}

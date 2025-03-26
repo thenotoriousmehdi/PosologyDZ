@@ -33,6 +33,8 @@ interface MedicinePreparation {
   erreurNature?: string;
   erreurEvitabilite?: string;
   dateSurvenue?: string | null;
+  numeroGellule?: number | null;
+  volumeExipient?: number | null;
   statut: string;
   patient: Patient;
   onDelete: (id: number) => void;
@@ -63,7 +65,6 @@ const PreparationDetails: React.FC = () => {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -355,7 +356,18 @@ const PreparationDetails: React.FC = () => {
                 </span>{" "}
                 {preparation.compriméEcrasé.toFixed(2)}
               </p>
-
+              <p>
+                <span className="font-bold font-poppins text-PrimaryBlack/80">
+                  Numéro de Gellule:
+                </span>{" "}
+                {preparation.numeroGellule || "N/A"}
+              </p>
+              <p>
+                <span className="font-bold font-poppins text-PrimaryBlack/80">
+                  Volume de l'excipient ajouté (ml):
+                </span>{" "}
+                {preparation.volumeExipient?.toFixed(2) || "N/A"}
+              </p>
               <p>
                 <span className="font-bold font-poppins text-PrimaryBlack/80">
                   Erreur médicamenteuse?

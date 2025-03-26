@@ -5,6 +5,7 @@ import { TbEyeFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/axiosConfig";
 interface PreparationCardProps {
+  name: string;
   id: string;
   dci: string;
   dosageInitial: number;
@@ -30,6 +31,7 @@ const statutMapping: { [key in Statut]: string } = {
 };
 
 const PreparationCard: React.FC<PreparationCardProps> = ({
+  name,
   id,
   dci,
   dosageInitial,
@@ -47,30 +49,81 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatut = event.target.value as Statut;
-
-    const confirmed = window.confirm(
-      `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
-    );
-
-    if (!confirmed) {
-      event.target.value = currentStatut;
-      return;
-    }
-
-    try {
-      await api.patch(
-        `/medicine-preparations/${id}/statut`,
-        { statut: newStatut }
+  
+    if (newStatut === "Terminé") {
+      // Prompt for additional data
+      const numeroGelluleInput = prompt("Veuillez entrer le numéro de gélule:");
+      const volumeExipientInput = prompt(
+        "Veuillez entrer le volume de l’excipient:"
       );
-
-      setCurrentStatut(newStatut);
-      alert("Statut mis à jour avec succès !");
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour du statut", error);
-      alert("Échec de la mise à jour du statut");
+  
+      if (!numeroGelluleInput || !volumeExipientInput) {
+        alert("Les deux champs sont requis pour terminer la préparation.");
+        event.target.value = currentStatut; // Reset selection
+        return;
+      }
+  
+      const numeroGellule = Number(numeroGelluleInput);
+      const volumeExipient = Number(volumeExipientInput);
+  
+      if (isNaN(numeroGellule) || isNaN(volumeExipient)) {
+        alert("Veuillez entrer des valeurs numériques valides.");
+        event.target.value = currentStatut; // Reset selection
+        return;
+      }
+  
+      const confirmed = window.confirm(
+        `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" avec:\n- Numéro Gélule: ${numeroGellule}\n- Volume Excipient: ${volumeExipient}`
+      );
+  
+      if (!confirmed) {
+        event.target.value = currentStatut; // Reset selection
+        return;
+      }
+  
+      try {
+        // Fetch the current preparation data
+        const { data: currentPreparation } = await api.get(
+          `/medicine-preparations/${patientId}/${id}`
+        );
+  
+        // Send a full update including the new status and additional fields
+        await api.put(`/medicine-preparations/${patientId}/${id}`, {
+          ...currentPreparation,
+          statut: newStatut,
+          numeroGellule,
+          volumeExipient,
+        });
+  
+        setCurrentStatut(newStatut);
+        alert("Statut et informations mises à jour avec succès !");
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour", error);
+        alert("Échec de la mise à jour du statut et des informations.");
+      }
+    } else {
+      // Normal status update
+      const confirmed = window.confirm(
+        `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
+      );
+  
+      if (!confirmed) {
+        event.target.value = currentStatut; // Reset selection
+        return;
+      }
+  
+      try {
+        await api.patch(`/medicine-preparations/${id}/statut`, { statut: newStatut });
+  
+        setCurrentStatut(newStatut);
+        alert("Statut mis à jour avec succès !");
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut", error);
+        alert("Échec de la mise à jour du statut");
+      }
     }
   };
-
+  
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -93,7 +146,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     doc.text("Fiche de Préparation Médicamenteuse", 10, 60);
     doc.setFontSize(12);
     doc.setFont("poppins", "normal");
-    doc.text(`ID: #${id}`, 10, 70);
+    doc.text(`Nom et Prénom: ${name}`, 10, 70);
     doc.text(`DCI: ${dci}`, 10, 80);
     doc.text(`Nombre de Gélules: ${nombreGellules}`, 10, 90);
     doc.text(`Excepient à effet notoire: ${excipient}`, 10, 100);

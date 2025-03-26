@@ -170,7 +170,6 @@ const AddPreparation: React.FC<PopupProps> = ({
         );
         alert("Préparation mise à jour avec succès!");
       } else {
-        // Create new preparation
         response = await api.post(
           `/medicine-preparations/${patientId}`,
           preparationData
@@ -415,6 +414,7 @@ const AddPreparation: React.FC<PopupProps> = ({
                           Voie d'administration
                         </option>
                         <option value="Orale">Orale</option>
+                        <option value="Cutanée">Cutanée</option>
                       </select>
                     </div>
                   </div>

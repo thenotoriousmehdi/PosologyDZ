@@ -1,21 +1,71 @@
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id          Int    @id @default(autoincrement())
-  email       String @unique
+  id          Int     @id @default(autoincrement())
+  email       String  @unique
   password    String
-  name  String
-  phoneNumber String?
   role        Role
+  name        String
+  phoneNumber String?
+}
+
+model Patient {
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  age                  Int
+  gender               String
+  weight               Float
+  phoneNumber          String
+  antecedents          String?
+  etablissement        String?
+  medicin              String?
+  specialite           String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  grade                Grade
+  service              String
+  medicinePreparations MedicinePreparation[]
+}
+
+model MedicinePreparation {
+  id                 Int       @id @default(autoincrement())
+  patient_id         Int
+  dci                String
+  indication         String?
+  dosageInitial      Float
+  dosageAdapte       Float?
+  modeEmploi         Float
+  voieAdministration String?
+  qsp                Int
+  excipient          String?
+  preparationDate    DateTime
+  peremptionDate     DateTime
+  nombreGellules     Int
+  compriméEcrasé   Float
+  created_at         DateTime  @default(now())
+  updated_at         DateTime  @updatedAt
+  statut             Statut
+  actionsEntreprises String?
+  consequences       String?
+  dateSurvenue       DateTime?
+  erreur             Boolean   @default(false)
+  erreurCause        String?
+  erreurDescription  String?
+  erreurEvitabilite  String?
+  erreurNature       String?
+  nomCom             String
+  numLot             String?
+  numeroGellule      Int?
+  volumeExipient     Float?    @db.Real
+  patient            Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
 }
 
 enum Role {
@@ -24,69 +74,16 @@ enum Role {
   admin
 }
 
-enum Grade{
+enum Grade {
   Ma
   Assistant
   Resident
   Professor
   Specialist
- }
-
-model Patient {
-  id          Int      @id @default(autoincrement()) 
-  name        String  
-  age         Int     
-  gender      String  
-  weight      Float    
-  phoneNumber String   
-  antecedents String?   
-  etablissement String? 
-  service String 
-  medicin     String?  
-  specialite  String?  
-  grade       Grade   
-  medicinePreparations MedicinePreparation[]
-  createdAt   DateTime @default(now())  
-  updatedAt   DateTime @updatedAt      
 }
-
-model MedicinePreparation {
-  id               Int       @id @default(autoincrement())
-  patient_id       Int       
-  dci              String
-  nomCom           String    
-  indication       String?  
-  dosageInitial    Float    
-  dosageAdapte     Float?   
-  modeEmploi       Float     
-  voieAdministration String? 
-  qsp              Int      
-  excipient        String?   
-  preparationDate  DateTime  
-  peremptionDate   DateTime
-  erreur             Boolean   @default(false)
-  numLot        String? 
-  erreurDescription     String?
-  actionsEntreprises   String?
-  consequences   String?
-  erreurCause   String?
-  erreurNature   String?
-  erreurEvitabilite  String?
-  dateSurvenue  DateTime?
-  statut           Statut
-  nombreGellules   Int      
-  compriméEcrasé   Float       
-  created_at       DateTime  @default(now()) 
-  updated_at       DateTime  @updatedAt       
-  patient          Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
-}
-
 
 enum Statut {
   A_faire
   En_Cours
   Termine
 }
- 
-
- 

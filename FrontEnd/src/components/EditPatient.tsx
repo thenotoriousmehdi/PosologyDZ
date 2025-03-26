@@ -202,8 +202,8 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
                       <option value="" disabled selected>
                         Sexe
                       </option>
-                      <option value="garçon">Garçon</option>
-                      <option value="fille">Fille</option>
+                      <option value="Masculin">Masculin</option>
+                      <option value="Féminin">Féminin</option>
                     </select>
                   </label>
                 </div>
@@ -445,9 +445,12 @@ const EditPatient: React.FC<PopupProps> = ({ isOpen, onClose, patientId }) => {
                       <option value="" disabled selected>
                         Grade
                       </option>
-                      <option value="MA">Maitre assistant(e)</option>
+                      <option value="Maitre assistant">Maitre assistant(e)</option>
                       <option value="Assistant">Assistant(e)</option>
                       <option value="Resident">Resident(e)</option>
+                      <option value="Généraliste">Généraliste</option>
+                      <option value="Maître de conférences">Maître de conférences</option>
+                      <option value="Professeur">Professeur</option>
                     </select>
                   </label>
                 </div>
