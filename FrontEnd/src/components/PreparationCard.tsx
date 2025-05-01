@@ -148,7 +148,7 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
           </div>
           <div className="text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[200px]">
             <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-              {nombreGellules} gel/{compriméEcrasé} comp
+              {nombreGellules} gel/{compriméEcrasé.toFixed(2) || "N/A"} comp
             </h1>
           </div>
           <div className="hidden text-center md:text-left flex-grow sm:flex-grow-0 w-full sm:w-[100px]  xl:flex items-center ">
