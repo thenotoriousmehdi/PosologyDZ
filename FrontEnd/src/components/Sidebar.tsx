@@ -81,7 +81,7 @@ const Sidebar = () => {
           </span>
           <div className="text-white">
             <p className="flex flex-col justify-center font-poppins font-medium text-[16px] leading-[40px]">
-              Logout
+             Déconnexion
             </p>
           </div>
         </div>
