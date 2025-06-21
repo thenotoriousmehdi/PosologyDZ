@@ -2,7 +2,7 @@
 
 This is a web application for managing patient records and medication preparations.
 
-![System Overview](./preparations.png)
+![System Overview](./Preparations.png)
 
 ## Features
 - Pharmacist and preparer roles.
