@@ -6,12 +6,14 @@ import {
   addPreparationToPatient,
   deleteMedicinePreparation,
   getMedicinePreparationById,
-  updateMedicinePreparationsForPatient
+  updateMedicinePreparationsForPatient,
+  getUniqueDCI
   
 } from "../controllers/medicinePreparationsController.js";
 
 const router = express.Router();
 router.get("/Count", getPreparationCounts);
+router.get("/dci", getUniqueDCI);
 router.get("/", getMedicinePreparations);
 router.post("/:patientId", addPreparationToPatient);
 router.patch("/:id/statut", updateMedicinePreparationStatus);

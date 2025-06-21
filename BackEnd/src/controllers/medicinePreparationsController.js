@@ -239,3 +239,18 @@ export const getMedicinePreparationById = async (req, res) => {
     res.status(500).json({ message: "Error retrieving medicine preparation." });
   }
 };
+
+export const getUniqueDCI = async (req, res) => {
+  try {
+    const uniqueDCI = await prisma.medicaments.findMany({
+      select: {
+        Principe_actif: true,
+      },
+      distinct: ["Principe_actif"],
+    });
+    res.status(200).json(uniqueDCI.map(med => med.Principe_actif));
+  } catch (error) {
+    console.error("Error fetching unique DCIs:", error);
+    res.status(500).json({ message: "Error retrieving unique DCIs." });
+  }
+};

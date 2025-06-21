@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../utils/axiosConfig";
 
 interface PopupProps {
@@ -36,6 +36,8 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
   const [progress, setProgress] = useState(33);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [dciList, setDciList] = useState<string[]>([]);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   
   const [personalInfo, setPersonalInfo] = useState({
     name: "",
@@ -79,6 +81,19 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
       dateSurvenue: null,
     },
   ]);
+
+  useEffect(() => {
+    const fetchDciList = async () => {
+      try {
+        const response = await api.get("/medicine-preparations/dci");
+        setDciList(response.data);
+      } catch (error) {
+        console.error("Error fetching DCI list:", error);
+      }
+    };
+
+    fetchDciList();
+  }, []);
 
   const handlePersonalInfoChange = (
     e: React.ChangeEvent<
@@ -194,9 +209,13 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
   };
 
  
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!validateForm()) return;
+    setIsConfirmationModalOpen(true);
+  };
 
+  const handleConfirmSubmit = async () => {
+    setIsConfirmationModalOpen(false);
     setIsSubmitting(true);
     try {
       const response = await api.post("/patients", {
@@ -264,7 +283,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
       case 1:
         return "Informations personnelles";
       case 2:
-        return "Informations de l’établissement";
+        return "Informations de l'établissement";
       case 3:
         return "Médicaments";
       default:
@@ -482,14 +501,14 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <div className="flex flex-col justify-start gap-2 w-full">
                   <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                    Nom de l’établissement
+                    Nom de l'établissement
                   </h1>
 
                   <label className="w-full">
                     <input
                       className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
                       type="text"
-                      placeholder="Nom de l’établissement"
+                      placeholder="Nom de l'établissement"
                       pattern="^[a-zA-ZÀ-ÿ]+(?:[ '-][a-zA-ZÀ-ÿ]+)*$"
                       name="etablissement"
                       value={etablissementInfo.etablissement}
@@ -694,10 +713,8 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                           DCI
                           <span className="text-delete">*</span>
                         </h1>
-                        <input
+                        <select
                           className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="text"
-                          placeholder="DCI"
                           required
                           name="dci"
                           value={medicament.dci}
@@ -708,7 +725,16 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                               e.target.value
                             )
                           }
-                        />
+                        >
+                          <option value="" disabled>
+                            DCI
+                          </option>
+                          {dciList.map((dci) => (
+                            <option key={dci} value={dci}>
+                              {dci}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <div className="flex flex-col justify-start gap-2 w-full">
@@ -810,14 +836,14 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                       <div className="flex flex-col justify-start gap-2 w-full">
                         <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                          Posologie, mode d’emploi (par jour)
+                          Posologie, mode d'emploi (par jour)
                           <span className="text-delete">*</span>
                         </h1>
                         <label className="w-full">
                           <input
                             className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
                             type="number"
-                            placeholder="Posologie, mode d’emploi"
+                            placeholder="Posologie, mode d'emploi"
                             required
                             name="modeEmploi"
                             value={medicament.modeEmploi}
@@ -834,7 +860,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
 
                       <div className="flex flex-col justify-start gap-2 w-full">
                         <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                          Voie d’administration
+                          Voie d'administration
                         </h1>
 
                         <label className="w-full">
@@ -851,7 +877,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                             }
                           >
                             <option value="" disabled selected>
-                              Voie d’administration
+                              Voie d'administration
                             </option>
                             <option value="Orale">Orale</option>
                             <option value="Cutanée">Cutanée</option>
@@ -1094,7 +1120,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
 
                         <div className="flex flex-col justify-start gap-2 w-full">
                           <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Cause de l’erreur
+                            Cause de l'erreur
                             <span className="text-delete">*</span>
                           </h1>
 
@@ -1134,7 +1160,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                         {/* fifth*/}
                         <div className="flex flex-col justify-start gap-2 w-full">
                           <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Nature de l’erreur
+                            Nature de l'erreur
                             <span className="text-delete">*</span>
                           </h1>
 
@@ -1165,7 +1191,7 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
 
                         <div className="flex flex-col justify-start gap-2 w-full">
                           <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Évitabilité de l’erreur
+                            Évitabilité de l'erreur
                             <span className="text-delete">*</span>
                           </h1>
 
@@ -1264,6 +1290,68 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
           </button>
         </div>
       </div>
+      {isConfirmationModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full">
+            <h2 className="text-2xl font-bold mb-4 text-yellow-500 flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              Attention – Note importante
+            </h2>
+            <div className="text-gray-700 space-y-3 leading-relaxed">
+              <p>
+                Ne reformulez jamais les formes suivantes sans avis
+                pharmaceutique spécialisé :
+              </p>
+              <ul className="list-disc list-inside pl-4 text-left">
+                <li>
+                  Médicaments à libération prolongée (LP) ou libération
+                  contrôlée
+                </li>
+                <li>Formes gastro-résistantes</li>
+                <li>
+                  Gélules contenant des granulés à libération modifiée
+                </li>
+                <li>
+                  Comprimés pelliculés ou enrobés avec fonction de protection
+                </li>
+                <li>Formes à libération retardée</li>
+              </ul>
+              <p className="font-semibold pt-2">
+                👉 Toute manipulation non appropriée de ces formes peut altérer
+                la sécurité, l'efficacité ou provoquer une toxicité du
+                traitement.
+              </p>
+            </div>
+            <div className="flex justify-end mt-6 space-x-4">
+              <button
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-poppins font-medium py-2 px-6 rounded-lg"
+                onClick={() => setIsConfirmationModalOpen(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="bg-green hover:bg-green/80 text-white font-poppins font-medium py-2 px-6 rounded-lg"
+                onClick={handleConfirmSubmit}
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

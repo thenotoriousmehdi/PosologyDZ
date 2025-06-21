@@ -68,6 +68,22 @@ model MedicinePreparation {
   patient            Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Medicaments {
+  id                      BigInt  @id
+  Principe_actif          String?
+  Forme_galenique         String?
+  Classe_ATC              String?
+  Libelle_ATC3            String?
+  Libelle_ATC4            String?
+  Source_modalites        String?
+  Autre_source            String?
+  Alternatives_galeniques String?
+  Informations_RCP        String?
+  Reponses_laboratoires   String?
+}
+
 enum Role {
   pharmacist
   preparateur

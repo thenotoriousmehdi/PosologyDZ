@@ -44,44 +44,67 @@ const AddPreparation: React.FC<PopupProps> = ({
   patientId,
   existingPreparation,
 }) => {
+  const [dciList, setDciList] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const initialMedicament: Medicament = {
     id: Date.now(),
-      dci: "",
-      nomCom: "",
-      indication: "",
-      dosageInitial: 0,
-      dosageAdapte: 0,
-      modeEmploi: 0,
-      voieAdministration: "",
-      qsp: 0,
-      excipient: "",
-      preparationDate: new Date().toISOString(),
-      peremptionDate: new Date().toISOString(),
-      erreur: false,
-      numLot: "",
-      erreurDescription: "",
-      actionsEntreprises: "",
-      consequences: "",
-      erreurCause: "",
-      erreurNature: "",
-      erreurEvitabilite: "",
-      dateSurvenue: null,
+    dci: "",
+    nomCom: "",
+    indication: "",
+    dosageInitial: 0,
+    dosageAdapte: 0,
+    modeEmploi: 0,
+    voieAdministration: "",
+    qsp: 0,
+    excipient: "",
+    preparationDate: new Date().toISOString(),
+    peremptionDate: new Date().toISOString(),
+    erreur: false,
+    numLot: "",
+    erreurDescription: "",
+    actionsEntreprises: "",
+    consequences: "",
+    erreurCause: "",
+    erreurNature: "",
+    erreurEvitabilite: "",
+    dateSurvenue: null,
   };
 
-  const [medicaments, setMedicaments] = useState<Medicament[]>([initialMedicament]);
+  const [medicaments, setMedicaments] = useState<Medicament[]>([
+    initialMedicament,
+  ]);
+
+  useEffect(() => {
+    const fetchDciList = async () => {
+      try {
+        const response = await api.get("/medicine-preparations/dci");
+        setDciList(response.data);
+      } catch (error) {
+        console.error("Error fetching DCI list:", error);
+      }
+    };
+
+    fetchDciList();
+  }, []);
 
   useEffect(() => {
     if (existingPreparation?.medicinePreparations) {
       setMedicaments(
-        existingPreparation.medicinePreparations.map(prep => ({
+        existingPreparation.medicinePreparations.map((prep) => ({
           ...prep,
           id: prep.id || Date.now(),
-          preparationDate: prep.preparationDate ? new Date(prep.preparationDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-          peremptionDate: prep.peremptionDate ? new Date(prep.peremptionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-          dateSurvenue: prep.dateSurvenue ? new Date(prep.dateSurvenue).toISOString().split('T')[0] : null,
+          preparationDate: prep.preparationDate
+            ? new Date(prep.preparationDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          peremptionDate: prep.peremptionDate
+            ? new Date(prep.peremptionDate).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0],
+          dateSurvenue: prep.dateSurvenue
+            ? new Date(prep.dateSurvenue).toISOString().split("T")[0]
+            : null,
         }))
       );
     }
@@ -90,7 +113,7 @@ const AddPreparation: React.FC<PopupProps> = ({
   const handleMedicamentChange = (
     id: number,
     field: keyof Medicament,
-    value: string | number | boolean 
+    value: string | number | boolean
   ) => {
     setMedicaments((prev) =>
       prev.map((med) => (med.id === id ? { ...med, [field]: value } : med))
@@ -98,7 +121,10 @@ const AddPreparation: React.FC<PopupProps> = ({
   };
 
   const handleAddMedicament = () => {
-    setMedicaments((prev) => [...prev, { ...initialMedicament, id: Date.now() }]);
+    setMedicaments((prev) => [
+      ...prev,
+      { ...initialMedicament, id: Date.now() },
+    ]);
   };
 
   const handleDeleteMedicament = (id: number) => {
@@ -134,7 +160,11 @@ const AddPreparation: React.FC<PopupProps> = ({
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-  
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    setIsConfirmationModalOpen(false);
     setIsSubmitting(true);
     try {
       let response;
@@ -162,7 +192,7 @@ const AddPreparation: React.FC<PopupProps> = ({
           dateSurvenue: med.dateSurvenue || null,
         })),
       };
-  
+
       if (existingPreparation) {
         response = await api.put(
           `/medicine-preparations/${patientId}/${existingPreparation.id}`,
@@ -176,13 +206,13 @@ const AddPreparation: React.FC<PopupProps> = ({
         );
         alert("Préparation ajoutée avec succès!");
       }
-  
+
       if (existingPreparation && onPreparationUpdated) {
         onPreparationUpdated(response.data);
       } else if (onPreparationAdded) {
         onPreparationAdded(response.data);
       }
-      
+
       onClose();
     } catch (error) {
       console.error("Error saving preparation:", error);
@@ -203,7 +233,9 @@ const AddPreparation: React.FC<PopupProps> = ({
           style={{ boxShadow: "0px 4px 10px 0px rgba(29, 28, 28, 0.05)" }}
         >
           <h1 className="font-poppins font-bold text-[24px] text-PrimaryBlack">
-            {existingPreparation ? "Modifier la préparation" : "Ajouter une préparation"}
+            {existingPreparation
+              ? "Modifier la préparation"
+              : "Ajouter une préparation"}
           </h1>
           <div
             className="bg-[#FAFAFA] border border-green p-[4px] rounded-[10px] hover:bg-green"
@@ -258,10 +290,8 @@ const AddPreparation: React.FC<PopupProps> = ({
                         DCI
                         <span className="text-delete">*</span>
                       </h1>
-                      <input
+                      <select
                         className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                        type="text"
-                        placeholder="DCI"
                         required
                         name="dci"
                         value={medicament.dci}
@@ -272,34 +302,42 @@ const AddPreparation: React.FC<PopupProps> = ({
                             e.target.value
                           )
                         }
-                      />
+                      >
+                        <option value="" disabled>
+                          DCI
+                        </option>
+                        {dciList.map((dci) => (
+                          <option key={dci} value={dci}>
+                            {dci}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="flex flex-col justify-start gap-2 w-full">
-                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                          Nom commercial
-                          <span className="text-delete">*</span>
-                        </h1>
-                        <input
-                          className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                          type="text"
-                          placeholder="Nom commercial"
-                          name="nomCom"
-                          required
-                          value={medicament.nomCom}
-                          onChange={(e) =>
-                            handleMedicamentChange(
-                              medicament.id,
-                              "nomCom",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
+                      <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                        Nom commercial
+                        <span className="text-delete">*</span>
+                      </h1>
+                      <input
+                        className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                        type="text"
+                        placeholder="Nom commercial"
+                        name="nomCom"
+                        required
+                        value={medicament.nomCom}
+                        onChange={(e) =>
+                          handleMedicamentChange(
+                            medicament.id,
+                            "nomCom",
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
                   </div>
 
                   <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-
                     <div className="flex flex-col justify-start gap-2 w-full">
                       <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
                         Indication thérapeutique
@@ -319,9 +357,6 @@ const AddPreparation: React.FC<PopupProps> = ({
                       />
                     </div>
                   </div>
-
-
-
 
                   {/* Second Line */}
                   <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -513,269 +548,270 @@ const AddPreparation: React.FC<PopupProps> = ({
                   </div>
 
                   <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-[30px]">
-                      <div>
-                        <input
-                          type="checkbox"
-                          id={`erreur-${medicament.id}`} 
-                          checked={medicament.erreur}
-                          onChange={(e) =>
-                            handleMedicamentChange(
-                              medicament.id,
-                              "erreur",
-                              e.target.checked
-                            )
-                          }
-                          className="mr-2 h-4 w-4 accent-green"
-                        />
-                        <label htmlFor={`erreur-${medicament.id}`}>
-                          Déclarer comme erreur médicamenteuse
-                        </label>
-                      </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                        id={`erreur-${medicament.id}`}
+                        checked={medicament.erreur}
+                        onChange={(e) =>
+                          handleMedicamentChange(
+                            medicament.id,
+                            "erreur",
+                            e.target.checked
+                          )
+                        }
+                        className="mr-2 h-4 w-4 accent-green"
+                      />
+                      <label htmlFor={`erreur-${medicament.id}`}>
+                        Déclarer comme erreur médicamenteuse
+                      </label>
                     </div>
+                  </div>
                 </div>
 
                 {medicament.erreur && (
-                    <div className="flex flex-col gap-[30px]">
-                      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        {/* first*/}
-                        <div className="flex flex-col justify-start gap-2 w-1/2">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Numéro de lot
-                          </h1>
-                          <label className="w-full">
-                            <input
-                              className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              type="text"
-                              placeholder=" Numéro de lot"
-                              name="numLot"
-                              value={medicament.numLot}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "numLot",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        {/* second*/}
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Description de l'erreur
-                            <span className="text-delete">*</span>
-                          </h1>
-                          <label className="w-full">
-                            <textarea
-                              className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              required
-                              placeholder="Description de l'erreur"
-                              name="descErreur"
-                              value={medicament.erreurDescription}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "erreurDescription",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        {/* third*/}
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Actions entreprises
-                            <span className="text-delete">*</span>
-                          </h1>
-                          <label className="w-full">
-                            <textarea
-                              className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              placeholder="Actions entreprises"
-                              name="actions"
-                              required
-                              value={medicament.actionsEntreprises}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "actionsEntreprises",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        {/* fourth*/}
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Consequences pour le patient
-                            <span className="text-delete">*</span>
-                          </h1>
-
-                          <label className="w-full">
-                            <select
-                              className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              name="consequences"
-                              value={medicament.consequences}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "consequences",
-                                  e.target.value
-                                )
-                              }
-                            >
-                              <option value="" disabled selected>
-                                Consequences
-                              </option>
-                              <option value="Aucune">Aucune</option>
-                              <option value="Événement indésirable">
-                                Événement indésirable
-                              </option>
-                              <option value="Autre">Autre</option>
-                            </select>
-                          </label>
-                        </div>
-
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Cause de l’erreur
-                            <span className="text-delete">*</span>
-                          </h1>
-
-                          <label className="w-full">
-                            <select
-                              className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              name="causes"
-                              value={medicament.erreurCause}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "erreurCause",
-                                  e.target.value
-                                )
-                              }
-                            >
-                              <option value="" disabled selected>
-                                Cause
-                              </option>
-                              <option value="Omission">Omission</option>
-                              <option value="Défaut d'informations">
-                                Défaut d'informations
-                              </option>
-                              <option value="Défaut de présentation">
-                                Défaut de présentation
-                              </option>
-                              <option value="Manque de lisibilité">
-                                Manque de lisibilité
-                              </option>
-                              <option value="Autre">Autre</option>
-                            </select>
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        {/* fifth*/}
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Nature de l’erreur
-                            <span className="text-delete">*</span>
-                          </h1>
-
-                          <label className="w-full">
-                            <select
-                              className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              name="nature"
-                              value={medicament.erreurNature}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "erreurNature",
-                                  e.target.value
-                                )
-                              }
-                            >
-                              <option value="" disabled selected>
-                                Nature
-                              </option>
-                              <option value="Risque d'erreur">Risque d'erreur</option>
-                              <option value="Erreur potentielle">
-                                Erreur potentielle
-                              </option>
-                              <option value="Erreur averée">Erreur averée</option>
-                            </select>
-                          </label>
-                        </div>
-
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Évitabilité de l’erreur
-                            <span className="text-delete">*</span>
-                          </h1>
-
-                          <label className="w-full">
-                            <select
-                              className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              name="evitabilite"
-                              value={medicament.erreurEvitabilite}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "erreurEvitabilite",
-                                  e.target.value
-                                )
-                              }
-                            >
-                              <option value="" disabled selected>
-                                Évitabilité
-                              </option>
-                              <option value="Oui">Oui</option>
-                              <option value="Non">Non</option>
-                            </select>
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        {/* sixth*/}
-
-                        <div className="flex flex-col justify-start gap-2 w-full">
-                          <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
-                            Date de survenue
-                            <span className="text-delete">*</span>
-                          </h1>
-                          <label className="w-full">
-                            <input
-                              className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
-                              type="date"
-                              placeholder="Date de survenue"
-                              required
-                              name="dateSurv"
-                              value={medicament.dateSurvenue ?? ""}
-                              onChange={(e) =>
-                                handleMedicamentChange(
-                                  medicament.id,
-                                  "dateSurvenue",
-                                  e.target.value
-                                )
-                              }
-                            />
-                          </label>
-                        </div>
+                  <div className="flex flex-col gap-[30px]">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* first*/}
+                      <div className="flex flex-col justify-start gap-2 w-1/2">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Numéro de lot
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="text"
+                            placeholder=" Numéro de lot"
+                            name="numLot"
+                            value={medicament.numLot}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "numLot",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
                       </div>
                     </div>
-                  )}
 
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* second*/}
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Description de l'erreur
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <textarea
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            required
+                            placeholder="Description de l'erreur"
+                            name="descErreur"
+                            value={medicament.erreurDescription}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "erreurDescription",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* third*/}
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Actions entreprises
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <textarea
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            placeholder="Actions entreprises"
+                            name="actions"
+                            required
+                            value={medicament.actionsEntreprises}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "actionsEntreprises",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* fourth*/}
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Consequences pour le patient
+                          <span className="text-delete">*</span>
+                        </h1>
+
+                        <label className="w-full">
+                          <select
+                            className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            name="consequences"
+                            value={medicament.consequences}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "consequences",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="" disabled selected>
+                              Consequences
+                            </option>
+                            <option value="Aucune">Aucune</option>
+                            <option value="Événement indésirable">
+                              Événement indésirable
+                            </option>
+                            <option value="Autre">Autre</option>
+                          </select>
+                        </label>
+                      </div>
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Cause de l'erreur
+                          <span className="text-delete">*</span>
+                        </h1>
+
+                        <label className="w-full">
+                          <select
+                            className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            name="causes"
+                            value={medicament.erreurCause}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "erreurCause",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="" disabled selected>
+                              Cause
+                            </option>
+                            <option value="Omission">Omission</option>
+                            <option value="Défaut d'informations">
+                              Défaut d'informations
+                            </option>
+                            <option value="Défaut de présentation">
+                              Défaut de présentation
+                            </option>
+                            <option value="Manque de lisibilité">
+                              Manque de lisibilité
+                            </option>
+                            <option value="Autre">Autre</option>
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* fifth*/}
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Nature de l'erreur
+                          <span className="text-delete">*</span>
+                        </h1>
+
+                        <label className="w-full">
+                          <select
+                            className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            name="nature"
+                            value={medicament.erreurNature}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "erreurNature",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="" disabled selected>
+                              Nature
+                            </option>
+                            <option value="Risque d'erreur">
+                              Risque d'erreur
+                            </option>
+                            <option value="Erreur potentielle">
+                              Erreur potentielle
+                            </option>
+                            <option value="Erreur averée">Erreur averée</option>
+                          </select>
+                        </label>
+                      </div>
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Évitabilité de l'erreur
+                          <span className="text-delete">*</span>
+                        </h1>
+
+                        <label className="w-full">
+                          <select
+                            className="sm:p-[20px] p-[15px] text-PrimaryBlack/90 w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            name="evitabilite"
+                            value={medicament.erreurEvitabilite}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "erreurEvitabilite",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="" disabled selected>
+                              Évitabilité
+                            </option>
+                            <option value="Oui">Oui</option>
+                            <option value="Non">Non</option>
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                      {/* sixth*/}
+
+                      <div className="flex flex-col justify-start gap-2 w-full">
+                        <h1 className="font-poppins font-medium text-[16px] text-PrimaryBlack">
+                          Date de survenue
+                          <span className="text-delete">*</span>
+                        </h1>
+                        <label className="w-full">
+                          <input
+                            className="sm:p-[20px] p-[15px] w-full rounded-[15px] text-[16px] font-openSans font-regular border border-BorderWithoutAction focus:border-green focus:outline-none"
+                            type="date"
+                            placeholder="Date de survenue"
+                            required
+                            name="dateSurv"
+                            value={medicament.dateSurvenue ?? ""}
+                            onChange={(e) =>
+                              handleMedicamentChange(
+                                medicament.id,
+                                "dateSurvenue",
+                                e.target.value
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 
@@ -804,6 +840,68 @@ const AddPreparation: React.FC<PopupProps> = ({
           </button>
         </div>
       </div>
+      {isConfirmationModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full">
+            <h2 className="text-2xl font-bold mb-4 text-yellow-500 flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              Attention – Note importante
+            </h2>
+            <div className="text-gray-700 space-y-3 leading-relaxed">
+              <p>
+                Ne reformulez jamais les formes suivantes sans avis
+                pharmaceutique spécialisé :
+              </p>
+              <ul className="list-disc list-inside pl-4 text-left">
+                <li>
+                  Médicaments à libération prolongée (LP) ou libération
+                  contrôlée
+                </li>
+                <li>Formes gastro-résistantes</li>
+                <li>
+                  Gélules contenant des granulés à libération modifiée
+                </li>
+                <li>
+                  Comprimés pelliculés ou enrobés avec fonction de protection
+                </li>
+                <li>Formes à libération retardée</li>
+              </ul>
+              <p className="font-semibold pt-2">
+                👉 Toute manipulation non appropriée de ces formes peut altérer
+                la sécurité, l'efficacité ou provoquer une toxicité du
+                traitement.
+              </p>
+            </div>
+            <div className="flex justify-end mt-6 space-x-4">
+              <button
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-poppins font-medium py-2 px-6 rounded-lg"
+                onClick={() => setIsConfirmationModalOpen(false)}
+              >
+                Annuler
+              </button>
+              <button
+                className="bg-green hover:bg-green/80 text-white font-poppins font-medium py-2 px-6 rounded-lg"
+                onClick={handleConfirmSubmit}
+              >
+                Confirmer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
