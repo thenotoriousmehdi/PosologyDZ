@@ -670,12 +670,8 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                     >
                       <option value="" disabled selected>
                         Grade
-
-                        enum Grade {
-
-}
                       </option>
-                      <option value=" Ma">Maitre assistant(e)</option>
+                      <option value="Ma">Maitre assistant(e)</option>
                       <option value="Assistant">Assistant(e)</option>
                       <option value="Resident">Resident(e)</option>
                       <option value="Gen">Généraliste</option>
