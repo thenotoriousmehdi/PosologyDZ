@@ -670,13 +670,18 @@ const AddPatient: React.FC<PopupProps> = ({ onClose, onPatientAdded }) => {
                     >
                       <option value="" disabled selected>
                         Grade
+
+                        enum Grade {
+
+}
                       </option>
-                      <option value="Maitre assistant">Maitre assistant(e)</option>
+                      <option value=" Ma">Maitre assistant(e)</option>
                       <option value="Assistant">Assistant(e)</option>
                       <option value="Resident">Resident(e)</option>
-                      <option value="Généraliste">Généraliste</option>
-                      <option value="Maître de conférences">Maître de conférences</option>
-                      <option value="Professeur">Professeur</option>
+                      <option value="Gen">Généraliste</option>
+                      <option value="Mc">Maître de conférences</option>
+                      <option value="Specialist">Spécialiste</option>
+                      <option value="Professor">Professeur</option>
                     </select>
                   </label>
                 </div>

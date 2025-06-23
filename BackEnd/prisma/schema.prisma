@@ -92,6 +92,8 @@ enum Role {
 
 enum Grade {
   Ma
+  Mc
+  Gen
   Assistant
   Resident
   Professor
