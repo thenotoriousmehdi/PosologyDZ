@@ -223,7 +223,7 @@ const PatientDetails: React.FC = () => {
       70
     );
     addInlinePair(
-      "Lieu d’exercice",
+      "Lieu d'exercice",
       patient.etablissement || "N/A",
       "Service",
       patient.service || "N/A",
@@ -245,7 +245,7 @@ const PatientDetails: React.FC = () => {
     );
 
     addInlinePair(
-      "Voie d’administration",
+      "Voie d'administration",
       preparation.voieAdministration || "N/A",
       "Forme galénique",
       "Gellule",
@@ -262,7 +262,7 @@ const PatientDetails: React.FC = () => {
 
     doc.setFontSize(14);
     doc.setFont("poppins", "bold");
-    doc.text("Description de l’erreur médicamenteuse", 10, 150);
+    doc.text("Description de l'erreur médicamenteuse", 10, 150);
     doc.setFontSize(11);
     doc.setFont("poppins", "normal");
 
@@ -278,14 +278,14 @@ const PatientDetails: React.FC = () => {
     addInlinePair(
       "Conséquences pour le patient",
       preparation.consequences || "N/A",
-      "Cause de l’erreur",
+      "Cause de l'erreur",
       preparation.erreurCause || "N/A",
       180
     );
     addInlinePair(
-      "Nature de l’erreur",
+      "Nature de l'erreur",
       preparation.erreurNature || "N/A",
-      "Évitabilité de l’erreur",
+      "Évitabilité de l'erreur",
       preparation.erreurEvitabilite || "N/A",
       190
     );
@@ -355,108 +355,45 @@ const PatientDetails: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex flex-col justify-start gap-4">
-          <h1 className="text-2xl text-PrimaryBlack font-bold ">
-            Informations personnelles
-          </h1>
-
-          <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
-            <div className=" flex flex-col gap-3">
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Id:
-                </strong>{" "}
-                {patient.id}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Nom:
-                </strong>{" "}
-                {patient.name}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Age:
-                </strong>{" "}
-                {patient.age}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Sexe:
-                </strong>{" "}
-                {patient.gender}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Poids:
-                </strong>{" "}
-                {patient.weight} kg
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Numéro du parent:
-                </strong>{" "}
-                {patient.phoneNumber}
-              </p>
-
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Antecedents:
-                </strong>{" "}
-                {patient.antecedents || "N/A"}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Nom de l’établissement:
-                </strong>{" "}
-                {patient.etablissement || "N/A"}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Service:
-                </strong>{" "}
-                {patient.service}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Nom du médecin traitant:
-                </strong>{" "}
-                {patient.medicin || "N/A"}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Spécialité:
-                </strong>{" "}
-                {patient.specialite || "N/A"}
-              </p>
-              <p>
-                <strong className="font-bold font-poppins text-PrimaryBlack/80">
-                  Grade:
-                </strong>{" "}
-                {patient.grade}
-              </p>
+        <div className="flex flex-col justify-start gap-6">
+          {/* Patient Info Section */}
+          <div className="flex flex-col bg-white border-2 border-green-100 rounded-xl shadow-sm p-6 mb-2">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-green-700 text-2xl">🧑‍⚕️</span>
+              <h1 className="font-bold text-2xl font-poppins text-green-900">Informations personnelles</h1>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+              <div><span className="font-medium text-gray-500">Id:</span> <span className="font-semibold text-PrimaryBlack">{patient.id}</span></div>
+              <div><span className="font-medium text-gray-500">Nom:</span> <span className="font-semibold text-PrimaryBlack">{patient.name}</span></div>
+              <div><span className="font-medium text-gray-500">Age:</span> <span className="font-semibold text-PrimaryBlack">{patient.age}</span></div>
+              <div><span className="font-medium text-gray-500">Sexe:</span> <span className="font-semibold text-PrimaryBlack">{patient.gender}</span></div>
+              <div><span className="font-medium text-gray-500">Poids:</span> <span className="font-semibold text-PrimaryBlack">{patient.weight} kg</span></div>
+              <div><span className="font-medium text-gray-500">Numéro du parent:</span> <span className="font-semibold text-PrimaryBlack">{patient.phoneNumber}</span></div>
+              <div><span className="font-medium text-gray-500">Antécédents:</span> <span className="font-semibold text-PrimaryBlack">{patient.antecedents || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Nom de l'établissement:</span> <span className="font-semibold text-PrimaryBlack">{patient.etablissement || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Service:</span> <span className="font-semibold text-PrimaryBlack">{patient.service}</span></div>
+              <div><span className="font-medium text-gray-500">Nom du médecin traitant:</span> <span className="font-semibold text-PrimaryBlack">{patient.medicin || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Spécialité:</span> <span className="font-semibold text-PrimaryBlack">{patient.specialite || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Grade:</span> <span className="font-semibold text-PrimaryBlack">{patient.grade}</span></div>
             </div>
             {canEditPatient && (
            <button
-           className="hover:scale-110 transition-transform text-blue-500 hover:text-blue-700"
-
+                className="hover:scale-110 transition-transform text-blue-500 hover:text-blue-700 mt-4 self-end"
            aria-label="Modifier les infos personnelles"
-           
            onClick={handleOpenEditPopup}
          >
            <RiEdit2Fill style={{ fontSize: "20px" }} />
          </button>
           )}
-            
-          </div>
         </div>
 
-        <div className="flex flex-col justify-start gap-4 mb-4">
+          {/* Preparation Section */}
+          <div className="flex flex-col gap-4 mb-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl text-PrimaryBlack font-bold">
-              Préparations
-            </h1>
-
+              <div className="flex items-center gap-2">
+                <span className="text-green-700 text-2xl">🧪</span>
+                <h1 className="text-2xl text-green-900 font-bold font-poppins">Préparations</h1>
+              </div>
             <button
               className="bg-green py-4 px-4 xl:px-10 text-white rounded-[10px] font-poppins font-medium text-[16px] hover:bg-green/80"
               onClick={handleOpenAddPrepPopup}
@@ -487,113 +424,27 @@ const PatientDetails: React.FC = () => {
             >
               {patient.medicinePreparations.map((prep) => (
                 <SwiperSlide key={prep.id}>
-                  <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
-                    <div className=" flex flex-col gap-3">
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Id:
-                        </span>{" "}
-                        {prep.id}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          DCI:
-                        </span>{" "}
-                        {prep.dci}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Nom commercial:
-                        </span>{" "}
-                        {prep.nomCom}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Indication thérapeutique:
-                        </span>{" "}
-                        {prep.indication || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Dosage Initial (mg):
-                        </span>{" "}
-                        {prep.dosageInitial}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Dosage Adapté (mg):
-                        </span>{" "}
-                        {prep.dosageAdapte || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Mode d'Emploi (par jour):
-                        </span>{" "}
-                        {prep.modeEmploi}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Voie d'Administration:
-                        </span>{" "}
-                        {prep.voieAdministration || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          QSP (nombre de jours):
-                        </span>{" "}
-                        {prep.qsp}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Excipient à effet notoire:
-                        </span>{" "}
-                        {prep.excipient || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Date de Préparation:
-                        </span>{" "}
-                        {new Date(prep.preparationDate).toLocaleDateString()}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Date de Péremption:
-                        </span>{" "}
-                        {new Date(prep.peremptionDate).toLocaleDateString()}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Statut:
-                        </span>{" "}
-                        {prep.statut}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Nombre de Gélules:
-                        </span>{" "}
-                        {prep.nombreGellules}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Comprimés à Écraser:
-                        </span>{" "}
-                        {prep.compriméEcrasé.toFixed(2)}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Numéro de Gellule:
-                        </span>{" "}
-                        {prep.numeroGellule || "N/A"}
-                      </p>
-                      <p>
-                        <span className="font-bold font-poppins text-PrimaryBlack/80">
-                          Volume de l'excipient ajouté (ml):
-                        </span>{" "}
-                        {prep.volumeExipient?.toFixed(2) || "N/A"}
-                      </p>
+                    <div className="flex flex-col bg-white border-2 border-green-50 rounded-xl shadow-sm p-6 h-full mb-2">
+                      <div className="grid grid-cols-1 gap-y-2">
+                        <div><span className="font-medium text-gray-500">Id:</span> <span className="font-semibold text-PrimaryBlack">{prep.id}</span></div>
+                        <div><span className="font-medium text-gray-500">DCI:</span> <span className="font-semibold text-PrimaryBlack">{prep.dci}</span></div>
+                        <div><span className="font-medium text-gray-500">Nom commercial:</span> <span className="font-semibold text-PrimaryBlack">{prep.nomCom}</span></div>
+                        <div><span className="font-medium text-gray-500">Indication thérapeutique:</span> <span className="font-semibold text-PrimaryBlack">{prep.indication || "N/A"}</span></div>
+                        <div><span className="font-medium text-gray-500">Dosage Initial (mg):</span> <span className="font-semibold text-PrimaryBlack">{prep.dosageInitial}</span></div>
+                        <div><span className="font-medium text-gray-500">Dosage Adapté (mg):</span> <span className="font-semibold text-PrimaryBlack">{prep.dosageAdapte || "N/A"}</span></div>
+                        <div><span className="font-medium text-gray-500">Mode d'Emploi (par jour):</span> <span className="font-semibold text-PrimaryBlack">{prep.modeEmploi}</span></div>
+                        <div><span className="font-medium text-gray-500">Voie d'Administration:</span> <span className="font-semibold text-PrimaryBlack">{prep.voieAdministration || "N/A"}</span></div>
+                        <div><span className="font-medium text-gray-500">QSP (nombre de jours):</span> <span className="font-semibold text-PrimaryBlack">{prep.qsp}</span></div>
+                        <div><span className="font-medium text-gray-500">Excipient à effet notoire:</span> <span className="font-semibold text-PrimaryBlack">{prep.excipient || "N/A"}</span></div>
+                        <div><span className="font-medium text-gray-500">Date de Préparation:</span> <span className="font-semibold text-PrimaryBlack">{new Date(prep.preparationDate).toLocaleDateString()}</span></div>
+                        <div><span className="font-medium text-gray-500">Date de Péremption:</span> <span className="font-semibold text-PrimaryBlack">{new Date(prep.peremptionDate).toLocaleDateString()}</span></div>
+                        <div><span className="font-medium text-gray-500">Statut:</span> <span className="font-semibold text-PrimaryBlack">{prep.statut}</span></div>
+                        <div><span className="font-medium text-gray-500">Nombre de Gélules:</span> <span className="font-semibold text-PrimaryBlack">{prep.nombreGellules}</span></div>
+                        <div><span className="font-medium text-gray-500">Comprimés à Écraser:</span> <span className="font-semibold text-PrimaryBlack">{prep.compriméEcrasé.toFixed(2)}</span></div>
+                        <div><span className="font-medium text-gray-500">Numéro de Gellule:</span> <span className="font-semibold text-PrimaryBlack">{prep.numeroGellule || "N/A"}</span></div>
+                        <div><span className="font-medium text-gray-500">Volume de l'excipient ajouté (ml):</span> <span className="font-semibold text-PrimaryBlack">{prep.volumeExipient?.toFixed(2) || "N/A"}</span></div>
                     </div>
-                    <div className="flex flex-col justify-end items-end gap-4">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-row justify-end items-center gap-4 mt-4">
                       <button
               onClick={() => handleOpenModifyPrepPopup(prep)}
               className="text-blue-500 hover:text-blue-700"
@@ -601,28 +452,20 @@ const PatientDetails: React.FC = () => {
             >
               <RiEdit2Fill size={20} />
             </button> 
-
                         <button
                           onClick={() => handleDeletePreparation(prep.id)}
                           className="hover:scale-110 transition-transform"
                           aria-label="Supprimer la préparation"
                         >
-                          <MdDelete
-                            style={{ color: "#FF3A3A", fontSize: "20px" }}
-                          />
+                          <MdDelete style={{ color: "#FF3A3A", fontSize: "20px" }} />
                         </button>
-                      </div>
-
                       {prep.erreur && (
                         <div
-                          className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer"
+                            className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer shadow"
                           onClick={() => handleDownloadPDF(prep)}
                         >
                           <TbFileDownload className="text-white text-[20px] group-hover:text-green" />
-                          <p className="text-white hover:text-green">
-                            {" "}
-                            Fiche d'EM
-                          </p>
+                            <p className="text-white hover:text-green"> Fiche d'EM</p>
                         </div>
                       )}
                     </div>
@@ -633,6 +476,7 @@ const PatientDetails: React.FC = () => {
           ) : (
             <p>Aucune préparation trouvée.</p>
           )}
+          </div>
         </div>
       </div>
       <style>{`

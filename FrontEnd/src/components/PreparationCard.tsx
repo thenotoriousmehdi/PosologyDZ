@@ -53,22 +53,22 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatut = event.target.value as Statut;
-
+  
     if (newStatut === Statut.Termine) {
       setShowFinishModal(true);
       event.target.value = currentStatut; // Prevent immediate change
-      return;
+        return;
     }
-
+  
     const confirmed = window.confirm(
       `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
     );
-
+  
     if (!confirmed) {
       event.target.value = currentStatut; // Reset selection
       return;
     }
-
+  
     try {
       await api.patch(`/medicine-preparations/${id}/statut`, { statut: newStatut });
       setCurrentStatut(newStatut);
