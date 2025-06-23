@@ -254,3 +254,27 @@ export const getUniqueDCI = async (req, res) => {
     res.status(500).json({ message: "Error retrieving unique DCIs." });
   }
 };
+
+export const getMedicamentByDCI = async (req, res) => {
+  const { dci } = req.query;
+  if (!dci) {
+    return res.status(400).json({ message: "Missing dci parameter" });
+  }
+  try {
+    const medicament = await prisma.medicaments.findFirst({
+      where: { Principe_actif: dci },
+    });
+    if (!medicament) {
+      return res.status(404).json({ message: "Medicament not found" });
+    }
+    // Convert BigInt id to string for JSON serialization
+    const medicamentSafe = {
+      ...medicament,
+      id: medicament.id.toString(),
+    };
+    res.status(200).json(medicamentSafe);
+  } catch (error) {
+    console.error("Error fetching medicament by DCI:", error);
+    res.status(500).json({ message: "Error retrieving medicament." });
+  }
+};

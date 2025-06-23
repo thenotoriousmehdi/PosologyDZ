@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { TbFileDownload } from "react-icons/tb";
 import jsPDF from "jspdf";
 import api from "../utils/axiosConfig";
+
 interface MedicinePreparation {
   id: number;
   dci: string;
@@ -56,6 +57,20 @@ interface Patient {
   medicinePreparations: MedicinePreparation[];
 }
 
+interface Medicament {
+  id: number;
+  Principe_actif?: string;
+  Forme_galenique?: string;
+  Classe_ATC?: string;
+  Libelle_ATC3?: string;
+  Libelle_ATC4?: string;
+  Source_modalites?: string;
+  Autre_source?: string;
+  Alternatives_galeniques?: string;
+  Informations_RCP?: string;
+  Reponses_laboratoires?: string;
+}
+
 const PreparationDetails: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
 
@@ -66,6 +81,7 @@ const PreparationDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [medicament, setMedicament] = useState<Medicament | null>(null);
 
   useEffect(() => {
     const fetchPreparation = async () => {
@@ -75,6 +91,15 @@ const PreparationDetails: React.FC = () => {
         );
         setPreparation(response.data);
         setPatient(response.data.patient);
+        // Fetch medicament info by DCI
+        if (response.data.dci) {
+          try {
+            const medResp = await api.get(`/medicine-preparations/medicament?dci=${encodeURIComponent(response.data.dci)}`);
+            setMedicament(medResp.data);
+          } catch (medErr: any) {
+            setMedicament(null);
+          }
+        }
       } catch (err: any) {
         setError(
           err.response?.data?.message ||
@@ -156,7 +181,7 @@ const PreparationDetails: React.FC = () => {
     );
 
     addInlinePair(
-      "Lieu d’exercice",
+      "Lieu d'exercice",
       preparation.patient?.etablissement || "N/A",
       "Service",
       preparation.patient?.service || "N/A",
@@ -178,7 +203,7 @@ const PreparationDetails: React.FC = () => {
     );
 
     addInlinePair(
-      "Voie d’administration",
+      "Voie d'administration",
       preparation.voieAdministration || "N/A",
       "Forme galénique",
       "Gellule",
@@ -195,7 +220,7 @@ const PreparationDetails: React.FC = () => {
 
     doc.setFontSize(14);
     doc.setFont("poppins", "bold");
-    doc.text("Description de l’erreur médicamenteuse", 10, 150);
+    doc.text("Description de l'erreur médicamenteuse", 10, 150);
     doc.setFontSize(11);
     doc.setFont("poppins", "normal");
 
@@ -211,14 +236,14 @@ const PreparationDetails: React.FC = () => {
     addInlinePair(
       "Conséquences pour le patient",
       preparation.consequences || "N/A",
-      "Cause de l’erreur",
+      "Cause de l'erreur",
       preparation.erreurCause || "N/A",
       180
     );
     addInlinePair(
-      "Nature de l’erreur",
+      "Nature de l'erreur",
       preparation.erreurNature || "N/A",
-      "Évitabilité de l’erreur",
+      "Évitabilité de l'erreur",
       preparation.erreurEvitabilite || "N/A",
       190
     );
@@ -262,160 +287,85 @@ const PreparationDetails: React.FC = () => {
             <span className="ml-2">Retour</span>
           </button>
         </div>
-
-        <div className="flex flex-col justify-start gap-4">
-          <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
-            <div className=" flex flex-col gap-3">
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Id:
-                </span>{" "}
-                {preparation.id}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  DCI:
-                </span>{" "}
-                {preparation.dci}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Nom commercial:
-                </span>{" "}
-                {preparation.nomCom}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Indication thérapeutique:
-                </span>{" "}
-                {preparation.indication || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Dosage Initial (mg):
-                </span>{" "}
-                {preparation.dosageInitial}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Dosage Adapté (mg):
-                </span>{" "}
-                {preparation.dosageAdapte || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Mode d'Emploi (par jour):
-                </span>{" "}
-                {preparation.modeEmploi}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Voie d'Administration:
-                </span>{" "}
-                {preparation.voieAdministration || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  QSP (nombre de jours):
-                </span>{" "}
-                {preparation.qsp}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Excipient à effet notoire:
-                </span>{" "}
-                {preparation.excipient || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Date de Préparation:
-                </span>{" "}
-                {new Date(preparation.preparationDate).toLocaleDateString()}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Date de Péremption:
-                </span>{" "}
-                {new Date(preparation.peremptionDate).toLocaleDateString()}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Statut:
-                </span>{" "}
-                {preparation.statut}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Nombre de Gélules:
-                </span>{" "}
-                {preparation.nombreGellules}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Comprimés à Écraser:
-                </span>{" "}
-                {preparation.compriméEcrasé.toFixed(2)}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Numéro de Gellule:
-                </span>{" "}
-                {preparation.numeroGellule || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Volume de l'excipient ajouté (ml):
-                </span>{" "}
-                {preparation.volumeExipient?.toFixed(2) || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Erreur médicamenteuse?
-                </span>{" "}
-                {preparation.erreur ? "Oui" : "Non"}
-              </p>
+        <div className="flex flex-col justify-start gap-6 ">
+          {/* Patient Section */}
+          <div className="flex flex-col bg-white border-2 border-green-100 rounded-xl shadow-sm p-6 mb-2">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-green-700 text-2xl">🧑‍⚕️</span>
+              <h1 className="font-bold text-2xl font-poppins text-green-900">Patient</h1>
             </div>
-            <div className="flex flex-col justify-end items-end gap-4">
-              {preparation.erreur && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+              <div><span className="font-medium text-gray-500">ID:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.id || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Nom et Prénom:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.name || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Contact:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.phoneNumber || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Âge:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.age || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Sexe:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.gender || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Poids:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.weight || "N/A"} kg</span></div>
+              <div><span className="font-medium text-gray-500">Grade:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.grade || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Service:</span> <span className="font-semibold text-PrimaryBlack">{preparation.patient?.service || "N/A"}</span></div>
+            </div>
+          </div>
+
+          {/* Preparation Section */}
+          <div className="flex flex-col bg-white border-2 border-green-50 rounded-xl shadow-sm p-6 mb-2">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-green-700 text-2xl">🧪</span>
+              <h1 className="font-bold text-2xl font-poppins text-green-900">Préparation</h1>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+              <div><span className="font-medium text-gray-500">Id:</span> <span className="font-semibold text-PrimaryBlack">{preparation.id}</span></div>
+              <div><span className="font-medium text-gray-500">DCI:</span> <span className="font-semibold text-PrimaryBlack">{preparation.dci}</span></div>
+              <div><span className="font-medium text-gray-500">Nom commercial:</span> <span className="font-semibold text-PrimaryBlack">{preparation.nomCom}</span></div>
+              <div><span className="font-medium text-gray-500">Indication thérapeutique:</span> <span className="font-semibold text-PrimaryBlack">{preparation.indication || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Dosage Initial (mg):</span> <span className="font-semibold text-PrimaryBlack">{preparation.dosageInitial}</span></div>
+              <div><span className="font-medium text-gray-500">Dosage Adapté (mg):</span> <span className="font-semibold text-PrimaryBlack">{preparation.dosageAdapte || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Mode d'Emploi (par jour):</span> <span className="font-semibold text-PrimaryBlack">{preparation.modeEmploi}</span></div>
+              <div><span className="font-medium text-gray-500">Voie d'Administration:</span> <span className="font-semibold text-PrimaryBlack">{preparation.voieAdministration || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">QSP (nombre de jours):</span> <span className="font-semibold text-PrimaryBlack">{preparation.qsp}</span></div>
+              <div><span className="font-medium text-gray-500">Excipient à effet notoire:</span> <span className="font-semibold text-PrimaryBlack">{preparation.excipient || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Date de Préparation:</span> <span className="font-semibold text-PrimaryBlack">{new Date(preparation.preparationDate).toLocaleDateString()}</span></div>
+              <div><span className="font-medium text-gray-500">Date de Péremption:</span> <span className="font-semibold text-PrimaryBlack">{new Date(preparation.peremptionDate).toLocaleDateString()}</span></div>
+              <div><span className="font-medium text-gray-500">Statut:</span> <span className="font-semibold text-PrimaryBlack">{preparation.statut}</span></div>
+              <div><span className="font-medium text-gray-500">Nombre de Gélules:</span> <span className="font-semibold text-PrimaryBlack">{preparation.nombreGellules}</span></div>
+              <div><span className="font-medium text-gray-500">Comprimés à Écraser:</span> <span className="font-semibold text-PrimaryBlack">{preparation.compriméEcrasé.toFixed(2)}</span></div>
+              <div><span className="font-medium text-gray-500">Numéro de Gellule:</span> <span className="font-semibold text-PrimaryBlack">{preparation.numeroGellule || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Volume de l'excipient ajouté (ml):</span> <span className="font-semibold text-PrimaryBlack">{preparation.volumeExipient?.toFixed(2) || "N/A"}</span></div>
+              <div><span className="font-medium text-gray-500">Erreur médicamenteuse?</span> <span className="font-semibold text-PrimaryBlack">{preparation.erreur ? "Oui" : "Non"}</span></div>
+            </div>
+            {preparation.erreur && (
+              <div className="flex flex-col items-end mt-4">
                 <div
-                  className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] h-full rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer"
+                  className="flex items-center gap-2 bg-green border border-green p-[12px] sm:p-[15px] rounded-[10px] hover:bg-green/10 hover:text-green group cursor-pointer shadow"
                   onClick={() => handleDownloadPDF(preparation)}
                 >
                   <TbFileDownload className="text-white text-[20px] group-hover:text-green" />
                   <p className="text-white hover:text-green"> Fiche d'EM</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
-        </div>
 
-        <div className="flex flex-col justify-start gap-4 mb-4">
-          <div className="flex justify-between items-start bg-white border-2 border-green-50 hover:shadow-green-100 transition-shadow rounded-xl p-6 h-full mb-2">
-            <div className=" flex flex-col gap-3">
-              <h1 className="font-bold text-2xl font-poppins text-PrimaryBlack">
-                Patient
-              </h1>
-
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  ID
-                </span>{" "}
-                {preparation.patient?.id || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Nom et Prénom
-                </span>{" "}
-                {preparation.patient?.name || "N/A"}
-              </p>
-              <p>
-                <span className="font-bold font-poppins text-PrimaryBlack/80">
-                  Contact
-                </span>{" "}
-                {preparation.patient?.phoneNumber || "N/A"}
-              </p>
+          {/* Medicament Info Section */}
+          {medicament && (
+            <div className="flex flex-col bg-blue-50 border-2 border-blue-200 rounded-xl shadow p-6 mb-2">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-blue-700 text-2xl">💊</span>
+                <h1 className="font-bold text-2xl font-poppins text-blue-900">Médicament (Liste nationale des médicaments concernant l'écrasement des comprimés et l'ouverture)</h1>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                <div><span className="font-medium text-gray-500">Principe actif:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Principe_actif || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Forme galénique:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Forme_galenique || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Classe ATC:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Classe_ATC || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Libellé ATC3:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Libelle_ATC3 || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Libellé ATC4:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Libelle_ATC4 || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Source modalités:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Source_modalites || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Autre source:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Autre_source || 'N/A'}</span></div>
+                <div><span className="font-medium text-gray-500">Alternatives galéniques:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Alternatives_galeniques || 'N/A'}</span></div>
+                <div className="md:col-span-2"><span className="font-medium text-gray-500">Informations RCP:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Informations_RCP || 'N/A'}</span></div>
+                <div className="md:col-span-2"><span className="font-medium text-gray-500">Réponses laboratoires:</span> <span className="font-semibold text-PrimaryBlack">{medicament.Reponses_laboratoires || 'N/A'}</span></div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

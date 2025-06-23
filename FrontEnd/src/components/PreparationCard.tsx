@@ -4,6 +4,8 @@ import jsPDF from "jspdf";
 import { TbEyeFilled } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/axiosConfig";
+import PreparationFinishModal from "./PreparationFinishModal";
+
 interface PreparationCardProps {
   name: string;
   id: string;
@@ -44,52 +46,49 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
   statut,
 }) => {
   const [currentStatut, setCurrentStatut] = useState<Statut>(statut as Statut);
+  const [showFinishModal, setShowFinishModal] = useState(false);
   const navigate = useNavigate();
 
   const handleStatutChange = async (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatut = event.target.value as Statut;
-  
-    const updateData: { statut: Statut; numeroGellule?: number; volumeExipient?: number } = {
-      statut: newStatut,
-    };
-  
+
     if (newStatut === Statut.Termine) {
-      const numeroGelluleInput = prompt("Veuillez entrer le numéro de gélule utilisée:");
-      const volumeExipientInput = prompt("Veuillez entrer le volume de l’excipient ajouté (ml):");
-  
-      if (!numeroGelluleInput || !volumeExipientInput) {
-        alert("Les deux champs sont requis pour terminer la préparation.");
-        event.target.value = currentStatut; 
-        return;
-      }
-  
-      const numeroGellule = Number(numeroGelluleInput);
-      const volumeExipient = Number(volumeExipientInput);
-  
-      if (isNaN(numeroGellule) || isNaN(volumeExipient)) {
-        alert("Veuillez entrer des valeurs numériques valides.");
-        event.target.value = currentStatut; 
-        return;
-      }
-  
-      updateData.numeroGellule = numeroGellule;
-      updateData.volumeExipient = volumeExipient;
+      setShowFinishModal(true);
+      event.target.value = currentStatut; // Prevent immediate change
+      return;
     }
-  
+
     const confirmed = window.confirm(
       `Êtes-vous sûr de vouloir changer le statut en "${statutMapping[newStatut]}" ?`
     );
-  
+
     if (!confirmed) {
       event.target.value = currentStatut; // Reset selection
       return;
     }
-  
+
+    try {
+      await api.patch(`/medicine-preparations/${id}/statut`, { statut: newStatut });
+      setCurrentStatut(newStatut);
+      alert("Statut mis à jour avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du statut", error);
+      alert("Échec de la mise à jour du statut");
+    }
+  };
+
+  const handleFinishValidate = async (numeroGellule: number, volumeExipient: number) => {
+    const updateData = {
+      statut: Statut.Termine,
+      numeroGellule,
+      volumeExipient,
+    };
     try {
       await api.patch(`/medicine-preparations/${id}/statut`, updateData);
-      setCurrentStatut(newStatut);
+      setCurrentStatut(Statut.Termine);
+      setShowFinishModal(false);
       alert("Statut mis à jour avec succès !");
     } catch (error) {
       console.error("Erreur lors de la mise à jour du statut", error);
@@ -223,6 +222,12 @@ const PreparationCard: React.FC<PreparationCardProps> = ({
           </div>
         </div>
       </div>
+      {/* Modal for finishing preparation */}
+      <PreparationFinishModal
+        isOpen={showFinishModal}
+        onClose={() => setShowFinishModal(false)}
+        onValidate={handleFinishValidate}
+      />
     </div>
   );
 };
